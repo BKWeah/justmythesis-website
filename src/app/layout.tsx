@@ -55,7 +55,7 @@ export default function RootLayout({
           type="image/png"
         />
       </head>
-      <body className="font-sans antialiased bg-navy text-navy">
+      <body className="font-sans antialiased bg-white text-navy">
         {children}
       </body>
     </html>
