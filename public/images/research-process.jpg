@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="processGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2744"/>
+      <stop offset="50%" style="stop-color:#2a3a5c"/>
+      <stop offset="100%" style="stop-color:#1a2744"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#processGrad)"/>
+  <g transform="translate(400, 300)">
+    <circle cx="-150" cy="0" r="30" fill="rgba(212,168,71,0.3)" stroke="#d4a847" stroke-width="3"/>
+    <circle cx="0" cy="0" r="30" fill="rgba(212,168,71,0.5)" stroke="#d4a847" stroke-width="3"/>
+    <circle cx="150" cy="0" r="30" fill="rgba(212,168,71,0.8)" stroke="#d4a847" stroke-width="3"/>
+    <line x1="-120" y1="0" x2="-30" y2="0" stroke="#d4a847" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="30" y1="0" x2="120" y2="0" stroke="#d4a847" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="-150" y="5" text-anchor="middle" fill="white" font-size="20" font-weight="bold">1</text>
+    <text x="0" y="5" text-anchor="middle" fill="white" font-size="20" font-weight="bold">2</text>
+    <text x="150" y="5" text-anchor="middle" fill="white" font-size="20" font-weight="bold">3</text>
+  </g>
+  <g transform="translate(250, 450)">
+    <rect x="-80" y="0" width="160" height="40" rx="20" fill="rgba(212,168,71,0.2)" stroke="#d4a847" stroke-width="2"/>
+    <text x="0" y="25" text-anchor="middle" fill="#d4a847" font-family="Arial, sans-serif" font-size="14">Step 1</text>
+  </g>
+  <g transform="translate(400, 450)">
+    <rect x="-80" y="0" width="160" height="40" rx="20" fill="rgba(212,168,71,0.2)" stroke="#d4a847" stroke-width="2"/>
+    <text x="0" y="25" text-anchor="middle" fill="#d4a847" font-family="Arial, sans-serif" font-size="14">Step 2</text>
+  </g>
+  <g transform="translate(550, 450)">
+    <rect x="-80" y="0" width="160" height="40" rx="20" fill="rgba(212,168,71,0.2)" stroke="#d4a847" stroke-width="2"/>
+    <text x="0" y="25" text-anchor="middle" fill="#d4a847" font-family="Arial, sans-serif" font-size="14">Step 3</text>
+  </g>
+  <text x="400" y="520" text-anchor="middle" fill="#d4a847" font-family="Georgia, serif" font-size="24" font-weight="bold">Service Process</text>
+</svg>

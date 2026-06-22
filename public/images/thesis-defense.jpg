@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="defenseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2744"/>
+      <stop offset="50%" style="stop-color:#2a3a5c"/>
+      <stop offset="100%" style="stop-color:#1a2744"/>
+    </linearGradient>
+    <radialGradient id="trophy" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:rgba(212,168,71,0.4)"/>
+      <stop offset="100%" style="stop-color:transparent"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#defenseGrad)"/>
+  <ellipse cx="400" cy="200" rx="250" ry="150" fill="url(#trophy)"/>
+  <g transform="translate(400, 280)">
+    <path d="M-40,0 L0,-60 L40,0 L30,0 L30,40 L-30,40 L-30,0 Z" fill="rgba(212,168,71,0.8)"/>
+    <rect x="-8" y="40" width="16" height="20" fill="rgba(212,168,71,0.6)"/>
+    <rect x="-25" y="60" width="50" height="10" rx="2" fill="rgba(212,168,71,0.6)"/>
+    <circle cx="0" cy="-30" r="8" fill="rgba(255,255,255,0.9)"/>
+  </g>
+  <text x="400" y="480" text-anchor="middle" fill="#d4a847" font-family="Georgia, serif" font-size="24" font-weight="bold">Thesis Defense</text>
+  <text x="400" y="510" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Arial, sans-serif" font-size="16">Confidently Present Your Work</text>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="supportGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2744"/>
+      <stop offset="50%" style="stop-color:#2a3a5c"/>
+      <stop offset="100%" style="stop-color:#1a2744"/>
+    </linearGradient>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(212,168,71,0.1)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#supportGrad)"/>
+  <rect width="800" height="600" fill="url(#grid)"/>
+  <g transform="translate(400, 280)">
+    <rect x="-100" y="-60" width="200" height="120" rx="8" fill="rgba(212,168,71,0.2)" stroke="#d4a847" stroke-width="2"/>
+    <line x1="-80" y1="-30" x2="80" y2="-30" stroke="#d4a847" stroke-width="3"/>
+    <line x1="-80" y1="0" x2="60" y2="0" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+    <line x1="-80" y1="20" x2="70" y2="20" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+    <line x1="-80" y1="40" x2="40" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+  </g>
+  <text x="400" y="480" text-anchor="middle" fill="#d4a847" font-family="Georgia, serif" font-size="24" font-weight="bold">Academic Support</text>
+  <text x="400" y="510" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Arial, sans-serif" font-size="16">Guiding You to Success</text>
+</svg>
