@@ -7,59 +7,17 @@ export default function Home() {
   
   const sections = [
     { id: 'hero', name: 'Hero' },
-    { id: 'who-we-serve', name: 'Who We Serve' },
     { id: 'struggling', name: 'Struggling With' },
     { id: 'about', name: 'Who We Are' },
     { id: 'services', name: 'Service Packages' },
     { id: 'additional', name: 'Additional Learning' },
     { id: 'process', name: 'Service Process' },
     { id: 'fees', name: 'Service Fees' },
-    { id: 'why-us', name: 'Why Choose Us' },
-    { id: 'team', name: 'Our Team' },
-    { id: 'testimonials', name: 'Testimonials' },
+    { id: 'why-us', name: 'Why Students Choose Us' },
+    { id: 'team', name: 'Meet Our Team' },
+    { id: 'testimonials', name: 'What Students Are Saying' },
     { id: 'notice', name: 'Important Notice' },
     { id: 'contact', name: 'Get Started' }
-  ];
-
-  const whoWeServe = [
-    {
-      title: 'Undergraduate Students',
-      description: 'Final-year undergraduate students preparing research projects and theses.',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l9-5-9-5-9 5 9 5z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-        </svg>
-      )
-    },
-    {
-      title: "Master's Students",
-      description: 'Graduate students conducting advanced academic research.',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-      )
-    },
-    {
-      title: 'Researchers & Professionals',
-      description: 'Individuals conducting academic, organizational, policy, and professional research.',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      )
-    },
-    {
-      title: 'Doctoral Support',
-      description: 'Coming Soon.',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      comingSoon: true
-    }
   ];
 
   const strugglingItems = [
@@ -460,35 +418,6 @@ export default function Home() {
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
       </section>
 
-      {/* Who We Serve Section */}
-      <section id="who-we-serve" className="section bg-cream min-h-screen flex flex-col">
-        <div className="container-custom flex-grow">
-          <div className="text-center mb-12">
-            <h2 className="heading-lg text-brand-green mb-4">Who We Serve</h2>
-            <div className="divider-gold max-w-xs mx-auto" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {whoWeServe.map((item, idx) => (
-              <div 
-                key={idx} 
-                className={`card p-6 text-center ${item.comingSoon ? 'opacity-70' : ''}`}
-              >
-                <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${item.comingSoon ? 'bg-gold/20' : 'bg-brand-green/10'}`}>
-                  <div className={item.comingSoon ? 'text-gold' : 'text-brand-green'}>
-                    {item.icon}
-                  </div>
-                </div>
-                <h3 className="font-bold text-dark text-lg mb-2">{item.title}</h3>
-                <p className="text-dark/60 text-sm">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="container-custom">
-          <SectionNav sectionIndex={1} />
-        </div>
-      </section>
-
       {/* Struggling With Section */}
       <section id="struggling" className="section min-h-screen flex flex-col">
         <div className="container-custom flex-grow">
@@ -506,7 +435,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={2} />
+          <SectionNav sectionIndex={1} />
         </div>
       </section>
 
@@ -530,7 +459,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={3} />
+          <SectionNav sectionIndex={2} />
         </div>
       </section>
 
@@ -787,7 +716,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={9} />
+          <SectionNav sectionIndex={8} />
         </div>
       </section>
 
@@ -822,7 +751,7 @@ export default function Home() {
           </p>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={10} />
+          <SectionNav sectionIndex={9} />
         </div>
       </section>
 
@@ -853,7 +782,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={11} />
+          <SectionNav sectionIndex={10} />
         </div>
       </section>
 
@@ -893,25 +822,25 @@ export default function Home() {
                 +231776732989
               </a>
               <span className="hidden sm:block text-gold">•</span>
-              <a href="mailto:kontentkingkong@gmail.com" className="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="mailto:team@justmythesis.org" className="flex items-center gap-2 hover:text-white transition-colors">
                 <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                kontentkingkong@gmail.com
+                team@justmythesis.org
               </a>
               <span className="hidden sm:block text-gold">•</span>
               <span className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
-                Monrovia, Liberia
+                GSA Road, Paynesville, Liberia
               </span>
             </div>
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={12} />
+          <SectionNav sectionIndex={11} />
         </div>
       </section>
 
