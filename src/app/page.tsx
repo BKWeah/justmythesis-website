@@ -35,7 +35,7 @@ export default function Home() {
   const services = [
     {
       package: 'A',
-      name: 'Proposal Development Package',
+      name: 'Proposal Development',
       bestFor: ['Topic Approved', 'Proposal Development'],
       deliverables: [
         'Background of the Study',
@@ -51,7 +51,7 @@ export default function Home() {
     },
     {
       package: 'B',
-      name: 'Foundation Thesis Package',
+      name: 'Foundation Thesis',
       bestFor: ['Proposal Approved', 'Literature Review', 'Methodology Development'],
       deliverables: [
         'Institution-required introductory sections',
@@ -64,7 +64,7 @@ export default function Home() {
     },
     {
       package: 'C',
-      name: 'Complete Thesis Development Package',
+      name: 'Complete Thesis Development',
       bestFor: ['Data Collection', 'Data Analysis & Presentation', 'Thesis Development'],
       deliverables: [
         'Proposal Review',
@@ -80,7 +80,7 @@ export default function Home() {
     },
     {
       package: 'D',
-      name: 'Thesis Rescue Package',
+      name: 'Thesis Rescue',
       bestFor: ['Supervisor Corrections', 'Delayed Projects', 'Rejected Projects', 'Weak Drafts'],
       deliverables: [
         'Project Assessment',
@@ -93,7 +93,7 @@ export default function Home() {
     },
     {
       package: 'E',
-      name: 'Formatting & Compliance Package',
+      name: 'Formatting & Compliance',
       bestFor: ['Formatting Review', 'Citation & Reference Review', 'Final Submission Preparation'],
       deliverables: [
         'Formatting Review',
@@ -106,7 +106,7 @@ export default function Home() {
     },
     {
       package: 'G',
-      name: 'Defense Presentation Package',
+      name: 'Defense Presentation',
       bestFor: ['Defense Preparation'],
       deliverables: [
         'Defense Presentation Slides',
