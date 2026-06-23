@@ -8,12 +8,14 @@ export default function TermsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-navy to-navy-light flex items-center justify-center shadow-md">
-                <span className="text-gold font-bold text-sm tracking-wide">JMT</span>
-              </div>
-              <div>
-                <h1 className="text-navy font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
-                <p className="text-navy/50 text-xs hidden sm:block">Academic Research Support</p>
+              <img 
+                src="/images/logo/justmythesis-logo.png" 
+                alt="JUSTmyTHESIS™ Logo"
+                className="h-10 md:h-12 w-auto"
+              />
+              <div className="hidden">
+                <h1 className="text-brand-green font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
+                <p className="text-dark/50 text-xs">Academic Research & Thesis Support</p>
               </div>
             </Link>
           </div>
@@ -22,12 +24,12 @@ export default function TermsPage() {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <h1 className="text-3xl md:text-4xl font-bold text-navy mb-8">Terms of Service</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-brand-green mb-8">Terms of Service</h1>
         
-        <div className="prose prose-lg max-w-none text-navy/80 space-y-6">
-          <p className="text-sm text-navy/50">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+        <div className="prose prose-lg max-w-none text-dark/80 space-y-6">
+          <p className="text-sm text-dark/50">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
           
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">1. Acceptance of Terms</h2>
+          <h2 className="text-2xl font-bold text-brand-green mt-8 mb-4">1. Acceptance of Terms</h2>
           <p>
             By accessing and using the JUSTmyTHESIS™ website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.
           </p>
@@ -90,14 +92,14 @@ export default function TermsPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-navy text-white py-8 mt-auto">
+      <footer className="bg-cream text-dark py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-white/60">
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-dark/60">
+            <Link href="/terms" className="hover:text-gold transition-colors">Terms of Service</Link>
             <span className="hidden sm:block text-gold">•</span>
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link>
           </div>
-          <div className="mt-4 text-center text-white/40 text-sm">
+          <div className="mt-4 text-center text-dark/40 text-sm">
             © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
           </div>
         </div>

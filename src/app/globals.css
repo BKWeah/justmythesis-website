@@ -186,7 +186,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/images/hero/homepage-hero.jpg');
+  background-image: url('/images/hero/hero-students.jpg');
   background-size: cover;
   background-position: center;
   opacity: 0.45;

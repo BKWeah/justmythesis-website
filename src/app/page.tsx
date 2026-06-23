@@ -124,28 +124,21 @@ export default function Home() {
       position: 'Research & Academic Advisor',
       experienceSince: 2010,
       discipline: 'Research, Academia & Academic Support',
-      initials: 'EN'
-    },
-    {
-      name: 'Albert J. Stevens',
-      position: 'Business & Professional Development Advisor',
-      experienceSince: 2014,
-      discipline: 'Business Development, Professional Services & Organizational Support',
-      initials: 'AS'
+      image: '/images/team/emily-nookes.jpg'
     },
     {
       name: 'B. K. Weah',
       position: 'Marketing & Service Executive',
       experienceSince: 2016,
       discipline: 'Technology Entrepreneurship, Marketing & Service Development',
-      initials: 'BK'
+      image: '/images/team/bk-weah.jpg'
     },
     {
       name: 'Georgina Horace',
       position: 'Project Development & Information Technology Advisor',
       experienceSince: 2012,
       discipline: 'Project Development, Information Technology & Documentation Systems',
-      initials: 'GH'
+      image: '/images/team/georgina-horace.jpg'
     }
   ];
 
@@ -338,13 +331,21 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-green to-brand-green-light flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-sm tracking-wide">JMT</span>
-              </div>
-              <div>
-                <h1 className="text-brand-green font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
-                <p className="text-dark/50 text-xs hidden sm:block">Academic Research & Thesis Support</p>
-              </div>
+              <a href="/" className="flex items-center gap-3">
+                <img 
+                  src="/images/logo/justmythesis-logo.png" 
+                  alt="JUSTmyTHESIS™ Logo"
+                  className="h-10 md:h-12 w-auto"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+                <div className="hidden">
+                  <h1 className="text-brand-green font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
+                  <p className="text-dark/50 text-xs">Academic Research & Thesis Support</p>
+                </div>
+              </a>
             </div>
             <div className="flex items-center gap-2 md:gap-3">
               <a
@@ -502,23 +503,6 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            {/* Doctoral Support Coming Soon */}
-            <div className="service-card opacity-75">
-              <div className="service-card-header">
-                <span className="text-white text-sm font-bold">Package F</span>
-                <h3 className="text-lg font-bold mt-1 text-white">Doctoral Support</h3>
-              </div>
-              <div className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="text-dark/70">
-                  Advanced doctoral-level support services are currently under development and will be introduced in a future phase.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
         <div className="container-custom">
@@ -527,14 +511,22 @@ export default function Home() {
       </section>
 
       {/* Additional Learning Opportunities */}
-      <section id="additional" className="section bg-cream min-h-screen flex flex-col">
-        <div className="container-custom flex-grow">
+      <section id="additional" className="section min-h-screen flex flex-col relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/sections/additional-learning.jpg" 
+            alt="Additional Learning"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-brand-green/90" />
+        </div>
+        <div className="container-custom flex-grow relative z-10">
           <div className="text-center mb-12">
-            <h2 className="heading-lg text-brand-green mb-4">Additional Learning Opportunities</h2>
+            <h2 className="heading-lg text-white mb-4">Additional Learning Opportunities</h2>
             <div className="divider-gold max-w-xs mx-auto" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div className="card p-6">
+            <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
                   <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -547,7 +539,7 @@ export default function Home() {
                 Personalized coaching designed to strengthen research skills, project planning, and understanding of the research process.
               </p>
             </div>
-            <div className="card p-6">
+            <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
                   <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -633,17 +625,6 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="pricing-card opacity-75">
-              <h3 className="text-xl font-bold text-dark mb-4">Doctoral Support</h3>
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mb-4">
-                  <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <p className="text-dark/60 text-center">Coming Soon</p>
-              </div>
-            </div>
           </div>
         </div>
         <div className="container-custom">
@@ -692,11 +673,23 @@ export default function Home() {
               Collectively, our team members bring nearly four decades of practical experience supporting learning, research, writing, documentation, training, project development, and professional advancement.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {teamMembers.map((member, idx) => (
-              <div key={idx} className="card p-8 text-center">
-                <div className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] lg:w-[160px] lg:h-[160px] rounded-full bg-gradient-to-br from-brand-green to-brand-green-light flex items-center justify-center mx-auto mb-6 shadow-lg ring-4 ring-gold/30">
-                  <span className="text-white font-bold text-3xl sm:text-4xl lg:text-5xl">{member.initials}</span>
+              <div key={idx} className="card p-6 text-center">
+                <div className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] rounded-full overflow-hidden mx-auto mb-6 shadow-lg ring-4 ring-gold/30">
+                  <img 
+                    src={member.image} 
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-brand-green to-brand-green-light flex items-center justify-center"><span class="text-white font-bold text-3xl sm:text-4xl lg:text-5xl">${member.name.split(' ').map(n => n[0]).join('')}</span></div>`;
+                      }
+                    }}
+                  />
                 </div>
                 <h3 className="font-bold text-dark text-xl mb-2">{member.name}</h3>
                 <p className="text-gold text-sm font-semibold mb-3">{member.position}</p>
@@ -717,20 +710,28 @@ export default function Home() {
       </section>
 
       {/* Student Testimonials Section */}
-      <section id="testimonials" className="section min-h-screen flex flex-col">
-        <div className="container-custom flex-grow">
+      <section id="testimonials" className="section min-h-screen flex flex-col relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/sections/success-stories.jpg" 
+            alt="Success Stories"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-brand-green/90" />
+        </div>
+        <div className="container-custom flex-grow relative z-10">
           <div className="text-center mb-12">
-            <h2 className="heading-lg text-brand-green mb-4">What Students Are Saying</h2>
+            <h2 className="heading-lg text-white mb-4">What Students Are Saying</h2>
             <div className="divider-gold max-w-xs mx-auto" />
           </div>
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <p className="text-dark/80 leading-relaxed">
+            <p className="text-white/80 leading-relaxed">
               Students from different academic backgrounds have trusted JUSTmyTHESIS™ to help them navigate the research and thesis process with greater clarity, structure, and confidence.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {testimonials.map((testimonial, idx) => (
-              <div key={idx} className="card p-6">
+              <div key={idx} className="bg-white rounded-xl p-6 shadow-lg">
                 <svg className="w-8 h-8 text-gold/30 mb-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
@@ -742,7 +743,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <p className="text-center text-dark/50 text-sm mt-8 max-w-3xl mx-auto">
+          <p className="text-center text-white/60 text-sm mt-8 max-w-3xl mx-auto">
             Names and identifying details may be abbreviated or modified to protect client privacy.
           </p>
         </div>
@@ -845,7 +846,15 @@ export default function Home() {
         <div className="container-custom">
           <div className="flex flex-col items-center text-center">
             <div className="mb-6">
-              <h3 className="font-bold text-2xl text-brand-green mb-1">JUSTmyTHESIS™</h3>
+              <img 
+                src="/images/logo/justmythesis-logo.png" 
+                alt="JUSTmyTHESIS™ Logo"
+                className="h-16 w-auto mx-auto mb-4"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
               <p className="text-dark/60 text-sm mb-2">Academic Research & Thesis Support</p>
               <p className="text-dark/80 font-medium">Focus on Your Research. We'll Handle the Thesis.</p>
             </div>
