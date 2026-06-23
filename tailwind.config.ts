@@ -9,17 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        navy: {
-          DEFAULT: '#1a2744',
-          light: '#2a3a5c',
-          dark: '#0f1829',
+        brand: {
+          green: '#18452F',
+          'green-light': '#2a5c45',
+          'green-dark': '#0f2d1f',
         },
         gold: {
-          DEFAULT: '#d4a847',
-          light: '#e6c06e',
-          dark: '#b8922e',
+          DEFAULT: '#C79A2D',
+          light: '#d9b44a',
+          dark: '#a68425',
         },
         cream: '#FAF7F0',
+        white: '#FFFFFF',
+        dark: '#222222',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

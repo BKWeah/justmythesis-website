@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'JUSTmyTHESIS™ | Academic Research & Thesis Development Support',
-  description: 'Academic research, thesis development support, formatting, dissertation support, and defense preparation for undergraduate, master\'s, and doctoral students.',
+  title: 'JUSTmyTHESIS™ | Academic Research & Thesis Support',
+  description: 'Academic Research & Thesis Support for undergraduate and master\'s students, researchers, and professionals.',
   keywords: [
     'thesis help',
     'dissertation support',
@@ -13,21 +13,20 @@ export const metadata: Metadata = {
     'literature review',
     'thesis defense',
     'undergraduate thesis',
-    'master thesis',
-    'doctoral dissertation'
+    'master thesis'
   ],
   authors: [{ name: 'JUSTmyTHESIS™' }],
   openGraph: {
-    title: 'JUSTmyTHESIS™ | Academic Research & Thesis Development Support',
-    description: 'Professional academic research and thesis development support for undergraduate, master\'s, and doctoral students.',
+    title: 'JUSTmyTHESIS™ | Academic Research & Thesis Support',
+    description: 'Focus on Your Research. We\'ll Handle the Thesis.',
     type: 'website',
     locale: 'en_US',
     siteName: 'JUSTmyTHESIS™',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'JUSTmyTHESIS™ | Academic Research & Thesis Development Support',
-    description: 'Professional academic research and thesis development support for students.',
+    title: 'JUSTmyTHESIS™ | Academic Research & Thesis Support',
+    description: 'Focus on Your Research. We\'ll Handle the Thesis.',
   },
   robots: {
     index: true,
@@ -51,11 +50,11 @@ export default function RootLayout({
         />
         <link
           rel="icon"
-          href="/images/logo/jmt-logo.png"
+          href="/images/logo/justmythesis-logo.png"
           type="image/png"
         />
       </head>
-      <body className="font-sans antialiased bg-white text-navy">
+      <body className="font-sans antialiased bg-white text-dark">
         {children}
       </body>
     </html>
