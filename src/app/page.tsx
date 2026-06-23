@@ -256,8 +256,59 @@ export default function Home() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  // Section navigation component
+  const SectionNav = ({ sectionIndex }: { sectionIndex: number }) => {
+    const isFirst = sectionIndex === 0;
+    const isLast = sectionIndex === sections.length - 1;
+    const prevSection = sections[sectionIndex - 1];
+    const nextSection = sections[sectionIndex + 1];
+
+    return (
+      <div className="flex items-center justify-between mt-12 pt-6 border-t border-navy/10">
+        {!isFirst && prevSection && (
+          <button
+            onClick={() => scrollToSection(prevSection.id)}
+            className="flex items-center gap-2 px-4 py-2 text-navy hover:text-gold transition-colors duration-300"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="font-medium">Previous</span>
+          </button>
+        )}
+        {isFirst && <div />}
+        
+        {!isLast && nextSection && (
+          <button
+            onClick={() => scrollToSection(nextSection.id)}
+            className="flex items-center gap-2 px-4 py-2 text-navy hover:text-gold transition-colors duration-300 ml-auto"
+          >
+            <span className="font-medium">Next</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+        
+        {isLast && (
+          <a
+            href="https://wa.me/231776732989?text=Hello%20JUSTmyTHESIS%2C%20I%20would%20like%20a%20FREE%20Project%20Assessment."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-300 ml-auto"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span className="font-medium">Start on WhatsApp</span>
+          </a>
+        )}
+      </div>
+    );
   };
 
   // Track current section on scroll
@@ -321,47 +372,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Floating Section Navigation */}
-      <div className="fixed right-4 bottom-20 z-40 flex flex-col gap-2">
-        <button
-          onClick={() => scrollToSection(sections[currentSection - 1]?.id || sections[0].id)}
-          disabled={currentSection === 0}
-          className="w-10 h-10 bg-white rounded-full shadow-lg border border-gold/20 flex items-center justify-center text-navy hover:bg-gold hover:text-navy transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
-          aria-label="Previous section"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
-        </button>
-        <button
-          onClick={() => scrollToSection(sections[currentSection + 1]?.id || sections[sections.length - 1].id)}
-          disabled={currentSection === sections.length - 1}
-          className="w-10 h-10 bg-white rounded-full shadow-lg border border-gold/20 flex items-center justify-center text-navy hover:bg-gold hover:text-navy transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
-          aria-label="Next section"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Section Indicator */}
-      <div className="fixed right-4 bottom-72 z-40 hidden lg:flex flex-col gap-1">
-        {sections.map((section, idx) => (
-          <button
-            key={section.id}
-            onClick={() => scrollToSection(section.id)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              idx === currentSection ? 'bg-gold scale-150' : 'bg-navy/20 hover:bg-navy/40'
-            }`}
-            aria-label={`Go to ${section.name}`}
-          />
-        ))}
-      </div>
-
       {/* Hero Section */}
-      <section id="hero" className="hero-bg text-white py-16 md:py-24 lg:py-32 relative overflow-hidden">
-        <div className="container-custom relative z-10">
+      <section id="hero" className="hero-bg text-white py-16 md:py-24 lg:py-32 relative overflow-hidden min-h-screen flex flex-col">
+        <div className="container-custom relative z-10 flex-grow flex flex-col justify-center">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="heading-xl mb-6 leading-tight">
               Focus on Your Research.<br />
@@ -394,13 +407,16 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom relative z-10">
+          <SectionNav sectionIndex={0} />
+        </div>
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-gold/10 blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
       </section>
 
       {/* Struggling With Section */}
-      <section id="struggling" className="section">
-        <div className="container-custom">
+      <section id="struggling" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Struggling With?</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -414,11 +430,14 @@ export default function Home() {
             ))}
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={1} />
+        </div>
       </section>
 
       {/* Who We Are Section */}
-      <section id="about" className="section bg-gray-50/50">
-        <div className="container-custom">
+      <section id="about" className="section bg-gray-50/50 min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Who We Are</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -457,11 +476,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={2} />
+        </div>
       </section>
 
       {/* Service Packages Section */}
-      <section id="services" className="section">
-        <div className="container-custom">
+      <section id="services" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Our Service Packages</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -521,11 +543,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={3} />
+        </div>
       </section>
 
       {/* Additional Learning Opportunities */}
-      <section id="additional" className="section bg-gray-50/50">
-        <div className="container-custom">
+      <section id="additional" className="section bg-gray-50/50 min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Additional Learning Opportunities</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -559,11 +584,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={4} />
+        </div>
       </section>
 
       {/* How Our Service Process Works */}
-      <section id="process" className="section">
-        <div className="container-custom">
+      <section id="process" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">How Our Service Process Works</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -578,11 +606,14 @@ export default function Home() {
             ))}
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={5} />
+        </div>
       </section>
 
       {/* Service Fees Section */}
-      <section id="fees" className="section bg-gray-50/50">
-        <div className="container-custom">
+      <section id="fees" className="section bg-gray-50/50 min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Service Fees</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -633,11 +664,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={6} />
+        </div>
       </section>
 
       {/* Why Students Choose Us */}
-      <section id="why-us" className="section">
-        <div className="container-custom">
+      <section id="why-us" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Why Students Choose Us</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -653,11 +687,14 @@ export default function Home() {
             ))}
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={7} />
+        </div>
       </section>
 
       {/* Meet Our Team Section */}
-      <section id="team" className="section bg-gray-50/50">
-        <div className="container-custom">
+      <section id="team" className="section bg-gray-50/50 min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Meet Our Core Academic Support Team</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -692,11 +729,14 @@ export default function Home() {
             ))}
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={8} />
+        </div>
       </section>
 
       {/* Student Testimonials Section */}
-      <section id="testimonials" className="section">
-        <div className="container-custom">
+      <section id="testimonials" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">What Students Are Saying</h2>
             <div className="divider-gold max-w-xs mx-auto" />
@@ -724,11 +764,14 @@ export default function Home() {
             Names and identifying details may be abbreviated or modified to protect client privacy.
           </p>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={9} />
+        </div>
       </section>
 
       {/* Important Notice */}
-      <section id="notice" className="section bg-gray-50/50">
-        <div className="container-custom">
+      <section id="notice" className="section bg-gray-50/50 min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
           <div className="max-w-3xl mx-auto">
             <div className="bg-amber-50 rounded-2xl p-6 md:p-8 border border-amber-200">
               <h3 className="heading-sm text-amber-800 mb-4">Important Notice</h3>
@@ -751,11 +794,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={10} />
+        </div>
       </section>
 
       {/* Final CTA Section */}
-      <section id="contact" className="section cta-bg text-white">
-        <div className="container-custom">
+      <section id="contact" className="section cta-bg text-white min-h-screen flex flex-col">
+        <div className="container-custom flex-grow flex flex-col justify-center">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="heading-lg mb-4">Ready to Get Started?</h2>
             <p className="text-white/80 text-lg mb-8">Request your FREE Project Assessment today.</p>
@@ -805,6 +851,9 @@ export default function Home() {
               </span>
             </div>
           </div>
+        </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={11} />
         </div>
       </section>
 
