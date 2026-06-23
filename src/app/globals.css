@@ -10,6 +10,7 @@
   --gold: #d4a847;
   --gold-light: #e6c06e;
   --gold-dark: #b8922e;
+  --cream: #FAF7F0;
 }
 
 /* Base Styles */
@@ -98,7 +99,7 @@ body {
 
 /* Headings */
 .heading-xl {
-  @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  @apply text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight;
 }
 
 .heading-lg {
@@ -118,6 +119,11 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Eyebrow Label */
+.eyebrow-label {
+  @apply text-sm font-semibold uppercase tracking-widest text-gold mb-3;
 }
 
 /* Button Styles */
@@ -168,9 +174,9 @@ body {
   background: linear-gradient(90deg, transparent, #d4a847, transparent);
 }
 
-/* Hero gradient background */
+/* Hero gradient background with image */
 .hero-bg {
-  background: linear-gradient(135deg, #1a2744 0%, #2a3a5c 50%, #1a2744 100%);
+  background: linear-gradient(135deg, rgba(26, 39, 68, 0.95) 0%, rgba(42, 58, 92, 0.9) 100%);
   position: relative;
 }
 
@@ -178,9 +184,19 @@ body {
   content: '';
   position: absolute;
   inset: 0;
+  background-image: url('/images/hero-students.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: 
-    radial-gradient(circle at 20% 80%, rgba(212, 168, 71, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(212, 168, 71, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(212, 168, 71, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(212, 168, 71, 0.1) 0%, transparent 50%);
 }
 
 /* Service Card */
@@ -204,14 +220,14 @@ body {
 
 /* Timeline */
 .timeline-item {
-  @apply relative pl-8 pb-12 last:pb-0;
+  @apply relative pl-12 pb-10 last:pb-0;
 }
 
 .timeline-item::before {
   content: '';
   position: absolute;
-  left: 15px;
-  top: 32px;
+  left: 23px;
+  top: 40px;
   bottom: 0;
   width: 2px;
   background: linear-gradient(180deg, #d4a847, rgba(212, 168, 71, 0.2));
@@ -222,12 +238,31 @@ body {
 }
 
 .timeline-dot {
-  @apply absolute left-0 top-0 w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-white font-bold text-sm;
+  @apply absolute left-0 top-0 w-12 h-12 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-white font-bold text-lg shadow-lg;
 }
 
 /* CTA Section gradient */
 .cta-bg {
   background: linear-gradient(135deg, #1a2744 0%, #2a3a5c 100%);
+}
+
+/* Footer Styles */
+.site-footer {
+  background-color: #FAF7F0;
+  border-top: 1px solid rgba(212, 168, 71, 0.2);
+}
+
+/* Section Navigation Buttons - High Contrast */
+.section-nav-btn {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-md;
+}
+
+.section-nav-btn-light {
+  @apply bg-navy text-white hover:bg-navy-light;
+}
+
+.section-nav-btn-dark {
+  @apply bg-white text-navy hover:bg-gray-100 shadow-lg border border-gold/20;
 }
 
 /* Mobile optimizations */

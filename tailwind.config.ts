@@ -19,6 +19,7 @@ const config: Config = {
           light: '#e6c06e',
           dark: '#b8922e',
         },
+        cream: '#FAF7F0',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
