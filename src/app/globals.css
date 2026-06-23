@@ -186,19 +186,17 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/images/hero-students.jpg');
+  background-image: url('/images/hero/homepage-hero.jpg');
   background-size: cover;
   background-position: center;
-  opacity: 0.3;
+  opacity: 0.45;
 }
 
 .hero-bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(199, 154, 45, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(199, 154, 45, 0.1) 0%, transparent 50%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.50));
 }
 
 /* Service Card */

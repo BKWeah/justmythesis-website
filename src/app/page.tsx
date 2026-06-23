@@ -376,10 +376,6 @@ export default function Home() {
       <section id="hero" className="hero-bg text-white py-16 md:py-24 lg:py-32 relative overflow-hidden min-h-screen flex flex-col">
         <div className="container-custom relative z-10 flex-grow flex flex-col justify-center">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-              <span className="w-2 h-2 bg-gold rounded-full animate-pulse"></span>
-              <span className="text-sm font-medium text-white/80">Academic Research & Thesis Support</span>
-            </div>
             <h1 className="heading-xl mb-6 leading-tight">
               Focus on Your Research.<br />
               <span className="text-gradient">We'll Handle the Thesis.</span>
