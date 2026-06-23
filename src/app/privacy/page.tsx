@@ -89,7 +89,7 @@ export default function PrivacyPage() {
           <h2 className="text-2xl font-bold text-navy mt-8 mb-4">8. Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, please contact us:<br />
-            Email: kontentkingkong@gmail.com<br />
+            Email: <a href="mailto:team@justmythesis.org" className="text-gold hover:text-gold-dark">team@justmythesis.org</a><br />
             Phone/WhatsApp: +231776732989
           </p>
           

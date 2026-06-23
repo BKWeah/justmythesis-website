@@ -59,7 +59,7 @@ export const brochurePages: BrochurePage[] = [
     },
     contact: {
       phone: "+231776732989",
-      email: "kontentkingkong@gmail.com"
+      email: "team@justmythesis.org"
     }
   },
 
@@ -272,7 +272,7 @@ export const brochurePages: BrochurePage[] = [
     },
     contact: {
       phone: "+231776732989",
-      email: "kontentkingkong@gmail.com"
+      email: "team@justmythesis.org"
     }
   }
 ];

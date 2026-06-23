@@ -74,7 +74,7 @@ export default function TermsPage() {
           <h2 className="text-2xl font-bold text-navy mt-8 mb-4">8. Contact</h2>
           <p>
             For questions regarding these terms, please contact us at:<br />
-            Email: kontentkingkong@gmail.com<br />
+            Email: <a href="mailto:team@justmythesis.org" className="text-gold hover:text-gold-dark">team@justmythesis.org</a><br />
             Phone/WhatsApp: +231776732989
           </p>
         </div>
