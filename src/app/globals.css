@@ -180,7 +180,7 @@ body {
 .hero-bg {
   background: linear-gradient(135deg, rgba(24, 69, 47, 0.95) 0%, rgba(42, 92, 69, 0.90) 100%);
   position: relative;
-  background-image: url('/images/hero/hero-students.jpg');
+  background-image: url('/images/hero-students.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

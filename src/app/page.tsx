@@ -198,10 +198,10 @@ export default function Home() {
       { name: 'Formatting & Compliance', price: 'USD $39' }
     ],
     masters: [
-      { name: 'Proposal Package', price: 'USD $99' },
-      { name: 'Foundation Thesis', price: 'USD $249' },
-      { name: 'Complete Thesis', price: 'USD $499' },
-      { name: 'Formatting & Compliance', price: 'USD $79' }
+      { name: 'Proposal Package', price: 'USD $97' },
+      { name: 'Foundation Thesis', price: 'USD $247' },
+      { name: 'Complete Thesis', price: 'USD $497' },
+      { name: 'Formatting & Compliance', price: 'USD $77' }
     ]
   };
 
@@ -599,10 +599,13 @@ export default function Home() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="pricing-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="pricing-card featured relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                <span className="bg-gold text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Popular</span>
+              </div>
               <h3 className="text-xl font-bold text-dark mb-4">Undergraduate</h3>
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-4 mb-6">
                 {pricing.undergraduate.map((item, idx) => (
                   <li key={idx} className="flex justify-between items-center text-sm">
                     <span className="text-dark/70">{item.name}</span>
@@ -611,12 +614,9 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="pricing-card featured">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-gold text-white text-xs font-bold px-3 py-1 rounded-full">Popular</span>
-              </div>
+            <div className="pricing-card">
               <h3 className="text-xl font-bold text-dark mb-4">Master's</h3>
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-4 mb-6">
                 {pricing.masters.map((item, idx) => (
                   <li key={idx} className="flex justify-between items-center text-sm">
                     <span className="text-dark/70">{item.name}</span>
