@@ -254,19 +254,19 @@ body {
 
 /* Section Navigation Buttons - High Contrast */
 .section-nav-btn {
-  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-md;
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-lg;
 }
 
 .section-nav-btn-light {
-  @apply bg-brand-green text-white hover:bg-brand-green-light;
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
 }
 
 .section-nav-btn-dark {
-  @apply bg-white text-brand-green hover:bg-gray-100 shadow-lg border border-gold/20;
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
 }
 
 .section-nav-btn-primary {
-  @apply bg-brand-green text-white hover:bg-brand-green-light;
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
 }
 
 /* Mobile optimizations */
