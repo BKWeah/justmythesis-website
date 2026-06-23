@@ -1,6 +1,25 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export default function Home() {
+  const [currentSection, setCurrentSection] = useState(0);
+  
+  const sections = [
+    { id: 'hero', name: 'Hero' },
+    { id: 'struggling', name: 'Struggling With' },
+    { id: 'about', name: 'Who We Are' },
+    { id: 'services', name: 'Service Packages' },
+    { id: 'additional', name: 'Additional Learning' },
+    { id: 'process', name: 'Service Process' },
+    { id: 'fees', name: 'Service Fees' },
+    { id: 'why-us', name: 'Why Choose Us' },
+    { id: 'team', name: 'Our Team' },
+    { id: 'testimonials', name: 'Testimonials' },
+    { id: 'notice', name: 'Important Notice' },
+    { id: 'contact', name: 'Get Started' }
+  ];
+
   const strugglingItems = [
     'Proposal Development',
     'Literature Review',
@@ -86,19 +105,6 @@ export default function Home() {
       outcome: 'An institution-compliant submission copy.'
     },
     {
-      package: 'F',
-      name: 'Dissertation Support Package',
-      bestFor: ['Dissertation Development'],
-      deliverables: [
-        'Dissertation Structure Support',
-        'Proposal Support',
-        'Formatting Support',
-        'Compliance Review',
-        'Submission Preparation'
-      ],
-      outcome: 'A dissertation-ready draft.'
-    },
-    {
       package: 'G',
       name: 'Defense Presentation Package',
       bestFor: ['Defense Preparation'],
@@ -112,23 +118,97 @@ export default function Home() {
     }
   ];
 
+  const teamMembers = [
+    {
+      name: 'Emily Nookes',
+      position: 'Research & Academic Advisor',
+      experience: '15 Years',
+      discipline: 'Research, Academia & Academic Support',
+      initials: 'EN'
+    },
+    {
+      name: 'Albert J. Stevens',
+      position: 'Business & Professional Development Advisor',
+      experience: '11 Years',
+      discipline: 'Business Development, Professional Services & Organizational Support',
+      initials: 'AS'
+    },
+    {
+      name: 'B. K. Weah',
+      position: 'Marketing & Service Executive',
+      experience: '9 Years',
+      discipline: 'Technology Entrepreneurship, Marketing & Service Development',
+      initials: 'BK'
+    },
+    {
+      name: 'Georgina Horace',
+      position: 'Project Development & Information Technology Advisor',
+      experience: '13 Years',
+      discipline: 'Project Development, Information Technology & Documentation Systems',
+      initials: 'GH'
+    }
+  ];
+
+  const testimonials = [
+    {
+      quote: "The proposal package helped me organize my ideas properly and submit a stronger proposal to my supervisor.",
+      author: 'M. Johnson',
+      role: 'Undergraduate Student'
+    },
+    {
+      quote: "I was struggling with my literature review until I received guidance that helped me understand what was actually required.",
+      author: 'R. Cooper',
+      role: 'Undergraduate Student'
+    },
+    {
+      quote: "The formatting review saved me a lot of time before submission and helped me avoid unnecessary corrections.",
+      author: 'T. Diggs',
+      role: 'Undergraduate Student'
+    },
+    {
+      quote: "Their structured process made the entire thesis journey less stressful and more manageable.",
+      author: 'P. Williams',
+      role: "Master's Student"
+    },
+    {
+      quote: "The support I received helped me address my supervisor's comments more confidently.",
+      author: 'K. Doe',
+      role: 'Research Student'
+    },
+    {
+      quote: "I appreciated the professionalism and prompt communication throughout my project.",
+      author: 'S. Reeves',
+      role: 'Undergraduate Student'
+    },
+    {
+      quote: "The defense preparation session helped me feel more prepared and organized before presenting.",
+      author: 'J. Brown',
+      role: 'Undergraduate Student'
+    },
+    {
+      quote: "The team helped me identify weaknesses in my draft and improve the overall structure of my work.",
+      author: 'A. Walker',
+      role: 'Research Student'
+    },
+    {
+      quote: "From proposal development to final review, the support was clear, practical, and easy to follow.",
+      author: 'C. Roberts',
+      role: "Master's Student"
+    }
+  ];
+
   const pricing = {
     undergraduate: [
       { name: 'Proposal Package', price: 'USD $49' },
       { name: 'Foundation Thesis', price: 'USD $149' },
       { name: 'Complete Thesis', price: 'USD $299' },
-      { name: 'Formatting', price: 'USD $39' }
+      { name: 'Formatting & Compliance', price: 'USD $39' }
     ],
     masters: [
       { name: 'Proposal Package', price: 'USD $99' },
       { name: 'Foundation Thesis', price: 'USD $249' },
       { name: 'Complete Thesis', price: 'USD $499' },
-      { name: 'Formatting', price: 'USD $79' }
-    ],
-    doctoral: [
-      { name: 'Proposal', price: 'Custom Quote' },
-      { name: 'Foundation Thesis', price: 'Custom Quote' },
-      { name: 'Complete Thesis / Dissertation', price: 'Starting from USD $799+' }
+      { name: 'Formatting & Compliance', price: 'USD $79' }
     ]
   };
 
@@ -142,7 +222,7 @@ export default function Home() {
     'Confidential Handling of Projects',
     'Responsive Client Support',
     'Research Coaching & Skills Development',
-    'Nearly Two Decades of Combined Experience'
+    'Nearly Four Decades of Combined Experience'
   ];
 
   const steps = [
@@ -160,7 +240,7 @@ export default function Home() {
     },
     {
       title: 'Package Recommendation & Onboarding',
-      description: 'You receive the recommended package, project roadmap, expected timeline, suggested contribution amount, and service agreement.'
+      description: 'You receive the recommended package, project roadmap, expected timeline, service fee, and service agreement.'
     },
     {
       title: 'Service Delivery & Quality Review',
@@ -171,6 +251,34 @@ export default function Home() {
       description: 'Receive your completed deliverables with recommendations and next steps.'
     }
   ];
+
+  // Scroll to section function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Track current section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const sectionElements = sections.map(s => document.getElementById(s.id)).filter(Boolean);
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+      
+      sectionElements.forEach((element, index) => {
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setCurrentSection(index);
+          }
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <main className="min-h-screen bg-white">
@@ -213,8 +321,46 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Floating Section Navigation */}
+      <div className="fixed right-4 bottom-20 z-40 flex flex-col gap-2">
+        <button
+          onClick={() => scrollToSection(sections[currentSection - 1]?.id || sections[0].id)}
+          disabled={currentSection === 0}
+          className="w-10 h-10 bg-white rounded-full shadow-lg border border-gold/20 flex items-center justify-center text-navy hover:bg-gold hover:text-navy transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Previous section"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+        <button
+          onClick={() => scrollToSection(sections[currentSection + 1]?.id || sections[sections.length - 1].id)}
+          disabled={currentSection === sections.length - 1}
+          className="w-10 h-10 bg-white rounded-full shadow-lg border border-gold/20 flex items-center justify-center text-navy hover:bg-gold hover:text-navy transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Next section"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Section Indicator */}
+      <div className="fixed right-4 bottom-72 z-40 hidden lg:flex flex-col gap-1">
+        {sections.map((section, idx) => (
+          <button
+            key={section.id}
+            onClick={() => scrollToSection(section.id)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              idx === currentSection ? 'bg-gold scale-150' : 'bg-navy/20 hover:bg-navy/40'
+            }`}
+            aria-label={`Go to ${section.name}`}
+          />
+        ))}
+      </div>
+
       {/* Hero Section */}
-      <section className="hero-bg text-white py-16 md:py-24 lg:py-32 relative overflow-hidden">
+      <section id="hero" className="hero-bg text-white py-16 md:py-24 lg:py-32 relative overflow-hidden">
         <div className="container-custom relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="heading-xl mb-6 leading-tight">
@@ -248,13 +394,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-gold/10 blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
       </section>
 
       {/* Struggling With Section */}
-      <section className="section">
+      <section id="struggling" className="section">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Struggling With?</h2>
@@ -262,10 +407,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {strugglingItems.map((item, idx) => (
-              <div 
-                key={idx}
-                className="card p-4 flex items-center gap-3"
-              >
+              <div key={idx} className="card p-4 flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-gold flex-shrink-0" />
                 <span className="text-navy font-medium">{item}</span>
               </div>
@@ -275,7 +417,7 @@ export default function Home() {
       </section>
 
       {/* Who We Are Section */}
-      <section className="section bg-gray-50/50" id="about">
+      <section id="about" className="section bg-gray-50/50">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Who We Are</h2>
@@ -286,21 +428,20 @@ export default function Home() {
               JUSTmyTHESIS™ is a dedicated academic support team committed to helping students successfully complete research projects, theses, and dissertations. We understand the challenges students face throughout the research and thesis development process and provide structured support, guidance, review, and development services that help students move from uncertainty to successful completion.
             </p>
             <p>
-              Our team brings together individuals from diverse academic and professional backgrounds with experience spanning education, research, business, information technology, academic writing, project development, and professional consulting. Collectively, our team members possess nearly two decades of practical experience supporting learning, research, writing, analysis, documentation, training, and professional development.
+              Our team brings together individuals from diverse academic and professional backgrounds with experience spanning education, research, business, information technology, academic writing, project development, and professional consulting. Collectively, our team members bring nearly four decades of practical experience supporting learning, research, writing, documentation, training, project development, and professional advancement.
             </p>
             <p className="font-semibold text-navy">
               Our mission is to help students produce professionally structured, institution-compliant, and submission-ready academic projects with greater confidence, clarity, and organization.
             </p>
           </div>
           
-          {/* Who We Serve */}
           <div className="mt-12">
             <h3 className="heading-sm text-navy mb-6 text-center">Who We Serve</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
               {[
                 { title: 'Undergraduate Students', desc: 'Final-year students preparing research projects and theses' },
                 { title: "Master's Students", desc: 'Graduate students conducting advanced academic research' },
-                { title: 'Doctoral Candidates', desc: 'Researchers working on dissertations and major research studies' },
+                { title: 'Doctoral Support', desc: 'Coming Soon' },
                 { title: 'Researchers & Professionals', desc: 'Individuals conducting academic, organizational, policy, and professional research' }
               ].map((item, idx) => (
                 <div key={idx} className="card p-5 text-center">
@@ -319,7 +460,7 @@ export default function Home() {
       </section>
 
       {/* Service Packages Section */}
-      <section className="section" id="services">
+      <section id="services" className="section">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Our Service Packages</h2>
@@ -332,7 +473,7 @@ export default function Home() {
                   <span className="text-gold text-sm font-bold">Package {service.package}</span>
                   <h3 className="text-lg font-bold mt-1">{service.name}</h3>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 p-6">
                   <div>
                     <span className="text-sm font-semibold text-navy/60">Best For:</span>
                     <div className="flex flex-wrap gap-2 mt-1">
@@ -361,10 +502,35 @@ export default function Home() {
                 </div>
               </div>
             ))}
+            {/* Doctoral Support Coming Soon */}
+            <div className="service-card opacity-75">
+              <div className="service-card-header">
+                <span className="text-gold text-sm font-bold">Package F</span>
+                <h3 className="text-lg font-bold mt-1">Doctoral Support</h3>
+              </div>
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p className="text-navy/70">
+                  Advanced doctoral-level support services are currently under development and will be introduced in a future phase.
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
 
-          {/* Additional Learning Opportunities */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      {/* Additional Learning Opportunities */}
+      <section id="additional" className="section bg-gray-50/50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-navy mb-4">Additional Learning Opportunities</h2>
+            <div className="divider-gold max-w-xs mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="card p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
@@ -396,7 +562,7 @@ export default function Home() {
       </section>
 
       {/* How Our Service Process Works */}
-      <section className="section bg-gray-50/50" id="process">
+      <section id="process" className="section">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">How Our Service Process Works</h2>
@@ -414,16 +580,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contribution Model */}
-      <section className="section" id="pricing">
+      {/* Service Fees Section */}
+      <section id="fees" className="section bg-gray-50/50">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="heading-lg text-navy mb-4">Student-Friendly Contribution Model</h2>
+            <h2 className="heading-lg text-navy mb-4">Service Fees</h2>
             <div className="divider-gold max-w-xs mx-auto" />
           </div>
           <div className="max-w-3xl mx-auto text-center mb-12">
             <p className="text-navy/80 leading-relaxed">
-              JUSTmyTHESIS™ is committed to making academic support accessible to students. To provide transparency while maintaining flexibility, each package has a suggested contribution amount based on the scope and complexity of support required. Students are encouraged to contribute responsibly in appreciation of the time, expertise, and effort invested in supporting their academic journey. Reasonable arrangements may be discussed where necessary.
+              JUSTmyTHESIS™ provides structured academic support packages with transparent service fees based on the scope and complexity of each package.
             </p>
           </div>
 
@@ -454,23 +620,23 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="pricing-card">
-              <h3 className="text-xl font-bold text-navy mb-4">Doctoral</h3>
-              <ul className="space-y-3 mb-6">
-                {pricing.doctoral.map((item, idx) => (
-                  <li key={idx} className="flex justify-between items-center text-sm">
-                    <span className="text-navy/70">{item.name}</span>
-                    <span className="font-semibold text-gold">{item.price}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="pricing-card opacity-75">
+              <h3 className="text-xl font-bold text-navy mb-4">Doctoral Support</h3>
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mb-4">
+                  <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p className="text-navy/60 text-center">Coming Soon</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Why Students Choose Us */}
-      <section className="section bg-gray-50/50">
+      <section id="why-us" className="section">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="heading-lg text-navy mb-4">Why Students Choose Us</h2>
@@ -489,8 +655,79 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Meet Our Team Section */}
+      <section id="team" className="section bg-gray-50/50">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-navy mb-4">Meet Our Core Academic Support Team</h2>
+            <div className="divider-gold max-w-xs mx-auto" />
+          </div>
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <p className="text-navy/80 leading-relaxed mb-4">
+              JUSTmyTHESIS™ is supported by a multidisciplinary network of professionals with experience across research, academia, business development, technology, project development, marketing, and professional services.
+            </p>
+            <p className="text-navy/80 leading-relaxed mb-4">
+              The individuals below represent some of the core team members who contribute to the planning, coordination, delivery, and quality review of our academic support services.
+            </p>
+            <p className="text-navy/80 leading-relaxed">
+              Collectively, our team members bring nearly four decades of practical experience supporting learning, research, writing, documentation, training, project development, and professional advancement.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {teamMembers.map((member, idx) => (
+              <div key={idx} className="card p-6 text-center">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-navy to-navy-light flex items-center justify-center mx-auto mb-4">
+                  <span className="text-gold font-bold text-2xl">{member.initials}</span>
+                </div>
+                <h3 className="font-bold text-navy text-lg mb-1">{member.name}</h3>
+                <p className="text-gold text-sm font-medium mb-2">{member.position}</p>
+                <p className="text-navy/60 text-xs mb-2">{member.discipline}</p>
+                <div className="inline-flex items-center gap-1 text-sm text-navy/50">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  {member.experience} Experience
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Student Testimonials Section */}
+      <section id="testimonials" className="section">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-navy mb-4">What Students Are Saying</h2>
+            <div className="divider-gold max-w-xs mx-auto" />
+          </div>
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <p className="text-navy/80 leading-relaxed">
+              Students from different academic backgrounds have trusted JUSTmyTHESIS™ to help them navigate the research and thesis process with greater clarity, structure, and confidence.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {testimonials.map((testimonial, idx) => (
+              <div key={idx} className="card p-6">
+                <svg className="w-8 h-8 text-gold/30 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-navy/80 mb-4 italic">"{testimonial.quote}"</p>
+                <div className="border-t border-gold/20 pt-4">
+                  <p className="font-semibold text-navy">{testimonial.author}</p>
+                  <p className="text-sm text-navy/60">{testimonial.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-navy/50 text-sm mt-8 max-w-3xl mx-auto">
+            Names and identifying details may be abbreviated or modified to protect client privacy.
+          </p>
+        </div>
+      </section>
+
       {/* Important Notice */}
-      <section className="section">
+      <section id="notice" className="section bg-gray-50/50">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             <div className="bg-amber-50 rounded-2xl p-6 md:p-8 border border-amber-200">
@@ -517,7 +754,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="section cta-bg text-white" id="contact">
+      <section id="contact" className="section cta-bg text-white">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="heading-lg mb-4">Ready to Get Started?</h2>
@@ -574,23 +811,15 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-navy text-white py-12">
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                <span className="text-gold font-bold text-lg">JMT</span>
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">JUSTmyTHESIS™</h3>
-                <p className="text-white/60 text-sm">Focus on Your Research. We'll Handle the Thesis.</p>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-6">
+              <h3 className="font-bold text-2xl mb-2">JUSTmyTHESIS™</h3>
+              <p className="text-white/60">Focus on Your Research. We'll Handle the Thesis.</p>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 text-white/60">
-              <a href="mailto:kontentkingkong@gmail.com" className="hover:text-white transition-colors">
-                kontentkingkong@gmail.com
-              </a>
-              <a href="tel:+231776732989" className="hover:text-white transition-colors">
-                +231776732989
-              </a>
+            <div className="flex flex-col sm:flex-row items-center gap-4 text-white/60 mb-6">
+              <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
+              <span className="hidden sm:block text-gold">•</span>
+              <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-white/10 text-center text-white/40 text-sm">
