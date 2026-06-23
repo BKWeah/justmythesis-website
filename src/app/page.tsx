@@ -335,7 +335,7 @@ export default function Home() {
                 <img 
                   src="/images/logo/justmythesis-logo.png" 
                   alt="JUSTmyTHESIS™ Logo"
-                  className="h-[50px] md:h-[65px] w-auto object-contain"
+                  className="h-[60px] md:h-[85px] w-auto object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -664,13 +664,13 @@ export default function Home() {
           </div>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <p className="text-dark/80 leading-relaxed mb-4">
-              JUSTmyTHESIS™ is supported by a multidisciplinary network of professionals with experience across research, academia, business development, technology, project development, marketing, and professional services.
+              JUSTmyTHESIS™ is a Liberia-based academic research and thesis support service focused first on helping undergraduate students, master's students, researchers, and professionals across Liberia.
             </p>
             <p className="text-dark/80 leading-relaxed mb-4">
-              The individuals below represent some of the core team members who contribute to the planning, coordination, delivery, and quality review of our academic support services.
+              Our team supports students with research structure, thesis development, formatting, documentation, project planning, academic guidance, and service delivery coordination.
             </p>
             <p className="text-dark/80 leading-relaxed">
-              Collectively, our team members bring nearly four decades of practical experience supporting learning, research, writing, documentation, training, project development, and professional advancement.
+              While Liberia remains our primary focus, selected services may gradually extend to students and researchers in other African countries as our capacity grows.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -680,7 +680,8 @@ export default function Home() {
                   <img 
                     src={member.image} 
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
+                    style={{ objectPosition: 'center top' }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -850,7 +851,7 @@ export default function Home() {
               <img 
                 src="/images/logo/justmythesis-logo.png" 
                 alt="JUSTmyTHESIS™ Logo"
-                className="h-20 md:h-24 w-auto mx-auto mb-4 object-contain"
+                className="h-[70px] md:h-[100px] w-auto mx-auto mb-4 object-contain"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';

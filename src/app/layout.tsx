@@ -50,8 +50,8 @@ export default function RootLayout({
         />
         <link
           rel="icon"
-          href="/images/logo/justmythesis-logo.png"
-          type="image/png"
+          href="/favicon.svg"
+          type="image/svg+xml"
         />
       </head>
       <body className="font-sans antialiased bg-white text-dark">

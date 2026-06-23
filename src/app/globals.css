@@ -178,25 +178,26 @@ body {
 
 /* Hero gradient background with image */
 .hero-bg {
-  background: linear-gradient(135deg, rgba(24, 69, 47, 0.97) 0%, rgba(42, 92, 69, 0.92) 100%);
+  background: linear-gradient(135deg, rgba(24, 69, 47, 0.95) 0%, rgba(42, 92, 69, 0.90) 100%);
   position: relative;
+  background-image: url('/images/hero/hero-students.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-bg::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/images/hero/hero-students.jpg');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.45;
+  background: linear-gradient(135deg, rgba(24, 69, 47, 0.88) 0%, rgba(20, 50, 35, 0.85) 100%);
 }
 
 .hero-bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.50));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.45));
 }
 
 /* Service Card */
