@@ -402,20 +402,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex items-center gap-3">
-              <a href="/" className="flex items-center gap-3">
+              <a href="/" className="flex items-center">
                 <img 
-                  src="/images/logo/justmythesis-logo.png" 
+                  src="/images/logo/justmythesis-logo-header.svg" 
                   alt="JUSTmyTHESIS™ Logo"
-                  className="h-[60px] md:h-[85px] w-auto object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
+                  className="h-[60px] md:h-[80px] w-auto object-contain"
                 />
-                <div className="hidden">
-                  <h1 className="text-brand-green font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
-                  <p className="text-dark/50 text-xs">Academic Research & Thesis Support</p>
-                </div>
               </a>
             </div>
             <div className="flex items-center gap-2 md:gap-3">
@@ -1010,15 +1002,11 @@ export default function Home() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-6">
               <img 
-                src="/images/logo/justmythesis-logo.png" 
+                src="/images/logo/justmythesis-logo-primary.svg" 
                 alt="JUSTmyTHESIS™ Logo"
-                className="h-[70px] md:h-[100px] w-auto mx-auto mb-4 object-contain"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                }}
+                className="h-[90px] md:h-[120px] w-auto mx-auto object-contain"
               />
-              <p className="text-dark/60 text-sm mb-2">Academic Research & Thesis Support</p>
+              <p className="text-dark/60 text-sm mt-4 mb-2">Academic Research & Thesis Support</p>
               <p className="text-dark/80 font-medium">Focus on Your Research. We'll Handle the Thesis.</p>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 text-dark/60 mb-6">
