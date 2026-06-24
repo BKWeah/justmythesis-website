@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://justmythesis-website.vercel.app/sitemap.xml
