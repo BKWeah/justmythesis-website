@@ -389,9 +389,9 @@ export default function Home() {
             <div className="flex items-center">
               <a href="/" className="flex items-center">
                 <img 
-                  src="/images/logo/justmythesis-logo-header.svg" 
+                  src="/images/justmythesis-logo-transparent.png" 
                   alt="JUSTmyTHESIS™"
-                  className="h-[50px] md:h-[85px] w-auto object-contain"
+                  className="h-[55px] md:h-[80px] w-auto object-contain"
                 />
               </a>
             </div>
@@ -987,9 +987,9 @@ export default function Home() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-6">
               <img 
-                src="/images/logo/justmythesis-logo-footer.svg" 
+                src="/images/justmythesis-logo-transparent.png" 
                 alt="JUSTmyTHESIS™"
-                className="h-[70px] md:h-[110px] w-auto mx-auto object-contain"
+                className="h-[80px] md:h-[120px] w-auto mx-auto object-contain"
               />
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 text-dark/60 mb-6">
