@@ -386,12 +386,12 @@ export default function Home() {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gold/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center">
               <a href="/" className="flex items-center">
                 <img 
                   src="/images/logo/justmythesis-logo-header.svg" 
                   alt="JUSTmyTHESIS™"
-                  className="h-[45px] md:h-[55px] w-auto object-contain max-w-[180px] md:max-w-[260px]"
+                  className="w-[190px] md:w-[300px] h-auto object-contain"
                 />
               </a>
             </div>
@@ -989,10 +989,8 @@ export default function Home() {
               <img 
                 src="/images/logo/justmythesis-logo-primary.svg" 
                 alt="JUSTmyTHESIS™"
-                className="h-[60px] md:h-[80px] w-auto mx-auto object-contain"
+                className="w-[220px] md:w-[350px] h-auto mx-auto object-contain"
               />
-              <p className="text-dark/60 text-sm mt-4 mb-2">Academic Research & Thesis Support</p>
-              <p className="text-dark/80 font-medium">Focus on Your Research. We'll Handle the Thesis.</p>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 text-dark/60 mb-6">
               <a href="/terms" className="hover:text-gold transition-colors">Terms of Service</a>
