@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <title>JUSTmyTHESIS™</title>
-  <!-- Green background -->
-  <rect width="32" height="32" rx="6" fill="#0F5132"/>
-  <!-- Upward growth arrow icon -->
-  <path d="M16 8 L24 20 L20 20 L20 24 L12 24 L12 20 L8 20 Z" fill="#D4A017"/>
-  <!-- Small underline accent -->
-  <rect x="8" y="26" width="16" height="2" rx="1" fill="#D4A017"/>
-</svg>
