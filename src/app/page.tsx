@@ -13,10 +13,12 @@ export default function Home() {
     { id: 'additional', name: 'Additional Learning' },
     { id: 'process', name: 'Service Process' },
     { id: 'fees', name: 'Service Fees' },
+    { id: 'payment', name: 'Payment Structure' },
     { id: 'why-us', name: 'Why Students Choose Us' },
     { id: 'team', name: 'Meet Our Team' },
     { id: 'testimonials', name: 'What Students Are Saying' },
     { id: 'notice', name: 'Important Notice' },
+    { id: 'faq', name: 'FAQ' },
     { id: 'contact', name: 'Get Started' }
   ];
 
@@ -105,7 +107,7 @@ export default function Home() {
       outcome: 'An institution-compliant submission copy.'
     },
     {
-      package: 'G',
+      package: 'F',
       name: 'Defense Presentation',
       bestFor: ['Defense Preparation'],
       deliverables: [
@@ -220,28 +222,76 @@ export default function Home() {
 
   const steps = [
     {
-      title: 'Project Stage Identification',
-      description: 'Contact us by Phone or WhatsApp and tell us where you currently are in your research or thesis journey.'
+      title: 'View Our Packages',
+      description: 'Review the available service packages and choose the one that best matches your current project stage.'
     },
     {
-      title: 'Document & Requirement Submission',
-      description: 'Based on your selected stage, we request the relevant information and documents required for review.'
+      title: 'Contact Us',
+      description: 'Contact JUSTmyTHESIS™ by Call or WhatsApp and tell us the package you are interested in.'
     },
     {
-      title: 'Project Assessment & Eligibility Review',
-      description: 'Our team reviews the submitted information to determine current project status, scope of support, readiness, recommended package, and timeline.'
+      title: 'Submit Project Information',
+      description: 'Based on your selected package, we request the relevant information and documents needed to review your project status.'
     },
     {
-      title: 'Package Recommendation & Onboarding',
-      description: 'You receive the recommended package, project roadmap, expected timeline, service fee, and service agreement.'
+      title: 'Receive Assessment & Agreement',
+      description: 'You receive the recommended package, project roadmap, expected timeline, service fee, payment structure, and service agreement.'
+    },
+    {
+      title: 'Make Payment',
+      description: 'Payment is made according to the selected package payment structure.'
     },
     {
       title: 'Service Delivery & Quality Review',
       description: 'Our team delivers the agreed support package and reviews quality, structure, formatting, compliance, consistency, and presentation.'
     },
     {
-      title: 'Final Delivery & Continued Support',
-      description: 'Receive your completed deliverables with recommendations and next steps.'
+      title: 'Receive Deliverables',
+      description: 'You receive your completed deliverables with recommendations and next steps.'
+    }
+  ];
+
+  const paymentStructure = [
+    { package: 'Proposal Development', structure: '100% upfront' },
+    { package: 'Foundation Thesis', structure: '60% before commencement, 40% before delivery' },
+    { package: 'Complete Thesis Development', structure: '40% before commencement, 40% before final development stage, 20% before final delivery' },
+    { package: 'Thesis Rescue', structure: '50% before commencement, 50% before delivery' },
+    { package: 'Formatting & Compliance', structure: '100% upfront' },
+    { package: 'Defense Presentation', structure: '100% upfront' }
+  ];
+
+  const faqs = [
+    {
+      question: 'Who does JUSTmyTHESIS™ support?',
+      answer: 'JUSTmyTHESIS™ supports undergraduate students, master\'s students, researchers, and professionals, with primary service focus in Liberia.'
+    },
+    {
+      question: 'Do you support doctoral or PhD students?',
+      answer: 'No. JUSTmyTHESIS™ does not currently offer doctoral or PhD-level services.'
+    },
+    {
+      question: 'Do you collect data for students?',
+      answer: 'No. Students remain responsible for surveys, interviews, data collection, academic approvals, defense, and final submission.'
+    },
+    {
+      question: 'Do you fabricate results or references?',
+      answer: 'No. JUSTmyTHESIS™ does not fabricate research findings, survey responses, interview results, citations, references, or academic data.'
+    },
+    {
+      question: 'How do I start?',
+      answer: 'Review the service packages, choose the package that matches your project stage, then contact us by Call or WhatsApp for assessment.'
+    },
+    {
+      question: 'How do payments work?',
+      answer: 'Payment depends on the selected package. Some packages require full payment upfront, while larger thesis development packages are paid in stages.'
+    },
+    {
+      question: 'Can I request only formatting or citation support?',
+      answer: 'Yes. Formatting & Compliance is available for students who already have a completed draft and need final preparation.'
+    },
+    {
+      question: 'Where is JUSTmyTHESIS™ based?',
+      answer: 'JUSTmyTHESIS™ is based at GSA Road, Paynesville, Liberia, and serves students across Liberia while gradually extending selected support to other African countries.'
     }
   ];
 
@@ -521,13 +571,15 @@ export default function Home() {
           <div className="absolute inset-0 bg-brand-green/90" />
         </div>
         <div className="container-custom flex-grow relative z-10">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="heading-lg text-white mb-4">Additional Learning Opportunities</h2>
             <div className="divider-gold max-w-xs mx-auto" />
+            <p className="text-white/70 text-sm mt-4">Optional learning support services to strengthen your research and thesis skills</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Research Coaching */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
                   <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1H3a1 1 0 01-1-1v-3a1 1 0 011-1h3a1 1 0 001-1v-0.5z" />
@@ -535,12 +587,27 @@ export default function Home() {
                 </div>
                 <h3 className="font-bold text-dark text-lg">Research Coaching</h3>
               </div>
-              <p className="text-dark/70 text-sm">
-                Personalized coaching designed to strengthen research skills, project planning, and understanding of the research process.
+              <p className="text-dark/70 text-sm mb-4">
+                Personalized coaching designed to strengthen research skills, project planning, topic clarity, supervisor response, and understanding of the research process.
               </p>
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-brand-green mb-2">Deliverables:</h4>
+                <ul className="text-dark/60 text-sm space-y-1">
+                  <li>• One-on-one coaching session</li>
+                  <li>• Research direction guidance</li>
+                  <li>• Project clarity support</li>
+                  <li>• Supervisor feedback interpretation</li>
+                  <li>• Next-step action plan</li>
+                </ul>
+              </div>
+              <div className="flex items-center justify-between text-sm border-t border-gold/20 pt-4">
+                <span className="text-dark/60">Duration: 60–90 minutes per session</span>
+                <span className="font-semibold text-gold">USD $25 per session</span>
+              </div>
             </div>
+            {/* Thesis Writing Training */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
                   <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
@@ -548,13 +615,27 @@ export default function Home() {
                 </div>
                 <h3 className="font-bold text-dark text-lg">Thesis Writing Training</h3>
               </div>
-              <p className="text-dark/70 text-sm">
-                Practical training that teaches students how to structure, organize, and write academic theses and dissertations according to accepted standards.
+              <p className="text-dark/70 text-sm mb-4">
+                Practical training that teaches students how to structure, organize, and write academic theses according to accepted academic standards.
               </p>
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-brand-green mb-2">Deliverables:</h4>
+                <ul className="text-dark/60 text-sm space-y-1">
+                  <li>• Thesis structure training</li>
+                  <li>• Chapter-by-chapter writing guidance</li>
+                  <li>• Academic writing principles</li>
+                  <li>• Formatting and citation basics</li>
+                  <li>• Training notes or guide</li>
+                </ul>
+              </div>
+              <div className="flex items-center justify-between text-sm border-t border-gold/20 pt-4">
+                <span className="text-dark/60">Duration: 2–3 hours</span>
+                <span className="font-semibold text-gold">USD $39 per training session</span>
+              </div>
             </div>
           </div>
         </div>
-        <div className="container-custom">
+        <div className="container-custom relative z-10">
           <SectionNav sectionIndex={4} />
         </div>
       </section>
@@ -632,6 +713,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Payment Structure Section */}
+      <section id="payment" className="section bg-cream min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-brand-green mb-4">Payment Structure</h2>
+            <div className="divider-gold max-w-xs mx-auto" />
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-brand-green text-white">
+                      <th className="px-6 py-4 text-left font-semibold">Service Package</th>
+                      <th className="px-6 py-4 text-left font-semibold">Payment Structure</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentStructure.map((item, idx) => (
+                      <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-cream'}>
+                        <td className="px-6 py-4 text-dark font-medium border-b border-gold/10">{item.package}</td>
+                        <td className="px-6 py-4 text-dark/70 border-b border-gold/10">{item.structure}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={7} />
+        </div>
+      </section>
+
       {/* Why Students Choose Us */}
       <section id="why-us" className="section min-h-screen flex flex-col">
         <div className="container-custom flex-grow">
@@ -651,7 +767,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={7} />
+          <SectionNav sectionIndex={8} />
         </div>
       </section>
 
@@ -707,7 +823,7 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={8} />
+          <SectionNav sectionIndex={9} />
         </div>
       </section>
 
@@ -750,7 +866,7 @@ export default function Home() {
           </p>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={9} />
+          <SectionNav sectionIndex={10} />
         </div>
       </section>
 
@@ -781,7 +897,31 @@ export default function Home() {
           </div>
         </div>
         <div className="container-custom">
-          <SectionNav sectionIndex={10} />
+          <SectionNav sectionIndex={11} />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="section min-h-screen flex flex-col">
+        <div className="container-custom flex-grow">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-brand-green mb-4">Frequently Asked Questions</h2>
+            <div className="divider-gold max-w-xs mx-auto" />
+          </div>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {faqs.map((faq, idx) => (
+              <div key={idx} className="card p-6">
+                <h3 className="font-bold text-brand-green text-lg mb-3 flex items-start gap-3">
+                  <span className="text-gold flex-shrink-0">Q{idx + 1}.</span>
+                  {faq.question}
+                </h3>
+                <p className="text-dark/70 leading-relaxed pl-8">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="container-custom">
+          <SectionNav sectionIndex={13} />
         </div>
       </section>
 
