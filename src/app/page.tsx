@@ -146,48 +146,33 @@ export default function Home() {
 
   const testimonials = [
     {
-      quote: "The proposal package helped me organize my ideas properly and submit a stronger proposal to my supervisor.",
+      quote: "The proposal support helped me organize my topic, objectives, and research questions clearly before meeting my supervisor again.",
       author: 'M. Johnson',
       role: 'Undergraduate Student'
     },
     {
-      quote: "I was struggling with my literature review until I received guidance that helped me understand what was actually required.",
-      author: 'R. Cooper',
-      role: 'Undergraduate Student'
-    },
-    {
-      quote: "The formatting review saved me a lot of time before submission and helped me avoid unnecessary corrections.",
-      author: 'T. Diggs',
-      role: 'Undergraduate Student'
-    },
-    {
-      quote: "Their structured process made the entire thesis journey less stressful and more manageable.",
-      author: 'P. Williams',
+      quote: "My thesis draft was confusing before I contacted JUSTmyTHESIS™. The team helped me restructure it and understand what needed to be corrected.",
+      author: 'S. Kamara',
       role: "Master's Student"
     },
     {
-      quote: "The support I received helped me address my supervisor's comments more confidently.",
-      author: 'K. Doe',
-      role: 'Research Student'
-    },
-    {
-      quote: "I appreciated the professionalism and prompt communication throughout my project.",
-      author: 'S. Reeves',
+      quote: "The formatting and citation review saved me time and helped me prepare my final copy with more confidence.",
+      author: 'A. Williams',
       role: 'Undergraduate Student'
     },
     {
-      quote: "The defense preparation session helped me feel more prepared and organized before presenting.",
+      quote: "I appreciated how clearly the team explained what was missing from my work and what I needed to do next.",
+      author: 'P. Cooper',
+      role: 'Research Student'
+    },
+    {
+      quote: "The defense preparation helped me organize my slides and anticipate the questions I might face.",
       author: 'J. Brown',
       role: 'Undergraduate Student'
     },
     {
-      quote: "The team helped me identify weaknesses in my draft and improve the overall structure of my work.",
-      author: 'A. Walker',
-      role: 'Research Student'
-    },
-    {
-      quote: "From proposal development to final review, the support was clear, practical, and easy to follow.",
-      author: 'C. Roberts',
+      quote: "The support was practical, respectful, and focused on my institution's requirements.",
+      author: 'R. Mensah',
       role: "Master's Student"
     }
   ];
@@ -405,8 +390,8 @@ export default function Home() {
               <a href="/" className="flex items-center">
                 <img 
                   src="/images/logo/justmythesis-logo-header.svg" 
-                  alt="JUSTmyTHESIS™ Logo"
-                  className="h-[60px] md:h-[80px] w-auto object-contain"
+                  alt="JUSTmyTHESIS™"
+                  className="h-[45px] md:h-[55px] w-auto object-contain max-w-[180px] md:max-w-[260px]"
                 />
               </a>
             </div>
@@ -527,7 +512,7 @@ export default function Home() {
       <section id="services" className="section min-h-screen flex flex-col">
         <div className="container-custom flex-grow">
           <div className="text-center mb-12">
-            <h2 className="heading-lg text-brand-green mb-4">Choose the Support That Fits Your Thesis Stage</h2>
+            <h2 className="heading-lg text-brand-green mb-4">Choose Your Support</h2>
             <div className="divider-gold max-w-xs mx-auto" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -643,7 +628,7 @@ export default function Home() {
               </div>
               <div className="flex items-center justify-between text-sm border-t border-gold/20 pt-4">
                 <span className="text-dark/60">Duration: 15 hours (3 days × 5 hours)</span>
-                <span className="font-semibold text-gold">USD $247</span>
+                <span className="font-semibold text-gold">USD $97</span>
               </div>
             </div>
           </div>
@@ -657,7 +642,7 @@ export default function Home() {
       <section id="process" className="section min-h-screen flex flex-col">
         <div className="container-custom flex-grow">
           <div className="text-center mb-12">
-            <h2 className="heading-lg text-brand-green mb-4">From Confusion to Submission: How We Support You</h2>
+            <h2 className="heading-lg text-brand-green mb-4">How We Support You</h2>
             <div className="divider-gold max-w-xs mx-auto" />
           </div>
           <div className="max-w-3xl mx-auto space-y-6">
@@ -1003,8 +988,8 @@ export default function Home() {
             <div className="mb-6">
               <img 
                 src="/images/logo/justmythesis-logo-primary.svg" 
-                alt="JUSTmyTHESIS™ Logo"
-                className="h-[90px] md:h-[120px] w-auto mx-auto object-contain"
+                alt="JUSTmyTHESIS™"
+                className="h-[60px] md:h-[80px] w-auto mx-auto object-contain"
               />
               <p className="text-dark/60 text-sm mt-4 mb-2">Academic Research & Thesis Support</p>
               <p className="text-dark/80 font-medium">Focus on Your Research. We'll Handle the Thesis.</p>
