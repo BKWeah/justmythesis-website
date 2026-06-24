@@ -50,7 +50,7 @@ export default function RootLayout({
         />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="apple-touch-icon" href="/images/logo/justmythesis-icon.svg" />
+        <link rel="apple-touch-icon" href="/images/logo/justmythesis-favicon.svg" />
       </head>
       <body className="font-sans antialiased bg-white text-dark">
         {children}

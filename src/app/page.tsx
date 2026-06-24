@@ -391,7 +391,7 @@ export default function Home() {
                 <img 
                   src="/images/logo/justmythesis-logo-header.svg" 
                   alt="JUSTmyTHESIS™"
-                  className="w-[190px] md:w-[300px] h-auto object-contain"
+                  className="h-[50px] md:h-[85px] w-auto object-contain"
                 />
               </a>
             </div>
@@ -987,9 +987,9 @@ export default function Home() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-6">
               <img 
-                src="/images/logo/justmythesis-logo-primary.svg" 
+                src="/images/logo/justmythesis-logo-footer.svg" 
                 alt="JUSTmyTHESIS™"
-                className="w-[220px] md:w-[350px] h-auto mx-auto object-contain"
+                className="h-[70px] md:h-[110px] w-auto mx-auto object-contain"
               />
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 text-dark/60 mb-6">
