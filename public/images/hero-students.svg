@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#18452F"/>
+      <stop offset="50%" style="stop-color:#1D5036"/>
+      <stop offset="100%" style="stop-color:#143228"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C79A2D;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#C79A2D;stop-opacity:0"/>
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#C79A2D" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#dots)"/>
+  <ellipse cx="1600" cy="200" rx="500" ry="400" fill="url(#accent)"/>
+  <ellipse cx="300" cy="900" rx="400" ry="300" fill="url(#accent)" transform="rotate(180)"/>
+  <circle cx="1800" cy="800" r="150" fill="#C79A2D" opacity="0.05"/>
+  <circle cx="150" cy="150" r="100" fill="#C79A2D" opacity="0.05"/>
+</svg>
