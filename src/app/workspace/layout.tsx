@@ -1,22 +1,20 @@
-import { WorkspaceShell } from '@/components/layout';
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: {
-    default: 'Workspace | JUSTmyTHESIS',
-    template: '%s | JUSTmyTHESIS Workspace',
-  },
-  description: 'JUSTmyTHESIS internal workspace for managing client requests and projects.',
-};
+import { usePathname } from 'next/navigation';
+import { WorkspaceShell } from '@/components/layout';
 
 export default function WorkspaceLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <WorkspaceShell>
-      {children}
-    </WorkspaceShell>
-  );
+  const pathname = usePathname();
+  
+  // If at login page, render without shell (no auth required)
+  if (pathname === '/workspace/login') {
+    return <>{children}</>;
+  }
+
+  // All other workspace pages use the shell (auth required)
+  return <WorkspaceShell>{children}</WorkspaceShell>;
 }
