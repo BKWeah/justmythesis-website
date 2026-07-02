@@ -2,10 +2,18 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  // Check if Supabase is configured
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return NextResponse.json(
+      { user: null, staff: null, error: 'Database not configured' },
+      { status: 200 }
+    );
+  }
+
   try {
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
         cookies: {
           getAll() {
@@ -44,7 +52,7 @@ export async function GET(request: NextRequest) {
     console.error('Session error:', error);
     return NextResponse.json(
       { user: null, staff: null, error: 'Session check failed' },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }
