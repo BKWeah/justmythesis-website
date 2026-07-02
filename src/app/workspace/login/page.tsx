@@ -46,11 +46,6 @@ export default function LoginPage() {
 
   return (
     <div style={bgStyle} className="min-h-screen flex flex-col">
-      {/* DEBUG HEADING - REMOVE AFTER TESTING */}
-      <div style={{ backgroundColor: '#EF4444', color: 'white', padding: '12px', textAlign: 'center', fontWeight: 'bold' }}>
-        JUSTmyTHESIS Operations Login
-      </div>
-
       {/* Header */}
       <header className="p-6">
         <Link href="/" className="flex items-center gap-2 w-fit">
