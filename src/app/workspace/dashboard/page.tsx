@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { StatsCard } from '@/components/layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { DashboardErrorBoundary } from '@/components/DashboardErrorBoundary';
 import { 
   FileText, 
   Clock, 
@@ -19,31 +19,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from '@/lib/utils/date';
-
-class DashboardErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <EmptyState
-          icon={<AlertCircle className="h-8 w-8 text-red-500" />}
-          title="Something went wrong"
-          description="An error occurred while loading the dashboard."
-        />
-      );
-    }
-    return this.props.children;
-  }
-}
 
 function StatusBadge({ status }: { status: string }) {
   const variants: Record<string, 'default' | 'success' | 'warning' | 'error' | 'info'> = {
