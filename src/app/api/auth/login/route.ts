@@ -12,6 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Track cookies set by Supabase
+    const cookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -20,10 +23,8 @@ export async function POST(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
-            );
+          setAll(cookiesToSetFromSupabase) {
+            cookiesToSet.push(...cookiesToSetFromSupabase);
           },
         },
       }
@@ -59,10 +60,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Build success response and apply cookies
     const response = NextResponse.json(
       { success: true, user: data.user },
       { status: 200 }
     );
+
+    // Apply all cookies that Supabase set
+    cookiesToSet.forEach(({ name, value, options }) => {
+      response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]);
+    });
 
     return response;
   } catch (error) {
