@@ -175,7 +175,11 @@ CREATE POLICY "admin_can_delete_support_requests"
 -- Clients can view their own support requests
 CREATE POLICY "client_can_view_own_requests"
     ON support_requests FOR SELECT
-    USING (auth.uid() = client_id);
+    USING (
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = support_requests.client_id
+        )
+    );
 
 -- ============================================================
 -- PROJECTS POLICIES
@@ -204,7 +208,11 @@ CREATE POLICY "admin_can_delete_projects"
 -- Clients can view their own projects
 CREATE POLICY "client_can_view_own_projects"
     ON projects FOR SELECT
-    USING (auth.uid() = client_id);
+    USING (
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = projects.client_id
+        )
+    );
 
 -- ============================================================
 -- DOCUMENTS POLICIES
@@ -220,7 +228,7 @@ CREATE POLICY "staff_can_insert_documents"
     ON documents FOR INSERT
     WITH CHECK (
         is_staff_member() = TRUE 
-        OR auth.uid() = client_id
+        OR auth.uid() IN (SELECT auth_uid FROM clients WHERE id = documents.client_id)
     );
 
 -- Staff can update documents
@@ -236,7 +244,11 @@ CREATE POLICY "admin_can_delete_documents"
 -- Clients can view their own documents
 CREATE POLICY "client_can_view_own_documents"
     ON documents FOR SELECT
-    USING (auth.uid() = client_id);
+    USING (
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = documents.client_id
+        )
+    );
 
 -- ============================================================
 -- ASSESSMENTS POLICIES
@@ -351,18 +363,28 @@ CREATE POLICY "admin_can_delete_payments"
 -- Clients can view their own payments
 CREATE POLICY "client_can_view_own_payments"
     ON payments FOR SELECT
-    USING (auth.uid() = client_id);
+    USING (
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = payments.client_id
+        )
+    );
 
 -- Clients can insert their own payment records
 CREATE POLICY "client_can_insert_own_payments"
     ON payments FOR INSERT
-    WITH CHECK (auth.uid() = client_id);
+    WITH CHECK (
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = payments.client_id
+        )
+    );
 
 -- Clients can update their own pending payments
 CREATE POLICY "client_can_update_own_pending_payments"
     ON payments FOR UPDATE
     USING (
-        auth.uid() = client_id 
+        auth.uid() IN (
+            SELECT auth_uid FROM clients WHERE id = payments.client_id
+        )
         AND status = 'Pending'
     );
 
@@ -395,8 +417,9 @@ CREATE POLICY "client_can_view_project_qa_reviews"
     ON qa_reviews FOR SELECT
     USING (
         auth.uid() IN (
-            SELECT client_id FROM projects 
-            WHERE id = project_id
+            SELECT c.auth_uid FROM clients c
+            JOIN projects p ON c.id = p.client_id
+            WHERE p.id = qa_reviews.project_id
         )
     );
 
@@ -429,8 +452,9 @@ CREATE POLICY "client_can_view_own_deliverables"
     ON deliverables FOR SELECT
     USING (
         auth.uid() IN (
-            SELECT client_id FROM projects 
-            WHERE id = project_id
+            SELECT c.auth_uid FROM clients c
+            JOIN projects p ON c.id = p.client_id
+            WHERE p.id = deliverables.project_id
         )
     );
 
@@ -439,8 +463,9 @@ CREATE POLICY "client_can_confirm_deliverables"
     ON deliverables FOR UPDATE
     USING (
         auth.uid() IN (
-            SELECT client_id FROM projects 
-            WHERE id = project_id
+            SELECT c.auth_uid FROM clients c
+            JOIN projects p ON c.id = p.client_id
+            WHERE p.id = deliverables.project_id
         )
         AND client_confirmed = FALSE
     );
@@ -469,14 +494,19 @@ CREATE POLICY "staff_can_insert_activity_logs"
 CREATE POLICY "client_can_view_own_activity_logs"
     ON activity_logs FOR SELECT
     USING (
-        auth.uid() = client_id
+        -- Direct client reference
+        auth.uid() IN (SELECT auth_uid FROM clients WHERE id = activity_logs.client_id)
+        -- Via support request
         OR auth.uid() IN (
-            SELECT client_id FROM support_requests 
-            WHERE id = support_request_id
+            SELECT c.auth_uid FROM clients c
+            JOIN support_requests sr ON c.id = sr.client_id
+            WHERE sr.id = activity_logs.support_request_id
         )
+        -- Via project
         OR auth.uid() IN (
-            SELECT client_id FROM projects 
-            WHERE id = project_id
+            SELECT c.auth_uid FROM clients c
+            JOIN projects p ON c.id = p.client_id
+            WHERE p.id = activity_logs.project_id
         )
     );
 
