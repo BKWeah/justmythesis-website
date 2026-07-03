@@ -1,18 +1,28 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+function isValidSupabaseUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && parsed.hostname.includes('.supabase.co');
+  } catch {
+    return false;
+  }
+}
+
 export async function updateSession(request: NextRequest) {
   // Skip auth check for login page - no Supabase client needed
   if (request.nextUrl.pathname === '/workspace/login') {
     return NextResponse.next({ request });
   }
 
-  // Check if Supabase is configured
+  // Check if Supabase is configured with valid URL
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    // Supabase not configured - allow all requests through
+  if (!supabaseUrl || !supabaseKey || !isValidSupabaseUrl(supabaseUrl)) {
+    // Supabase not configured or invalid URL - allow all requests through
     // Pages will handle auth state gracefully
     return NextResponse.next({ request });
   }
