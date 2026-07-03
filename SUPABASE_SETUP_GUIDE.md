@@ -69,6 +69,26 @@ Add these environment variables **for Production** (and optionally Preview/Devel
 
 ## Part 3: Run Database Migrations
 
+### Migration Order
+
+**Important:** Run migrations in numerical order. Each migration depends on the previous ones.
+
+| Order | Migration | Purpose |
+|-------|-----------|---------|
+| 1 | `002_users_tables.sql` | Creates `clients` and `staff_users` tables |
+| 2 | `003_support_requests.sql` | Creates `support_requests` table |
+| 3 | `004_projects.sql` | Creates `projects` table |
+| 4 | `005_documents.sql` | Creates `documents` table with short file type identifiers |
+| 5 | `006_assessments_recommendations.sql` | Creates `assessments` and `recommendations` tables |
+| 6 | `007_payments.sql` | Creates `payments` table |
+| 7 | `008_qa_deliverables_activity_logs.sql` | Creates `qa_reviews`, `deliverables`, `activity_logs` tables |
+| 8 | `009_storage_buckets.sql` | Creates storage buckets for file uploads |
+| 9 | `010_rls_policies.sql` | Creates RLS policies and helper functions |
+
+### Note on File Types
+
+The `documents` table uses short file type identifiers (e.g., `pdf`, `docx`, `png`) instead of full MIME types. MIME type mapping is handled in the application layer.
+
 ### Step 3.1: Access Supabase SQL Editor
 
 1. Go to your Supabase project dashboard

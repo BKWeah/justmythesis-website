@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { getFileType } from '@/lib/utils/file-types';
 
 export async function POST(
   request: NextRequest,
@@ -43,6 +44,9 @@ export async function POST(
     const body = await request.json();
     const { fileName, fileType, fileSize, category, description } = body;
 
+    // Convert MIME type to short identifier for database storage
+    const shortFileType = getFileType(fileType);
+
     // Upload file to storage
     const fileBuffer = Buffer.from(body.fileData, 'base64');
     const filePath = `${id}/${Date.now()}-${fileName}`;
@@ -63,14 +67,13 @@ export async function POST(
 
     // Create document record
     const { data: document, error: dbError } = await supabase
-      .from('project_documents')
+      .from('documents')
       .insert({
         project_id: id,
         file_name: fileName,
-        file_type: fileType,
-        file_size: fileSize,
-        storage_path: filePath,
-        public_url: urlData.publicUrl,
+        file_type: shortFileType,
+        file_size_bytes: fileSize,
+        file_url: urlData.publicUrl,
         category,
         description,
         uploaded_by: staffData.id,
@@ -86,7 +89,7 @@ export async function POST(
       action: 'document_uploaded',
       description: `Document uploaded: ${fileName}`,
       project_id: id,
-      entity_type: 'project_documents',
+      entity_type: 'documents',
       entity_id: document.id,
       performed_by: staffData.id,
     });
@@ -146,8 +149,8 @@ export async function PATCH(
     if (action === 'replace' && body.fileData) {
       // Get existing document
       const { data: existingDoc } = await supabase
-        .from('project_documents')
-        .select('storage_path')
+        .from('documents')
+        .select('file_url')
         .eq('id', documentId)
         .single();
 
@@ -158,9 +161,13 @@ export async function PATCH(
         );
       }
 
+      // Convert MIME type to short identifier
+      const shortFileType = getFileType(fileType);
+
       // Upload new file
       const fileBuffer = Buffer.from(body.fileData, 'base64');
-      const filePath = existingDoc.storage_path;
+      // Extract storage path from URL or generate new one
+      const filePath = existingDoc.file_url.split('/storage/v1/object/')[1] || `${id}/${Date.now()}-${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('project-documents')
@@ -178,12 +185,12 @@ export async function PATCH(
 
       // Update document record
       const { data: document, error: dbError } = await supabase
-        .from('project_documents')
+        .from('documents')
         .update({
           file_name: fileName,
-          file_type: fileType,
-          file_size: fileSize,
-          public_url: urlData.publicUrl,
+          file_type: shortFileType,
+          file_size_bytes: fileSize,
+          file_url: urlData.publicUrl,
           category,
           description,
         })
@@ -199,7 +206,7 @@ export async function PATCH(
         action: 'document_replaced',
         description: `Document replaced: ${fileName}`,
         project_id: id,
-        entity_type: 'project_documents',
+        entity_type: 'documents',
         entity_id: documentId,
         performed_by: staffData.id,
       });

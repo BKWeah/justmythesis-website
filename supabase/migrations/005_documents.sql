@@ -27,18 +27,23 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
--- Create enum type for file type
+-- Create enum type for file type (short identifiers, max 63 bytes)
+-- MIME type mapping handled in application layer
 DO $$ BEGIN
     CREATE TYPE document_file_type AS ENUM (
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'image/jpeg',
-        'image/png',
-        'application/zip',
-        'text/plain',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'txt',
+        'csv',
+        'jpg',
+        'jpeg',
+        'png',
+        'zip',
         'other'
     );
 EXCEPTION
