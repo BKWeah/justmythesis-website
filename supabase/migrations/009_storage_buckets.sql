@@ -63,12 +63,9 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- COMMENTS
+-- NOTE: Bucket descriptions are stored in application metadata
+-- Supabase Storage does not support COMMENT ON BUCKET syntax
 -- ============================================================
-COMMENT ON BUCKET 'request-documents' IS 'Documents uploaded for support requests (thesis guides, proposals, drafts)';
-COMMENT ON BUCKET 'project-documents' IS 'Documents related to active projects (drafts, supervisor comments)';
-COMMENT ON BUCKET 'payment-proofs' IS 'Payment proof documents (receipts, screenshots)';
-COMMENT ON BUCKET 'deliverables' IS 'Final deliverables (completed thesis, presentations)';
 
 -- ============================================================
 -- VERIFY BUCKETS CREATION
