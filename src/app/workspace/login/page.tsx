@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { GraduationCap, Lock, AlertCircle } from 'lucide-react';
+import { GraduationCap, Lock, AlertCircle, Database } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
@@ -13,6 +13,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check if database is configured
+    fetch('/api/auth/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.error === 'Database not configured') {
+          setIsConfigured(false);
+        } else {
+          setIsConfigured(true);
+        }
+      })
+      .catch(() => setIsConfigured(true));
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +88,19 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {/* Database Not Configured Alert */}
+            {isConfigured === false && (
+              <div className="mb-6 p-4 bg-amber-100 border border-amber-300 rounded-lg flex items-start gap-3">
+                <Database className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-800">Database Not Configured</p>
+                  <p className="text-xs text-amber-700 mt-1">
+                    The Supabase database is not properly configured. Please contact the administrator.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Error Alert */}
             {error && (
               <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg flex items-start gap-3">
@@ -99,7 +127,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || isConfigured === false}
                   className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#18452F]/50 focus:border-[#18452F]"
                 />
               </div>
@@ -118,14 +146,14 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isLoading || isConfigured === false}
                   className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#18452F]/50 focus:border-[#18452F]"
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isConfigured === false}
                 className="inline-flex items-center justify-center gap-2 font-medium rounded-xl h-10 px-4 text-sm w-full bg-[#18452F] text-white hover:bg-[#2a5c45] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Signing in...' : 'Sign In'}
