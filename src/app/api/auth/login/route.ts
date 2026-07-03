@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 
 function isValidSupabaseUrl(url: string | undefined): boolean {
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseKey || !isValidSupabaseUrl(supabaseUrl)) {
       return NextResponse.json(
@@ -32,6 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Create client with anon key for authentication
     const supabase = createServerClient(
       supabaseUrl,
       supabaseKey,
@@ -61,13 +64,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user is a staff member
+    // Check if user is a staff member using service role key to bypass RLS
     if (data.user) {
-      const { data: staffData } = await supabase
-        .from('staff_users')
-        .select('id, role')
-        .eq('auth_uid', data.user.id)
-        .single();
+      let staffData = null;
+
+      // Try to query staff_users with service role key first (bypasses RLS)
+      if (supabaseServiceKey) {
+        const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        });
+
+        const { data: adminStaffData, error: adminError } = await adminClient
+          .from('staff_users')
+          .select('id, role')
+          .eq('auth_uid', data.user.id)
+          .single();
+
+        if (!adminError && adminStaffData) {
+          staffData = adminStaffData;
+        }
+      }
+
+      // Fallback: try with anon key if service key not available
+      if (!staffData) {
+        const { data: anonStaffData } = await supabase
+          .from('staff_users')
+          .select('id, role')
+          .eq('auth_uid', data.user.id)
+          .single();
+
+        staffData = anonStaffData;
+      }
 
       if (!staffData) {
         // Sign out if not a staff member
