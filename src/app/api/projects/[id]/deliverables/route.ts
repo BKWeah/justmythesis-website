@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { getFileType } from '@/lib/utils/file-types';
 
 export async function POST(
   request: NextRequest,
@@ -43,9 +44,12 @@ export async function POST(
     const body = await request.json();
     const { fileName, fileType, fileSize, description, isFinal } = body;
 
+    // Convert MIME type to short identifier
+    const shortFileType = getFileType(fileType);
+
     // Get next version number
     const { count } = await supabase
-      .from('project_deliverables')
+      .from('deliverables')
       .select('*', { count: 'exact', head: true })
       .eq('project_id', id);
 
@@ -56,7 +60,7 @@ export async function POST(
     const filePath = `${id}/deliverable-v${version}-${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('project-deliverables')
+      .from('deliverables')
       .upload(filePath, fileBuffer, {
         contentType: fileType,
         upsert: true,
@@ -66,21 +70,20 @@ export async function POST(
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from('project-deliverables')
+      .from('deliverables')
       .getPublicUrl(filePath);
 
     // Create deliverable record
     const { data: deliverable, error: dbError } = await supabase
-      .from('project_deliverables')
+      .from('deliverables')
       .insert({
         project_id: id,
-        version,
+        version_number: version,
         file_name: fileName,
-        file_type: fileType,
-        file_size: fileSize,
-        storage_path: filePath,
-        public_url: urlData.publicUrl,
-        description,
+        file_type: shortFileType,
+        file_size_bytes: fileSize,
+        file_url: urlData.publicUrl,
+        delivery_notes: description,
         is_final: isFinal || false,
         uploaded_by: staffData.id,
       })
@@ -92,7 +95,7 @@ export async function POST(
     // If marking as final, update other deliverables
     if (isFinal) {
       await supabase
-        .from('project_deliverables')
+        .from('deliverables')
         .update({ is_final: false })
         .eq('project_id', id)
         .neq('id', deliverable.id);
@@ -104,7 +107,7 @@ export async function POST(
       action: 'deliverable_uploaded',
       description: `Deliverable uploaded: Version ${version}${isFinal ? ' (Final)' : ''}`,
       project_id: id,
-      entity_type: 'project_deliverables',
+      entity_type: 'deliverables',
       entity_id: deliverable.id,
       performed_by: staffData.id,
     });
@@ -163,10 +166,10 @@ export async function PATCH(
 
     // Update deliverable
     const { data, error } = await supabase
-      .from('project_deliverables')
+      .from('deliverables')
       .update({
         client_confirmed: clientConfirmed,
-        confirmed_at: clientConfirmed ? new Date().toISOString() : null,
+        client_confirmed_at: clientConfirmed ? new Date().toISOString() : null,
       })
       .eq('id', deliverableId)
       .select()
@@ -179,9 +182,9 @@ export async function PATCH(
       await supabase.from('activity_logs').insert({
         category: 'Project',
         action: 'deliverable_confirmed',
-        description: `Deliverable Version ${data.version} confirmed by client`,
+        description: `Deliverable Version ${data.version_number} confirmed by client`,
         project_id: id,
-        entity_type: 'project_deliverables',
+        entity_type: 'deliverables',
         entity_id: deliverableId,
         performed_by: staffData.id,
       });
