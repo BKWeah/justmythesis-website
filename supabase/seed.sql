@@ -1,0 +1,52 @@
+-- Seed Data: Development Staff Account
+-- 
+-- IMPORTANT: This script creates a test user in Supabase Auth and the staff_users table.
+-- Run this AFTER creating the Supabase project and running all migrations.
+--
+-- BEFORE RUNNING:
+-- 1. Create a Supabase project at https://supabase.com
+-- 2. Copy your project URL and keys
+-- 3. Run all migration files in order (001-010)
+-- 4. Run this seed.sql file
+--
+
+-- ============================================================
+-- PART 1: Create Auth User (run in Supabase Dashboard > Authentication > Users)
+-- ============================================================
+-- 
+-- Alternatively, use the Supabase Admin API or Dashboard to create:
+-- 1. Go to Authentication > Users > Add User
+-- 2. Email: admin@justmythesis.org
+-- 3. Password: Workspace2024!
+-- 4. Click "Create user"
+-- 5. Copy the user's UUID from the user list
+--
+
+-- ============================================================
+-- PART 2: Insert Staff User Record
+-- ============================================================
+-- 
+-- After creating the auth user, run this SQL with the user's UUID:
+-- Replace 'YOUR-USER-UUID-HERE' with the actual UUID from step 4 above.
+
+-- Example (uncomment and modify):
+-- INSERT INTO public.staff_users (auth_uid, email, full_name, role, created_at)
+-- VALUES (
+--   'YOUR-USER-UUID-HERE',
+--   'admin@justmythesis.org',
+--   'Test Admin',
+--   'super_admin',
+--   NOW()
+-- );
+
+-- ============================================================
+-- TEST CREDENTIALS (after setup)
+-- ============================================================
+-- 
+-- Email:    admin@justmythesis.org
+-- Password: Workspace2024!
+-- Role:     super_admin
+-- 
+-- These credentials will work at: /workspace/login
+-- After login, you will be redirected to: /workspace/dashboard
+--

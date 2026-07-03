@@ -10,11 +10,11 @@ export default function WorkspaceLayout({
 }) {
   const pathname = usePathname();
   
-  // If at login page, render without shell (no auth required)
+  // Login page has its own standalone layout - bypass shell
   if (pathname === '/workspace/login') {
     return <>{children}</>;
   }
 
-  // All other workspace pages use the shell (auth required)
+  // All other workspace pages use the shell with auth
   return <WorkspaceShell>{children}</WorkspaceShell>;
 }

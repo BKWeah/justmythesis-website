@@ -2,10 +2,19 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  // Return empty data if Supabase is not configured
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return NextResponse.json({
+      stats: { totalRequests: 0, pendingRequests: 0, activeProjects: 0, completedProjects: 0 },
+      recentRequests: [],
+      attentionProjects: [],
+    }, { status: 200 });
+  }
+
   try {
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
         cookies: {
           getAll() {
@@ -148,9 +157,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Dashboard API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch dashboard data' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      stats: { totalRequests: 0, pendingRequests: 0, activeProjects: 0, completedProjects: 0 },
+      recentRequests: [],
+      attentionProjects: [],
+      error: 'Failed to fetch dashboard data',
+    }, { status: 200 });
   }
 }
