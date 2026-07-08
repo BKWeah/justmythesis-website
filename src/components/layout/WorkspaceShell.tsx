@@ -37,15 +37,24 @@ const WorkspaceShell = ({
   const fetchUser = async () => {
     try {
       const response = await fetch('/api/auth/session');
+      
+      // If session endpoint returns 401 or 403, redirect to login
+      if (response.status === 401 || response.status === 403) {
+        router.push('/workspace/login');
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.staff) {
         setUser(data.staff);
-      } else if (!data.user) {
+      } else {
+        // User exists but not staff - redirect to login
         router.push('/workspace/login');
       }
     } catch (error) {
       console.error('Failed to fetch user:', error);
+      router.push('/workspace/login');
     } finally {
       setIsLoading(false);
     }
