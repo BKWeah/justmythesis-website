@@ -2,6 +2,7 @@
 import DeliverablesTab from '@/components/projects/DeliverablesTab';
 import QualityAssuranceTab from '@/components/projects/QualityAssuranceTab';
 import PaymentsTab from '@/components/projects/PaymentsTab';
+import StaffProjectMessages from '@/components/projects/StaffProjectMessages';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useProjectDetail } from '@/hooks/useProjectDetail';
@@ -25,6 +26,7 @@ import {
   Shield,
   Package,
   Activity,
+  MessageSquareText,
   Plus,
   Upload,
   Download,
@@ -114,7 +116,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
     assignTeamMember, removeTeamMember, updateTeamRole
   } = useProjectDetail(id);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'timeline' | 'milestones' | 'team' | 'documents' | 'payments' | 'qa' | 'deliverables' | 'activity'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'timeline' | 'milestones' | 'team' | 'documents' | 'payments' | 'qa' | 'deliverables' | 'messages' | 'activity'>('overview');
   const [showProjectUpdateModal, setShowProjectUpdateModal] = useState(false);
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
@@ -399,6 +401,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             { id: 'payments', label: 'Payments', icon: <CreditCard className="h-4 w-4" /> },
             { id: 'qa', label: 'Quality Assurance', icon: <Shield className="h-4 w-4" /> },
             { id: 'deliverables', label: 'Deliverables', icon: <Package className="h-4 w-4" /> },
+            { id: 'messages', label: 'Messages', icon: <MessageSquareText className="h-4 w-4" /> },
             { id: 'activity', label: 'Activity Log', icon: <Activity className="h-4 w-4" /> },
           ].map((tab) => (
             <button
@@ -712,6 +715,11 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             projectId={id}
             isCompleted={isCompleted}
           />
+        )}
+
+        {/* Messages Tab */}
+        {activeTab === 'messages' && (
+          <StaffProjectMessages projectId={id} />
         )}
 
         {/* Activity Tab */}
