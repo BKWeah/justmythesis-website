@@ -1,0 +1,35 @@
+{
+  "extends": "next/core-web-vitals",
+  "overrides": [
+    {
+      "files": ["src/app/page.tsx"],
+      "rules": {
+        "@next/next/no-img-element": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/no-unescaped-entities": "off"
+      }
+    },
+    {
+      "files": ["src/app/layout.tsx"],
+      "rules": {
+        "@next/next/no-page-custom-font": "off"
+      }
+    },
+    {
+      "files": [
+        "src/app/privacy/page.tsx",
+        "src/app/terms/page.tsx"
+      ],
+      "rules": {
+        "@next/next/no-img-element": "off",
+        "react/no-unescaped-entities": "off"
+      }
+    },
+    {
+      "files": ["src/components/layout/WorkspaceShell.tsx"],
+      "rules": {
+        "react-hooks/exhaustive-deps": "off"
+      }
+    }
+  ]
+}

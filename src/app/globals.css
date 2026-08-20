@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --brand-green: #18452F;
+  --brand-green-light: #2a5c45;
+  --brand-green-dark: #0f2d1f;
+  --gold: #C79A2D;
+  --gold-light: #d9b44a;
+  --gold-dark: #a68425;
+  --cream: #FAF7F0;
+  --white: #FFFFFF;
+  --dark: #222222;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(24, 69, 47, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #C79A2D, #a68425);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #d9b44a, #C79A2D);
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(199, 154, 45, 0.3);
+  color: var(--brand-green);
+}
+
+/* Focus States */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Section Styles */
+.section {
+  @apply py-16 md:py-24;
+}
+
+.section-alt {
+  @apply bg-gray-50/50;
+}
+
+/* Container */
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Headings */
+.heading-xl {
+  @apply text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight;
+}
+
+.heading-lg {
+  @apply text-3xl md:text-4xl font-bold tracking-tight;
+}
+
+.heading-md {
+  @apply text-2xl md:text-3xl font-bold;
+}
+
+.heading-sm {
+  @apply text-xl md:text-2xl font-semibold;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #C79A2D 0%, #d9b44a 50%, #C79A2D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Eyebrow Label */
+.eyebrow-label {
+  @apply text-sm font-semibold uppercase tracking-widest text-gold mb-3;
+}
+
+/* Button Styles */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+}
+
+.btn-primary {
+  @apply bg-brand-green text-white hover:bg-brand-green-light shadow-lg active:scale-95;
+}
+
+.btn-whatsapp {
+  @apply bg-brand-green text-white hover:bg-brand-green-light shadow-lg active:scale-95;
+}
+
+.btn-outline {
+  @apply border-2 border-brand-green text-brand-green hover:bg-brand-green hover:text-white;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300;
+  border: 1px solid rgba(199, 154, 45, 0.1);
+}
+
+.card-elevated {
+  @apply bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300;
+  border: 1px solid rgba(199, 154, 45, 0.15);
+}
+
+/* Pill/Tag Styles */
+.pill {
+  @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-medium;
+  background: rgba(199, 154, 45, 0.1);
+  color: var(--dark);
+  border: 1px solid rgba(199, 154, 45, 0.2);
+}
+
+.pill-dark {
+  @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold;
+  background: linear-gradient(135deg, #18452F, #2a5c45);
+  color: white;
+}
+
+/* Divider */
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C79A2D, transparent);
+}
+
+/* Hero gradient background with image */
+.hero-bg {
+  background: linear-gradient(135deg, rgba(24, 69, 47, 0.95) 0%, rgba(42, 92, 69, 0.90) 100%);
+  position: relative;
+  background-image: url('/images/hero-students.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(24, 69, 47, 0.88) 0%, rgba(20, 50, 35, 0.85) 100%);
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.45));
+}
+
+/* Service Card */
+.service-card {
+  @apply card-elevated p-6;
+}
+
+.service-card-header {
+  @apply bg-gradient-to-r from-brand-green to-brand-green-light text-white p-4 rounded-t-xl -mx-6 -mt-6 mb-4;
+}
+
+/* Pricing Card */
+.pricing-card {
+  @apply card-elevated p-6 text-center;
+}
+
+.pricing-card.featured {
+  @apply relative;
+  border: 2px solid #C79A2D;
+}
+
+/* Timeline */
+.timeline-item {
+  @apply relative pl-12 pb-10 last:pb-0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #C79A2D, rgba(199, 154, 45, 0.2));
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-dot {
+  @apply absolute left-0 top-0 w-12 h-12 rounded-full bg-gradient-to-br from-brand-green to-brand-green-light flex items-center justify-center text-white font-bold text-lg shadow-lg;
+}
+
+/* CTA Section gradient */
+.cta-bg {
+  background: linear-gradient(135deg, #18452F 0%, #2a5c45 100%);
+}
+
+/* Footer Styles */
+.site-footer {
+  background-color: #FAF7F0;
+  border-top: 1px solid rgba(199, 154, 45, 0.2);
+}
+
+/* Section Navigation Buttons - High Contrast */
+.section-nav-btn {
+  @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-lg;
+}
+
+.section-nav-btn-light {
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
+}
+
+.section-nav-btn-dark {
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
+}
+
+.section-nav-btn-primary {
+  @apply bg-white text-[#18452F] hover:bg-gray-100 border-2 border-[#C79A2D] shadow-xl;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  body {
+    font-size: 15px;
+  }
+}
