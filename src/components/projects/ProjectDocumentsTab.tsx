@@ -1,10 +1,16 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { AlertCircle, Download, FileText, LoaderCircle, Upload } from 'lucide-react';
+import {
+  AlertCircle,
+  Download,
+  FileText,
+  LoaderCircle,
+  Trash2,
+  Upload,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -60,6 +66,8 @@ export default function ProjectDocumentsTab({ projectId, documents, isCompleted,
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ProjectDocument | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const resetForm = () => {
     setFile(null);
@@ -134,6 +142,34 @@ export default function ProjectDocumentsTab({ projectId, documents, isCompleted,
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      setIsDeleting(true);
+      setError(null);
+      const response = await fetch(
+        `/api/projects/${projectId}/documents?documentId=${encodeURIComponent(deleteTarget.id)}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          cache: 'no-store',
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || 'Unable to delete this document.');
+      }
+
+      await onChanged();
+      setDeleteTarget(null);
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Unable to delete this document.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between gap-4 mb-5">
@@ -148,7 +184,7 @@ export default function ProjectDocumentsTab({ projectId, documents, isCompleted,
         )}
       </div>
 
-      {error && !isOpen && (
+      {error && !isOpen && !deleteTarget && (
         <div className="mb-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle className="h-4 w-4 mt-0.5" />
           <span>{error}</span>
@@ -173,19 +209,35 @@ export default function ProjectDocumentsTab({ projectId, documents, isCompleted,
                   )}
                 </div>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => void handleDownload(document)}
-                disabled={downloadingId === document.id}
-              >
-                {downloadingId === document.id ? (
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => void handleDownload(document)}
+                  disabled={downloadingId === document.id || isDeleting}
+                >
+                  {downloadingId === document.id ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  <span className="ml-2">{downloadingId === document.id ? 'Preparing' : 'Download'}</span>
+                </Button>
+                {!isCompleted && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setError(null);
+                      setDeleteTarget(document);
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="ml-2">Delete</span>
+                  </Button>
                 )}
-                <span className="ml-2">{downloadingId === document.id ? 'Preparing' : 'Download'}</span>
-              </Button>
+              </div>
             </div>
           ))}
         </div>
@@ -259,6 +311,45 @@ export default function ProjectDocumentsTab({ projectId, documents, isCompleted,
           <Button onClick={() => void handleUpload()} disabled={isUploading || !file}>
             {isUploading ? <LoaderCircle className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
             {isUploading ? 'Uploading...' : 'Upload Document'}
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => {
+          if (isDeleting) return;
+          setDeleteTarget(null);
+          setError(null);
+        }}
+        title="Delete Document"
+      >
+        <div className="space-y-4">
+          {error && (
+            <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <AlertCircle className="h-4 w-4 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+          <p className="text-gray-600">
+            Are you sure you want to delete <strong>{deleteTarget?.file_name}</strong>? This action cannot be undone.
+          </p>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setDeleteTarget(null);
+              setError(null);
+            }}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => void handleDelete()} disabled={isDeleting}>
+            {isDeleting ? <LoaderCircle className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+            {isDeleting ? 'Deleting...' : 'Delete Document'}
           </Button>
         </div>
       </Modal>
