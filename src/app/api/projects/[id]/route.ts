@@ -128,6 +128,7 @@ export async function GET(
       activityResult,
       teamResult,
       milestoneResult,
+      documentResult,
     ] = await Promise.allSettled([
       adminClient
         .from('clients')
@@ -206,6 +207,21 @@ export async function GET(
         `)
         .eq('project_id', projectId)
         .order('due_date', { ascending: true }),
+
+      adminClient
+        .from('documents')
+        .select(`
+          id,
+          file_name,
+          file_type,
+          file_size_bytes,
+          file_url,
+          category,
+          description,
+          created_at
+        `)
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false }),
     ]);
 
     const client =
@@ -232,6 +248,22 @@ export async function GET(
       milestoneResult.status === 'fulfilled'
         ? milestoneResult.value.data || []
         : [];
+
+    const rawDocuments =
+      documentResult.status === 'fulfilled'
+        ? documentResult.value.data || []
+        : [];
+
+    const documents = rawDocuments.map((document: any) => ({
+      id: document.id,
+      file_name: document.file_name,
+      file_type: document.file_type,
+      file_size: Number(document.file_size_bytes || 0),
+      public_url: document.file_url,
+      category: document.category,
+      description: document.description,
+      created_at: document.created_at,
+    }));
 
     const performerIds = [
       ...new Set(
@@ -281,7 +313,7 @@ export async function GET(
         activities,
         team,
         milestones,
-        documents: [],
+        documents,
         payments: [],
         qa_review: null,
         deliverables: [],
