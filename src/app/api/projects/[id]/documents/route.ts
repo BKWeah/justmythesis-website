@@ -231,3 +231,62 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to upload document' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const auth = await authenticateStaff(request);
+    if (auth.error || !auth.admin || !auth.staff) return auth.error!;
+
+    const projectId = params.id;
+    const documentId = request.nextUrl.searchParams.get('documentId');
+
+    if (!documentId) {
+      return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
+    }
+
+    const { data: document, error: documentError } = await auth.admin
+      .from('documents')
+      .select('id, file_name, file_url, category')
+      .eq('id', documentId)
+      .eq('project_id', projectId)
+      .maybeSingle();
+
+    if (documentError) throw documentError;
+    if (!document) {
+      return NextResponse.json({ error: 'Document not found' }, { status: 404 });
+    }
+
+    const filePath = storagePathFromValue(document.file_url);
+    const { error: storageError } = await auth.admin.storage
+      .from('project-documents')
+      .remove([filePath]);
+
+    if (storageError) throw storageError;
+
+    const { error: deleteError } = await auth.admin
+      .from('documents')
+      .delete()
+      .eq('id', documentId)
+      .eq('project_id', projectId);
+
+    if (deleteError) throw deleteError;
+
+    await auth.admin.from('activity_logs').insert({
+      category: 'Project',
+      action: 'document_deleted',
+      description: `Document deleted: ${document.file_name}`,
+      project_id: projectId,
+      entity_type: 'documents',
+      entity_id: documentId,
+      performed_by: auth.staff.id,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Documents DELETE API error:', error);
+    return NextResponse.json({ error: 'Failed to delete document' }, { status: 500 });
+  }
+}
