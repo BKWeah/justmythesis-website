@@ -46,12 +46,6 @@ async function authenticateStaff(request: NextRequest) {
     data: { user },
     error: userError,
   } = await authClient.auth.getUser();
-  
-  console.log('========== AUTH TEST ==========');
-console.log('USER:', user);
-console.log('ERROR:', userError);
-console.log('COOKIES:', request.cookies.getAll());
-console.log('===============================');
 
   if (userError || !user) {
     return {
@@ -68,7 +62,7 @@ console.log('===============================');
 
   const { data: staff, error: staffError } = await adminClient
     .from('staff_users')
-    .select('id, full_name')
+    .select('id, full_name, role')
     .eq('auth_uid', user.id)
     .single();
 
@@ -90,14 +84,54 @@ console.log('===============================');
   };
 }
 
-const ALLOWED_ROLES = [
-  'Lead Researcher',
-  'Researcher',
-  'Writer',
-  'Editor',
-  'QA Reviewer',
-  'Supervisor',
+const PROJECT_ROLES = [
+  'Operations Manager',
+  'Academic Consultant',
+  'QA Specialist',
+  'Client Success Officer',
 ] as const;
+
+type ProjectRole = (typeof PROJECT_ROLES)[number];
+
+const ROLE_ELIGIBILITY: Record<ProjectRole, string[]> = {
+  'Operations Manager': ['super_admin', 'operations_admin'],
+  'Academic Consultant': ['super_admin', 'reviewer'],
+  'QA Specialist': ['super_admin', 'reviewer'],
+  'Client Success Officer': ['super_admin', 'operations_admin', 'support'],
+};
+
+function normalizeProjectRole(value: unknown): ProjectRole | null {
+  if (value === 'Quality Assurance Specialist') return 'QA Specialist';
+  if (typeof value !== 'string') return null;
+  return PROJECT_ROLES.includes(value as ProjectRole)
+    ? (value as ProjectRole)
+    : null;
+}
+
+function isEligibleForRole(staffRole: string, projectRole: ProjectRole) {
+  return ROLE_ELIGIBILITY[projectRole].includes(staffRole);
+}
+
+async function roleAlreadyAssigned(
+  adminClient: ReturnType<typeof createAdminClient>,
+  projectId: string,
+  role: ProjectRole,
+  excludeAssignmentId?: string
+) {
+  let query = adminClient
+    .from('project_staff')
+    .select('id')
+    .eq('project_id', projectId)
+    .eq('role', role);
+
+  if (excludeAssignmentId) {
+    query = query.neq('id', excludeAssignmentId);
+  }
+
+  const { data, error } = await query.maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
+}
 
 export async function POST(
   request: NextRequest,
@@ -120,18 +154,11 @@ export async function POST(
     const body = await request.json();
 
     const staffId = body?.staffId;
-    const role = body?.role;
+    const role = normalizeProjectRole(body?.role);
 
     if (!staffId || !role) {
       return NextResponse.json(
-        { error: 'Team member and project role are required' },
-        { status: 400 }
-      );
-    }
-
-    if (!ALLOWED_ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: 'Invalid project role' },
+        { error: 'A valid team member and project role are required' },
         { status: 400 }
       );
     }
@@ -142,9 +169,7 @@ export async function POST(
       .eq('id', projectId)
       .maybeSingle();
 
-    if (projectError) {
-      throw projectError;
-    }
+    if (projectError) throw projectError;
 
     if (!project) {
       return NextResponse.json(
@@ -160,14 +185,21 @@ export async function POST(
         .eq('id', staffId)
         .maybeSingle();
 
-    if (selectedStaffError) {
-      throw selectedStaffError;
-    }
+    if (selectedStaffError) throw selectedStaffError;
 
     if (!selectedStaff) {
       return NextResponse.json(
         { error: 'Selected staff member was not found' },
         { status: 404 }
+      );
+    }
+
+    if (!isEligibleForRole(selectedStaff.role, role)) {
+      return NextResponse.json(
+        {
+          error: `${selectedStaff.full_name} is not eligible for the ${role} project role`,
+        },
+        { status: 409 }
       );
     }
 
@@ -179,13 +211,18 @@ export async function POST(
         .eq('staff_id', staffId)
         .maybeSingle();
 
-    if (duplicateError) {
-      throw duplicateError;
-    }
+    if (duplicateError) throw duplicateError;
 
     if (existingAssignment) {
       return NextResponse.json(
         { error: 'This staff member is already assigned to the project' },
+        { status: 409 }
+      );
+    }
+
+    if (await roleAlreadyAssigned(adminClient, projectId, role)) {
+      return NextResponse.json(
+        { error: `The ${role} role is already assigned for this project` },
         { status: 409 }
       );
     }
@@ -202,9 +239,7 @@ export async function POST(
         .select('id, project_id, staff_id, role, assigned_at')
         .single();
 
-    if (assignmentError) {
-      throw assignmentError;
-    }
+    if (assignmentError) throw assignmentError;
 
     await adminClient.from('activity_logs').insert({
       category: 'Project',
@@ -238,9 +273,7 @@ export async function POST(
     console.error('Assign team API error:', error);
 
     return NextResponse.json(
-      {
-        error: error?.message || 'Failed to assign team member',
-      },
+      { error: error?.message || 'Failed to assign team member' },
       { status: 500 }
     );
   }
@@ -267,18 +300,11 @@ export async function PATCH(
     const body = await request.json();
 
     const memberId = body?.memberId;
-    const role = body?.role;
+    const role = normalizeProjectRole(body?.role);
 
     if (!memberId || !role) {
       return NextResponse.json(
-        { error: 'Assignment and project role are required' },
-        { status: 400 }
-      );
-    }
-
-    if (!ALLOWED_ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: 'Invalid project role' },
+        { error: 'A valid assignment and project role are required' },
         { status: 400 }
       );
     }
@@ -289,22 +315,40 @@ export async function PATCH(
         .select(`
           id,
           staff_id,
+          role,
           staff:staff_id (
-            full_name
+            full_name,
+            role
           )
         `)
         .eq('id', memberId)
         .eq('project_id', projectId)
         .maybeSingle();
 
-    if (lookupError) {
-      throw lookupError;
-    }
+    if (lookupError) throw lookupError;
 
     if (!existingAssignment) {
       return NextResponse.json(
         { error: 'Team assignment not found' },
         { status: 404 }
+      );
+    }
+
+    const staffRecord = (existingAssignment as any).staff;
+    const staffName = staffRecord?.full_name || 'Team member';
+    const staffSystemRole = staffRecord?.role;
+
+    if (!staffSystemRole || !isEligibleForRole(staffSystemRole, role)) {
+      return NextResponse.json(
+        { error: `${staffName} is not eligible for the ${role} project role` },
+        { status: 409 }
+      );
+    }
+
+    if (await roleAlreadyAssigned(adminClient, projectId, role, memberId)) {
+      return NextResponse.json(
+        { error: `The ${role} role is already assigned for this project` },
+        { status: 409 }
       );
     }
 
@@ -317,38 +361,29 @@ export async function PATCH(
         .select('id, project_id, staff_id, role, assigned_at')
         .single();
 
-    if (updateError) {
-      throw updateError;
-    }
-
-    const staffName =
-      (existingAssignment as any).staff?.full_name || 'Team member';
+    if (updateError) throw updateError;
 
     await adminClient.from('activity_logs').insert({
       category: 'Project',
       action: 'team_role_updated',
-      description: `${staffName}'s project role changed to ${role}`,
+      description: `${staffName}'s project role changed from ${existingAssignment.role} to ${role}`,
       project_id: projectId,
       entity_type: 'project_staff',
       entity_id: memberId,
       performed_by: currentStaff.id,
       metadata: {
         staff_id: existingAssignment.staff_id,
+        previous_role: existingAssignment.role,
         project_role: role,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      assignment,
-    });
+    return NextResponse.json({ success: true, assignment });
   } catch (error: any) {
     console.error('Update team role API error:', error);
 
     return NextResponse.json(
-      {
-        error: error?.message || 'Failed to update team role',
-      },
+      { error: error?.message || 'Failed to update team role' },
       { status: 500 }
     );
   }
@@ -395,9 +430,7 @@ export async function DELETE(
       .eq('project_id', projectId)
       .maybeSingle();
 
-    if (lookupError) {
-      throw lookupError;
-    }
+    if (lookupError) throw lookupError;
 
     if (!assignment) {
       return NextResponse.json(
@@ -412,9 +445,7 @@ export async function DELETE(
       .eq('id', memberId)
       .eq('project_id', projectId);
 
-    if (deleteError) {
-      throw deleteError;
-    }
+    if (deleteError) throw deleteError;
 
     const staffName =
       (assignment as any).staff?.full_name || 'Team member';
@@ -422,7 +453,7 @@ export async function DELETE(
     await adminClient.from('activity_logs').insert({
       category: 'Project',
       action: 'team_member_removed',
-      description: `${staffName} removed from the project team`,
+      description: `${staffName} removed from the ${assignment.role} role`,
       project_id: projectId,
       entity_type: 'project_staff',
       entity_id: memberId,
@@ -433,16 +464,12 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({
-      success: true,
-    });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Remove team member API error:', error);
 
     return NextResponse.json(
-      {
-        error: error?.message || 'Failed to remove team member',
-      },
+      { error: error?.message || 'Failed to remove team member' },
       { status: 500 }
     );
   }
