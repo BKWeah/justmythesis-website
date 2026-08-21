@@ -3,6 +3,7 @@ import DeliverablesTab from '@/components/projects/DeliverablesTab';
 import QualityAssuranceTab from '@/components/projects/QualityAssuranceTab';
 import PaymentsTab from '@/components/projects/PaymentsTab';
 import StaffProjectMessages from '@/components/projects/StaffProjectMessages';
+import ProjectDocumentsTab from '@/components/projects/ProjectDocumentsTab';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useProjectDetail } from '@/hooks/useProjectDetail';
@@ -28,14 +29,9 @@ import {
   Activity,
   MessageSquareText,
   Plus,
-  Upload,
-  Download,
   Save,
   Check,
   AlertCircle,
-  Calendar,
-  Mail,
-  Building
 } from 'lucide-react';
 import { formatDistanceToNow, formatDate } from '@/lib/utils/date';
 
@@ -61,7 +57,7 @@ const PROJECT_ROLE_OPTIONS = [
   { value: '', label: 'Select project role' },
   { value: 'Operations Manager', label: 'Operations Manager' },
   { value: 'Academic Consultant', label: 'Academic Consultant' },
-  { value: 'Quality Assurance Specialist', label: 'Quality Assurance Specialist' },
+  { value: 'QA Specialist', label: 'QA Specialist' },
   { value: 'Client Success Officer', label: 'Client Success Officer' },
 ];
 
@@ -111,7 +107,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   const { id } = params;
   const { 
     data, isLoading, error, refetch, 
-    updateProject, completeProject, archiveProject,
+    updateProject, completeProject,
     addMilestone, completeMilestone,
     assignTeamMember, removeTeamMember, updateTeamRole
   } = useProjectDetail(id);
@@ -127,10 +123,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   const [teamError, setTeamError] = useState<string | null>(null);
   const [projectUpdateError, setProjectUpdateError] = useState<string | null>(null);
 
-  // Form states
   const [milestoneForm, setMilestoneForm] = useState({ title: '', description: '', due_date: '' });
   const [teamForm, setTeamForm] = useState({ staffId: '', role: '' });
-  
   const [projectUpdateForm, setProjectUpdateForm] = useState({
     status: 'Project Activated',
     completionPercentage: 0,
@@ -156,18 +150,14 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
     try {
       await updateProject({
         status: projectUpdateForm.status,
-        completionPercentage:
-          projectUpdateForm.completionPercentage,
-        expectedDeliveryDate:
-          projectUpdateForm.expectedDeliveryDate || null,
+        completionPercentage: projectUpdateForm.completionPercentage,
+        expectedDeliveryDate: projectUpdateForm.expectedDeliveryDate || null,
         notes: projectUpdateForm.notes,
       });
       setShowProjectUpdateModal(false);
     } catch (err) {
       setProjectUpdateError(
-        err instanceof Error
-          ? err.message
-          : 'Failed to update project'
+        err instanceof Error ? err.message : 'Failed to update project'
       );
     } finally {
       setIsSubmitting(false);
@@ -224,7 +214,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       }
     };
 
-    loadStaff();
+    void loadStaff();
   }, [showTeamModal, staffOptions.length]);
 
   const handleAssignTeamMember = async () => {
@@ -246,10 +236,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   };
 
   const handleRemoveTeamMember = async (memberId: string) => {
-    const confirmed = window.confirm(
-      'Remove this staff member from the project team?'
-    );
-
+    const confirmed = window.confirm('Remove this staff member from the project team?');
     if (!confirmed) return;
 
     try {
@@ -262,10 +249,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
     }
   };
 
-  const handleUpdateTeamRole = async (
-    memberId: string,
-    role: string
-  ) => {
+  const handleUpdateTeamRole = async (memberId: string, role: string) => {
     try {
       setIsSubmitting(true);
       await updateTeamRole(memberId, role);
@@ -289,11 +273,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <LoadingState />
-      </div>
-    );
+    return <div className="space-y-6"><LoadingState /></div>;
   }
 
   if (error || !data) {
@@ -318,47 +298,34 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/workspace/projects">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+            <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4" /></Button>
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {data.project_reference}
-              </h1>
-              <Badge variant={isCompleted ? 'success' : 'info'}>
-                {data.status}
-              </Badge>
+              <h1 className="text-2xl font-bold text-gray-900">{data.project_reference}</h1>
+              <Badge variant={isCompleted ? 'success' : 'info'}>{data.status}</Badge>
             </div>
-            <p className="text-gray-500 mt-1">
-              {data.project_title || 'Untitled Project'}
-            </p>
+            <p className="text-gray-500 mt-1">{data.project_title || 'Untitled Project'}</p>
           </div>
         </div>
         {!isCompleted && (
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => setShowTeamModal(true)}>
-              <Users className="h-4 w-4 mr-2" />
-              Assign Team
+              <Users className="h-4 w-4 mr-2" />Assign Team
             </Button>
             <Button variant="secondary" onClick={() => setShowProjectUpdateModal(true)}>
-              <Target className="h-4 w-4 mr-2" />
-              Update Project
+              <Target className="h-4 w-4 mr-2" />Update Project
             </Button>
             <Button onClick={() => setShowCompleteModal(true)}>
-              <Check className="h-4 w-4 mr-2" />
-              Mark Completed
+              <Check className="h-4 w-4 mr-2" />Mark Completed
             </Button>
           </div>
         )}
       </div>
 
-      {/* Stage Progress */}
       <Card>
         <CardContent className="py-4">
           <div className="flex items-center justify-between overflow-x-auto gap-2">
@@ -389,7 +356,6 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
         </CardContent>
       </Card>
 
-      {/* Tab Navigation */}
       <div className="border-b border-gray-200">
         <nav className="flex gap-6 overflow-x-auto">
           {[
@@ -406,47 +372,29 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 pb-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-brand-green text-brand-green'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              {tab.icon}
-              {tab.label}
+              {tab.icon}{tab.label}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Tab Content */}
       <div className="min-h-[400px]">
-        {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SectionCard title="Project Details" icon={<FolderKanban className="h-5 w-5" />}>
               <dl className="space-y-4">
-                <div>
-                  <dt className="text-sm text-gray-500">Project Reference</dt>
-                  <dd className="font-mono font-medium text-brand-green">{data.project_reference}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Status</dt>
-                  <dd><StageBadge stage={data.status} /></dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Progress</dt>
-                  <dd className="font-medium">{data.completion_percentage}%</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Start Date</dt>
-                  <dd>{data.start_date ? formatDate(data.start_date) : '-'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Target Completion</dt>
-                  <dd>{data.expected_delivery_date ? formatDate(data.expected_delivery_date) : '-'}</dd>
-                </div>
+                <div><dt className="text-sm text-gray-500">Project Reference</dt><dd className="font-mono font-medium text-brand-green">{data.project_reference}</dd></div>
+                <div><dt className="text-sm text-gray-500">Status</dt><dd><StageBadge stage={data.status} /></dd></div>
+                <div><dt className="text-sm text-gray-500">Progress</dt><dd className="font-medium">{data.completion_percentage}%</dd></div>
+                <div><dt className="text-sm text-gray-500">Start Date</dt><dd>{data.start_date ? formatDate(data.start_date) : '-'}</dd></div>
+                <div><dt className="text-sm text-gray-500">Target Completion</dt><dd>{data.expected_delivery_date ? formatDate(data.expected_delivery_date) : '-'}</dd></div>
               </dl>
             </SectionCard>
 
@@ -457,26 +405,15 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                   <p className="text-sm text-gray-500 mt-1">{data.linked_request.working_title}</p>
                   <p className="text-xs text-gray-400 mt-1">Status: {data.linked_request.status}</p>
                 </div>
-              ) : (
-                <p className="text-gray-500">No linked request</p>
-              )}
+              ) : <p className="text-gray-500">No linked request</p>}
             </SectionCard>
 
             <SectionCard title="Client" icon={<Users className="h-5 w-5" />}>
               {data.clients && (
                 <dl className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 w-24">Name:</span>
-                    <span className="font-medium">{data.clients.full_name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 w-24">Email:</span>
-                    <span>{data.clients.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 w-24">Institution:</span>
-                    <span>{data.clients.institution || '-'}</span>
-                  </div>
+                  <div className="flex items-center gap-2"><span className="text-sm text-gray-500 w-24">Name:</span><span className="font-medium">{data.clients.full_name}</span></div>
+                  <div className="flex items-center gap-2"><span className="text-sm text-gray-500 w-24">Email:</span><span>{data.clients.email}</span></div>
+                  <div className="flex items-center gap-2"><span className="text-sm text-gray-500 w-24">Institution:</span><span>{data.clients.institution || '-'}</span></div>
                 </dl>
               )}
             </SectionCard>
@@ -486,21 +423,15 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                 <div className="space-y-2">
                   {data.team.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                      <div>
-                        <p className="font-medium">{member.staff_name}</p>
-                        <p className="text-sm text-gray-500">{member.role}</p>
-                      </div>
+                      <div><p className="font-medium">{member.staff_name}</p><p className="text-sm text-gray-500">{member.role}</p></div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500">No team members assigned</p>
-              )}
+              ) : <p className="text-gray-500">No team members assigned</p>}
             </SectionCard>
           </div>
         )}
 
-        {/* Timeline Tab */}
         {activeTab === 'timeline' && (
           <SectionCard title="Project Timeline" icon={<Clock className="h-5 w-5" />}>
             {data.activities && data.activities.length > 0 ? (
@@ -511,33 +442,25 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     <div className="flex-1">
                       <p className="text-gray-900">{activity.description}</p>
                       <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                        <span>{activity.performer_name}</span>
-                        <span>•</span>
-                        <span>{formatDistanceToNow(activity.created_at)}</span>
+                        <span>{activity.performer_name}</span><span>•</span><span>{formatDistanceToNow(activity.created_at)}</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">No timeline events yet</p>
-            )}
+            ) : <p className="text-gray-500 text-center py-8">No timeline events yet</p>}
           </SectionCard>
         )}
 
-        {/* Milestones Tab */}
         {activeTab === 'milestones' && (
           <SectionCard 
             title="Project Milestones" 
             icon={<Target className="h-5 w-5" />}
-            actions={
-              !isCompleted && (
-                <Button size="sm" variant="secondary" onClick={() => setShowMilestoneModal(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Milestone
-                </Button>
-              )
-            }
+            actions={!isCompleted && (
+              <Button size="sm" variant="secondary" onClick={() => setShowMilestoneModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />Add Milestone
+              </Button>
+            )}
           >
             {data.milestones && data.milestones.length > 0 ? (
               <div className="space-y-4">
@@ -547,49 +470,36 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium">{milestone.title}</h4>
-                          <Badge variant={milestone.status === 'Completed' ? 'success' : milestone.status === 'In Progress' ? 'warning' : 'default'}>
-                            {milestone.status}
-                          </Badge>
+                          <Badge variant={milestone.status === 'Completed' ? 'success' : milestone.status === 'In Progress' ? 'warning' : 'default'}>{milestone.status}</Badge>
                         </div>
-                        {milestone.description && (
-                          <p className="text-sm text-gray-500 mt-1">{milestone.description}</p>
-                        )}
+                        {milestone.description && <p className="text-sm text-gray-500 mt-1">{milestone.description}</p>}
                         <div className="flex items-center gap-4 text-xs text-gray-400 mt-2">
                           <span>Due: {formatDate(milestone.due_date)}</span>
-                          {milestone.completed_date && (
-                            <span>Completed: {formatDate(milestone.completed_date)}</span>
-                          )}
+                          {milestone.completed_date && <span>Completed: {formatDate(milestone.completed_date)}</span>}
                         </div>
                       </div>
                       {milestone.status !== 'Completed' && !isCompleted && (
-                        <Button size="sm" variant="secondary" onClick={() => handleCompleteMilestone(milestone.id)}>
-                          <Check className="h-4 w-4 mr-1" />
-                          Complete
+                        <Button size="sm" variant="secondary" onClick={() => void handleCompleteMilestone(milestone.id)}>
+                          <Check className="h-4 w-4 mr-1" />Complete
                         </Button>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">No milestones created yet</p>
-            )}
+            ) : <p className="text-gray-500 text-center py-8">No milestones created yet</p>}
           </SectionCard>
         )}
 
-        {/* Team Tab */}
         {activeTab === 'team' && (
           <SectionCard 
             title="Project Oversight Team" 
             icon={<Users className="h-5 w-5" />}
-            actions={
-              !isCompleted && (
-                <Button size="sm" variant="secondary" onClick={() => setShowTeamModal(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Assign
-                </Button>
-              )
-            }
+            actions={!isCompleted && (
+              <Button size="sm" variant="secondary" onClick={() => setShowTeamModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />Assign
+              </Button>
+            )}
           >
             {data.team && data.team.length > 0 ? (
               <div className="overflow-x-auto">
@@ -610,12 +520,8 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         <td className="py-3 pr-4 min-w-[210px]">
                           <Select
                             value={member.role}
-                            onChange={(e) =>
-                              handleUpdateTeamRole(member.id, e.target.value)
-                            }
-                            options={PROJECT_ROLE_OPTIONS.filter(
-                              (option) => option.value
-                            )}
+                            onChange={(event) => void handleUpdateTeamRole(member.id, event.target.value)}
+                            options={PROJECT_ROLE_OPTIONS.filter((option) => option.value)}
                             disabled={isSubmitting || isCompleted}
                           />
                         </td>
@@ -623,14 +529,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         <td className="py-3 text-gray-500">{formatDate(member.assigned_date)}</td>
                         <td className="py-3 text-right">
                           {!isCompleted && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleRemoveTeamMember(member.id)}
-                              disabled={isSubmitting}
-                            >
-                              Remove
-                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => void handleRemoveTeamMember(member.id)} disabled={isSubmitting}>Remove</Button>
                           )}
                         </td>
                       </tr>
@@ -638,91 +537,36 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">No team members assigned</p>
-            )}
+            ) : <p className="text-gray-500 text-center py-8">No team members assigned</p>}
           </SectionCard>
         )}
 
-        {/* Documents Tab */}
         {activeTab === 'documents' && (
-          <SectionCard 
-            title="Project Documents" 
-            icon={<FileText className="h-5 w-5" />}
-            actions={
-              !isCompleted && (
-                <Button size="sm" variant="secondary">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload
-                </Button>
-              )
-            }
-          >
-            {data.documents && data.documents.length > 0 ? (
-              <div className="space-y-3">
-                {data.documents.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-gray-400" />
-                      <div>
-                        <p className="font-medium text-gray-900">{doc.file_name}</p>
-                        <p className="text-sm text-gray-500">{doc.category} • {(doc.file_size / 1024).toFixed(1)} KB</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">No documents uploaded</p>
-            )}
-          </SectionCard>
-        )}
-
-        {/* Payments Tab */}
-        {activeTab === 'payments' && (
-  <SectionCard
-    title="Payment Information"
-    icon={<CreditCard className="h-5 w-5" />}
-  >
-    <PaymentsTab
-      projectId={id}
-      isCompleted={isCompleted}
-    />
-  </SectionCard>
-)}
-
-                {/* QA Tab */}
-        {activeTab === 'qa' && (
-          <SectionCard
-            title="Quality Assurance Review"
-            icon={<Shield className="h-5 w-5" />}
-          >
-            <QualityAssuranceTab
+          <SectionCard title="Project Documents" icon={<FileText className="h-5 w-5" />}>
+            <ProjectDocumentsTab
               projectId={id}
+              documents={data.documents || []}
               isCompleted={isCompleted}
+              onChanged={refetch}
             />
           </SectionCard>
         )}
 
-        {/* Deliverables Tab */}
-        {activeTab === 'deliverables' && (
-          <DeliverablesTab
-            projectId={id}
-            isCompleted={isCompleted}
-          />
+        {activeTab === 'payments' && (
+          <SectionCard title="Payment Information" icon={<CreditCard className="h-5 w-5" />}>
+            <PaymentsTab projectId={id} isCompleted={isCompleted} />
+          </SectionCard>
         )}
 
-        {/* Messages Tab */}
-        {activeTab === 'messages' && (
-          <StaffProjectMessages projectId={id} />
+        {activeTab === 'qa' && (
+          <SectionCard title="Quality Assurance Review" icon={<Shield className="h-5 w-5" />}>
+            <QualityAssuranceTab projectId={id} isCompleted={isCompleted} />
+          </SectionCard>
         )}
 
-        {/* Activity Tab */}
+        {activeTab === 'deliverables' && <DeliverablesTab projectId={id} isCompleted={isCompleted} />}
+        {activeTab === 'messages' && <StaffProjectMessages projectId={id} />}
+
         {activeTab === 'activity' && (
           <SectionCard title="Activity Log" icon={<Activity className="h-5 w-5" />}>
             {data.activities && data.activities.length > 0 ? (
@@ -733,22 +577,17 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     <div className="flex-1">
                       <p className="text-gray-900">{activity.description}</p>
                       <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                        <span>{activity.performer_name}</span>
-                        <span>•</span>
-                        <span>{formatDistanceToNow(activity.created_at)}</span>
+                        <span>{activity.performer_name}</span><span>•</span><span>{formatDistanceToNow(activity.created_at)}</span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">No activity recorded</p>
-            )}
+            ) : <p className="text-gray-500 text-center py-8">No activity recorded</p>}
           </SectionCard>
         )}
       </div>
 
-      {/* Update Project Modal */}
       <Modal
         isOpen={showProjectUpdateModal}
         onClose={() => {
@@ -759,24 +598,14 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       >
         <div className="space-y-4">
           {projectUpdateError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {projectUpdateError}
-            </div>
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{projectUpdateError}</div>
           )}
 
           <Select
             label="Project Status"
             value={projectUpdateForm.status}
-            onChange={(event) =>
-              setProjectUpdateForm((previous) => ({
-                ...previous,
-                status: event.target.value,
-              }))
-            }
-            options={PROJECT_STATUSES.map((status) => ({
-              value: status,
-              label: status,
-            }))}
+            onChange={(event) => setProjectUpdateForm((previous) => ({ ...previous, status: event.target.value }))}
+            options={PROJECT_STATUSES.map((status) => ({ value: status, label: status }))}
             disabled={isSubmitting}
           />
 
@@ -787,12 +616,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             max={100}
             step={1}
             value={projectUpdateForm.completionPercentage}
-            onChange={(event) =>
-              setProjectUpdateForm((previous) => ({
-                ...previous,
-                completionPercentage: Number(event.target.value),
-              }))
-            }
+            onChange={(event) => setProjectUpdateForm((previous) => ({ ...previous, completionPercentage: Number(event.target.value) }))}
             disabled={isSubmitting}
           />
 
@@ -800,24 +624,14 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             label="Target Deadline"
             type="date"
             value={projectUpdateForm.expectedDeliveryDate}
-            onChange={(event) =>
-              setProjectUpdateForm((previous) => ({
-                ...previous,
-                expectedDeliveryDate: event.target.value,
-              }))
-            }
+            onChange={(event) => setProjectUpdateForm((previous) => ({ ...previous, expectedDeliveryDate: event.target.value }))}
             disabled={isSubmitting}
           />
 
           <Textarea
             label="Internal Notes"
             value={projectUpdateForm.notes}
-            onChange={(event) =>
-              setProjectUpdateForm((previous) => ({
-                ...previous,
-                notes: event.target.value,
-              }))
-            }
+            onChange={(event) => setProjectUpdateForm((previous) => ({ ...previous, notes: event.target.value }))}
             placeholder="Add internal project notes..."
             rows={4}
             disabled={isSubmitting}
@@ -825,158 +639,71 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
         </div>
 
         <div className="flex justify-end gap-3 mt-6">
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowProjectUpdateModal(false);
-              setProjectUpdateError(null);
-            }}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onClick={handleUpdateProject}
-            disabled={isSubmitting}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+          <Button variant="secondary" onClick={() => { setShowProjectUpdateModal(false); setProjectUpdateError(null); }} disabled={isSubmitting}>Cancel</Button>
+          <Button onClick={() => void handleUpdateProject()} disabled={isSubmitting}>
+            <Save className="h-4 w-4 mr-2" />{isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </Modal>
 
-      {/* Add Milestone Modal */}
       <Modal isOpen={showMilestoneModal} onClose={() => setShowMilestoneModal(false)} title="Add Milestone">
         <div className="space-y-4">
-          <Input
-            label="Title"
-            value={milestoneForm.title}
-            onChange={(e) => setMilestoneForm(prev => ({ ...prev, title: e.target.value }))}
-            placeholder="Milestone title"
-          />
-          <Textarea
-            label="Description"
-            value={milestoneForm.description}
-            onChange={(e) => setMilestoneForm(prev => ({ ...prev, description: e.target.value }))}
-            placeholder="Milestone description"
-            rows={3}
-          />
-          <Input
-            label="Due Date"
-            type="date"
-            value={milestoneForm.due_date}
-            onChange={(e) => setMilestoneForm(prev => ({ ...prev, due_date: e.target.value }))}
-          />
+          <Input label="Title" value={milestoneForm.title} onChange={(event) => setMilestoneForm((previous) => ({ ...previous, title: event.target.value }))} placeholder="Milestone title" />
+          <Textarea label="Description" value={milestoneForm.description} onChange={(event) => setMilestoneForm((previous) => ({ ...previous, description: event.target.value }))} placeholder="Milestone description" rows={3} />
+          <Input label="Due Date" type="date" value={milestoneForm.due_date} onChange={(event) => setMilestoneForm((previous) => ({ ...previous, due_date: event.target.value }))} />
         </div>
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="secondary" onClick={() => setShowMilestoneModal(false)}>Cancel</Button>
-          <Button onClick={handleAddMilestone} disabled={isSubmitting || !milestoneForm.title || !milestoneForm.due_date}>
-            Add Milestone
-          </Button>
+          <Button onClick={() => void handleAddMilestone()} disabled={isSubmitting || !milestoneForm.title || !milestoneForm.due_date}>Add Milestone</Button>
         </div>
       </Modal>
 
-      {/* Assign Team Modal */}
       <Modal
         isOpen={showTeamModal}
-        onClose={() => {
-          setShowTeamModal(false);
-          setTeamError(null);
-        }}
+        onClose={() => { setShowTeamModal(false); setTeamError(null); }}
         title="Assign Team Member"
       >
         <div className="space-y-4">
-          <p className="text-gray-500">
-            Select a staff member and assign a role for this project.
-          </p>
-
-          {teamError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {teamError}
-            </div>
-          )}
-
+          <p className="text-gray-500">Select a staff member and assign a role for this project.</p>
+          {teamError && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{teamError}</div>}
           <Select
             label="Staff Member"
             value={teamForm.staffId}
-            onChange={(e) =>
-              setTeamForm((previous) => ({
-                ...previous,
-                staffId: e.target.value,
-              }))
-            }
+            onChange={(event) => setTeamForm((previous) => ({ ...previous, staffId: event.target.value }))}
             options={[
-              {
-                value: '',
-                label: isLoadingStaff
-                  ? 'Loading staff members...'
-                  : 'Select staff member',
-              },
-              ...staffOptions.map((staff) => ({
-                value: staff.id,
-                label: `${staff.full_name} — ${staff.email}`,
-              })),
+              { value: '', label: isLoadingStaff ? 'Loading staff members...' : 'Select staff member' },
+              ...staffOptions.map((staff) => ({ value: staff.id, label: `${staff.full_name} — ${staff.email}` })),
             ]}
             disabled={isLoadingStaff || isSubmitting}
           />
-
           <Select
             label="Project Role"
             value={teamForm.role}
-            onChange={(e) =>
-              setTeamForm((previous) => ({
-                ...previous,
-                role: e.target.value,
-              }))
-            }
+            onChange={(event) => setTeamForm((previous) => ({ ...previous, role: event.target.value }))}
             options={PROJECT_ROLE_OPTIONS}
             disabled={isSubmitting}
           />
         </div>
 
         <div className="flex justify-end gap-3 mt-6">
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowTeamModal(false);
-              setTeamError(null);
-            }}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleAssignTeamMember}
-            disabled={
-              isSubmitting ||
-              isLoadingStaff ||
-              !teamForm.staffId ||
-              !teamForm.role
-            }
-          >
+          <Button variant="secondary" onClick={() => { setShowTeamModal(false); setTeamError(null); }} disabled={isSubmitting}>Cancel</Button>
+          <Button onClick={() => void handleAssignTeamMember()} disabled={isSubmitting || isLoadingStaff || !teamForm.staffId || !teamForm.role}>
             {isSubmitting ? 'Assigning...' : 'Assign'}
           </Button>
         </div>
       </Modal>
 
-      {/* Complete Project Modal */}
       <Modal isOpen={showCompleteModal} onClose={() => setShowCompleteModal(false)} title="Complete Project">
         <div className="space-y-4">
-          <p className="text-gray-600">
-            Are you sure you want to mark this project as completed? This action cannot be undone.
-          </p>
+          <p className="text-gray-600">Are you sure you want to mark this project as completed? This action cannot be undone.</p>
           <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <p className="text-sm text-amber-800">
-              <strong>Note:</strong> Once completed, the project will become read-only.
-            </p>
+            <p className="text-sm text-amber-800"><strong>Note:</strong> Once completed, the project will become read-only.</p>
           </div>
         </div>
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="secondary" onClick={() => setShowCompleteModal(false)}>Cancel</Button>
-          <Button onClick={handleCompleteProject} disabled={isSubmitting}>
-            <Check className="h-4 w-4 mr-2" />
-            Confirm Completion
+          <Button onClick={() => void handleCompleteProject()} disabled={isSubmitting}>
+            <Check className="h-4 w-4 mr-2" />Confirm Completion
           </Button>
         </div>
       </Modal>
