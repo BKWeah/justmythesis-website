@@ -26,10 +26,7 @@ export async function GET(request: NextRequest) {
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !anonKey) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
     }
 
     const authClient = createServerClient(supabaseUrl, anonKey, {
@@ -47,10 +44,7 @@ export async function GET(request: NextRequest) {
     } = await authClient.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const adminClient = createAdminClient();
@@ -62,18 +56,15 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (staffError || !staffData) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const search = searchParams.get('search') || '';
-    const stage = searchParams.get('stage') || '';
-    const status = searchParams.get('status') || '';
-    const staff = searchParams.get('staff') || '';
-    const institution = searchParams.get('institution') || '';
+    const search = (searchParams.get('search') || '').trim();
+    const stage = (searchParams.get('stage') || '').trim();
+    const status = (searchParams.get('status') || '').trim();
+    const staff = (searchParams.get('staff') || '').trim();
+    const institution = (searchParams.get('institution') || '').trim();
 
     let query = adminClient
       .from('projects')
@@ -88,75 +79,98 @@ export async function GET(request: NextRequest) {
       `)
       .order('created_at', { ascending: false });
 
-    if (stage) {
-      query = query.eq('current_stage', stage);
-    }
-
     if (status) {
       query = query.eq('status', status);
     }
 
-    const { data, error } = await query;
+    const { data: projects, error: projectsError } = await query;
 
-    if (error) {
-      console.error('Projects fetch error:', error);
-
+    if (projectsError) {
+      console.error('Projects fetch error:', projectsError);
       return NextResponse.json(
-        { error: error.message || 'Failed to fetch projects' },
+        { error: projectsError.message || 'Failed to fetch projects' },
         { status: 500 }
       );
     }
 
-    let filteredData = (data || []).map((project: any) => ({
+    const projectIds = (projects || []).map((project: any) => project.id).filter(Boolean);
+    let staffRows: any[] = [];
+
+    if (projectIds.length > 0) {
+      const { data, error } = await adminClient
+        .from('project_staff')
+        .select(`
+          id,
+          project_id,
+          role,
+          assigned_at,
+          staff:staff_id (
+            id,
+            full_name,
+            email,
+            role
+          )
+        `)
+        .in('project_id', projectIds)
+        .order('assigned_at', { ascending: true });
+
+      if (error) {
+        console.error('Project staff fetch error:', error);
+      } else {
+        staffRows = data || [];
+      }
+    }
+
+    const staffByProject = staffRows.reduce((acc: Record<string, any[]>, row: any) => {
+      if (!acc[row.project_id]) acc[row.project_id] = [];
+      acc[row.project_id].push(row);
+      return acc;
+    }, {});
+
+    let filteredData = (projects || []).map((project: any) => ({
       ...project,
-      project_staff: [],
+      current_stage: project.status,
+      project_staff: staffByProject[project.id] || [],
     }));
+
+    if (stage) {
+      filteredData = filteredData.filter((project: any) => project.current_stage === stage);
+    }
 
     if (search) {
       const searchLower = search.toLowerCase();
-
       filteredData = filteredData.filter((project: any) => {
         const client = project.clients;
+        const assignedStaff = project.project_staff || [];
 
         return (
-          project.project_reference
-            ?.toLowerCase()
-            .includes(searchLower) ||
-          project.project_title
-            ?.toLowerCase()
-            .includes(searchLower) ||
-          client?.full_name
-            ?.toLowerCase()
-            .includes(searchLower) ||
-          client?.institution
-            ?.toLowerCase()
-            .includes(searchLower)
+          project.project_reference?.toLowerCase().includes(searchLower) ||
+          project.project_title?.toLowerCase().includes(searchLower) ||
+          client?.full_name?.toLowerCase().includes(searchLower) ||
+          client?.institution?.toLowerCase().includes(searchLower) ||
+          assignedStaff.some((assignment: any) =>
+            assignment.staff?.full_name?.toLowerCase().includes(searchLower)
+          )
         );
       });
     }
 
     if (institution) {
       filteredData = filteredData.filter(
-        (project: any) =>
-          project.clients?.institution === institution
+        (project: any) => project.clients?.institution === institution
       );
     }
 
     if (staff) {
-      filteredData = [];
+      filteredData = filteredData.filter((project: any) =>
+        project.project_staff?.some((assignment: any) => assignment.staff?.id === staff)
+      );
     }
 
-    return NextResponse.json({
-      projects: filteredData,
-    });
-  } catch (error: any) {
+    return NextResponse.json({ projects: filteredData });
+  } catch (error: unknown) {
     console.error('Projects API error:', error);
-
-    return NextResponse.json(
-      {
-        error: error?.message || 'Failed to fetch projects',
-      },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : 'Failed to fetch projects';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
