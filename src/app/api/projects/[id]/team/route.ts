@@ -18,6 +18,12 @@ function createAdminClient() {
   });
 }
 
+type CookieToSet = {
+  name: string;
+  value: string;
+  options?: Record<string, unknown>;
+};
+
 async function authenticateStaff(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -30,15 +36,23 @@ async function authenticateStaff(request: NextRequest) {
       ),
       adminClient: null,
       staff: null,
+      applyAuthCookies: (response: NextResponse) => response,
     };
   }
+
+  const cookiesToSet: CookieToSet[] = [];
 
   const authClient = createServerClient(supabaseUrl, anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll() {},
+      setAll(cookies) {
+        cookies.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          cookiesToSet.push({ name, value, options });
+        });
+      },
     },
   });
 
@@ -47,14 +61,25 @@ async function authenticateStaff(request: NextRequest) {
     error: userError,
   } = await authClient.auth.getUser();
 
+  const applyAuthCookies = (response: NextResponse) => {
+    cookiesToSet.forEach(({ name, value, options }) => {
+      response.cookies.set(
+        name,
+        value,
+        options as Parameters<typeof response.cookies.set>[2]
+      );
+    });
+    return response;
+  };
+
   if (userError || !user) {
     return {
-      errorResponse: NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+      errorResponse: applyAuthCookies(
+        NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       ),
       adminClient: null,
       staff: null,
+      applyAuthCookies,
     };
   }
 
@@ -68,12 +93,12 @@ async function authenticateStaff(request: NextRequest) {
 
   if (staffError || !staff) {
     return {
-      errorResponse: NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
+      errorResponse: applyAuthCookies(
+        NextResponse.json({ error: 'Access denied' }, { status: 403 })
       ),
       adminClient: null,
       staff: null,
+      applyAuthCookies,
     };
   }
 
@@ -81,6 +106,7 @@ async function authenticateStaff(request: NextRequest) {
     errorResponse: null,
     adminClient,
     staff,
+    applyAuthCookies,
   };
 }
 
@@ -148,8 +174,7 @@ export async function POST(
       return authentication.errorResponse!;
     }
 
-    const adminClient = authentication.adminClient;
-    const currentStaff = authentication.staff;
+    const { adminClient, staff: currentStaff, applyAuthCookies } = authentication;
     const projectId = params.id;
     const body = await request.json();
 
@@ -157,9 +182,11 @@ export async function POST(
     const role = normalizeProjectRole(body?.role);
 
     if (!staffId || !role) {
-      return NextResponse.json(
-        { error: 'A valid team member and project role are required' },
-        { status: 400 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'A valid team member and project role are required' },
+          { status: 400 }
+        )
       );
     }
 
@@ -172,72 +199,76 @@ export async function POST(
     if (projectError) throw projectError;
 
     if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
+      return applyAuthCookies(
+        NextResponse.json({ error: 'Project not found' }, { status: 404 })
       );
     }
 
-    const { data: selectedStaff, error: selectedStaffError } =
-      await adminClient
-        .from('staff_users')
-        .select('id, full_name, email, role')
-        .eq('id', staffId)
-        .maybeSingle();
+    const { data: selectedStaff, error: selectedStaffError } = await adminClient
+      .from('staff_users')
+      .select('id, full_name, email, role')
+      .eq('id', staffId)
+      .maybeSingle();
 
     if (selectedStaffError) throw selectedStaffError;
 
     if (!selectedStaff) {
-      return NextResponse.json(
-        { error: 'Selected staff member was not found' },
-        { status: 404 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'Selected staff member was not found' },
+          { status: 404 }
+        )
       );
     }
 
     if (!isEligibleForRole(selectedStaff.role, role)) {
-      return NextResponse.json(
-        {
-          error: `${selectedStaff.full_name} is not eligible for the ${role} project role`,
-        },
-        { status: 409 }
+      return applyAuthCookies(
+        NextResponse.json(
+          {
+            error: `${selectedStaff.full_name} is not eligible for the ${role} project role`,
+          },
+          { status: 409 }
+        )
       );
     }
 
-    const { data: existingAssignment, error: duplicateError } =
-      await adminClient
-        .from('project_staff')
-        .select('id')
-        .eq('project_id', projectId)
-        .eq('staff_id', staffId)
-        .maybeSingle();
+    const { data: existingAssignment, error: duplicateError } = await adminClient
+      .from('project_staff')
+      .select('id')
+      .eq('project_id', projectId)
+      .eq('staff_id', staffId)
+      .maybeSingle();
 
     if (duplicateError) throw duplicateError;
 
     if (existingAssignment) {
-      return NextResponse.json(
-        { error: 'This staff member is already assigned to the project' },
-        { status: 409 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'This staff member is already assigned to the project' },
+          { status: 409 }
+        )
       );
     }
 
     if (await roleAlreadyAssigned(adminClient, projectId, role)) {
-      return NextResponse.json(
-        { error: `The ${role} role is already assigned for this project` },
-        { status: 409 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: `${role} is already assigned to this project` },
+          { status: 409 }
+        )
       );
     }
 
-    const { data: assignment, error: assignmentError } =
-      await adminClient
-        .from('project_staff')
-        .insert({
-          project_id: projectId,
-          staff_id: staffId,
-          role,
-          assigned_at: new Date().toISOString(),
-        })
-        .select('id, project_id, staff_id, role, assigned_at')
-        .single();
+    const { data: assignment, error: assignmentError } = await adminClient
+      .from('project_staff')
+      .insert({
+        project_id: projectId,
+        staff_id: staffId,
+        role,
+        assigned_at: new Date().toISOString(),
+      })
+      .select('id, project_id, staff_id, role, assigned_at')
+      .single();
 
     if (assignmentError) throw assignmentError;
 
@@ -256,22 +287,23 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        assignment: {
-          ...assignment,
-          staff_name: selectedStaff.full_name,
-          staff_email: selectedStaff.email,
-          staff_role: selectedStaff.role,
-          assigned_date: assignment.assigned_at,
+    return applyAuthCookies(
+      NextResponse.json(
+        {
+          success: true,
+          assignment: {
+            ...assignment,
+            staff_name: selectedStaff.full_name,
+            staff_email: selectedStaff.email,
+            staff_role: selectedStaff.role,
+            assigned_date: assignment.assigned_at,
+          },
         },
-      },
-      { status: 201 }
+        { status: 201 }
+      )
     );
   } catch (error: any) {
     console.error('Assign team API error:', error);
-
     return NextResponse.json(
       { error: error?.message || 'Failed to assign team member' },
       { status: 500 }
@@ -294,8 +326,7 @@ export async function PATCH(
       return authentication.errorResponse!;
     }
 
-    const adminClient = authentication.adminClient;
-    const currentStaff = authentication.staff;
+    const { adminClient, staff: currentStaff, applyAuthCookies } = authentication;
     const projectId = params.id;
     const body = await request.json();
 
@@ -303,34 +334,37 @@ export async function PATCH(
     const role = normalizeProjectRole(body?.role);
 
     if (!memberId || !role) {
-      return NextResponse.json(
-        { error: 'A valid assignment and project role are required' },
-        { status: 400 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'A valid assignment and project role are required' },
+          { status: 400 }
+        )
       );
     }
 
-    const { data: existingAssignment, error: lookupError } =
-      await adminClient
-        .from('project_staff')
-        .select(`
-          id,
-          staff_id,
-          role,
-          staff:staff_id (
-            full_name,
-            role
-          )
-        `)
-        .eq('id', memberId)
-        .eq('project_id', projectId)
-        .maybeSingle();
+    const { data: existingAssignment, error: lookupError } = await adminClient
+      .from('project_staff')
+      .select(`
+        id,
+        staff_id,
+        role,
+        staff:staff_id (
+          full_name,
+          role
+        )
+      `)
+      .eq('id', memberId)
+      .eq('project_id', projectId)
+      .maybeSingle();
 
     if (lookupError) throw lookupError;
 
     if (!existingAssignment) {
-      return NextResponse.json(
-        { error: 'Team assignment not found' },
-        { status: 404 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'Team assignment not found' },
+          { status: 404 }
+        )
       );
     }
 
@@ -339,27 +373,30 @@ export async function PATCH(
     const staffSystemRole = staffRecord?.role;
 
     if (!staffSystemRole || !isEligibleForRole(staffSystemRole, role)) {
-      return NextResponse.json(
-        { error: `${staffName} is not eligible for the ${role} project role` },
-        { status: 409 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: `${staffName} is not eligible for the ${role} project role` },
+          { status: 409 }
+        )
       );
     }
 
     if (await roleAlreadyAssigned(adminClient, projectId, role, memberId)) {
-      return NextResponse.json(
-        { error: `The ${role} role is already assigned for this project` },
-        { status: 409 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: `${role} is already assigned to this project` },
+          { status: 409 }
+        )
       );
     }
 
-    const { data: assignment, error: updateError } =
-      await adminClient
-        .from('project_staff')
-        .update({ role })
-        .eq('id', memberId)
-        .eq('project_id', projectId)
-        .select('id, project_id, staff_id, role, assigned_at')
-        .single();
+    const { data: assignment, error: updateError } = await adminClient
+      .from('project_staff')
+      .update({ role })
+      .eq('id', memberId)
+      .eq('project_id', projectId)
+      .select('id, project_id, staff_id, role, assigned_at')
+      .single();
 
     if (updateError) throw updateError;
 
@@ -378,10 +415,11 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({ success: true, assignment });
+    return applyAuthCookies(
+      NextResponse.json({ success: true, assignment })
+    );
   } catch (error: any) {
     console.error('Update team role API error:', error);
-
     return NextResponse.json(
       { error: error?.message || 'Failed to update team role' },
       { status: 500 }
@@ -404,15 +442,16 @@ export async function DELETE(
       return authentication.errorResponse!;
     }
 
-    const adminClient = authentication.adminClient;
-    const currentStaff = authentication.staff;
+    const { adminClient, staff: currentStaff, applyAuthCookies } = authentication;
     const projectId = params.id;
     const memberId = request.nextUrl.searchParams.get('memberId');
 
     if (!memberId) {
-      return NextResponse.json(
-        { error: 'Assignment ID is required' },
-        { status: 400 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'Assignment ID is required' },
+          { status: 400 }
+        )
       );
     }
 
@@ -433,9 +472,11 @@ export async function DELETE(
     if (lookupError) throw lookupError;
 
     if (!assignment) {
-      return NextResponse.json(
-        { error: 'Team assignment not found' },
-        { status: 404 }
+      return applyAuthCookies(
+        NextResponse.json(
+          { error: 'Team assignment not found' },
+          { status: 404 }
+        )
       );
     }
 
@@ -447,8 +488,7 @@ export async function DELETE(
 
     if (deleteError) throw deleteError;
 
-    const staffName =
-      (assignment as any).staff?.full_name || 'Team member';
+    const staffName = (assignment as any).staff?.full_name || 'Team member';
 
     await adminClient.from('activity_logs').insert({
       category: 'Project',
@@ -464,10 +504,9 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ success: true });
+    return applyAuthCookies(NextResponse.json({ success: true }));
   } catch (error: any) {
     console.error('Remove team member API error:', error);
-
     return NextResponse.json(
       { error: error?.message || 'Failed to remove team member' },
       { status: 500 }
