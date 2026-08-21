@@ -2,6 +2,8 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 type RecommendationStatus =
   | 'Draft'
   | 'Approved Internally'
@@ -56,7 +58,11 @@ async function authenticateStaff(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll() {},
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value);
+        });
+      },
     },
   });
 
