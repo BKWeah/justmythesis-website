@@ -102,18 +102,11 @@ export async function GET(
     const adminClient = authentication.adminClient;
     const projectId = params.id;
 
-    console.log('Requested Project ID:', projectId);
-
     const { data: project, error: projectError } = await adminClient
       .from('projects')
       .select('*')
       .eq('id', projectId)
       .maybeSingle();
-
-    console.log('Project Query Result:', {
-      project,
-      projectError,
-    });
 
     if (projectError) {
       return NextResponse.json(
@@ -129,71 +122,91 @@ export async function GET(
       );
     }
 
-    const [clientResult, requestResult, activityResult, teamResult] =
-      await Promise.allSettled([
-        adminClient
-          .from('clients')
-          .select(`
+    const [
+      clientResult,
+      requestResult,
+      activityResult,
+      teamResult,
+      milestoneResult,
+    ] = await Promise.allSettled([
+      adminClient
+        .from('clients')
+        .select(`
+          id,
+          full_name,
+          email,
+          phone,
+          whatsapp,
+          institution,
+          degree_level,
+          programme
+        `)
+        .eq('id', project.client_id)
+        .maybeSingle(),
+
+      project.support_request_id
+        ? adminClient
+            .from('support_requests')
+            .select(`
+              id,
+              request_reference,
+              working_title,
+              requested_service,
+              current_stage,
+              academic_level,
+              status,
+              created_at
+            `)
+            .eq('id', project.support_request_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+
+      adminClient
+        .from('activity_logs')
+        .select(`
+          id,
+          category,
+          action,
+          description,
+          performed_by,
+          created_at
+        `)
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false }),
+
+      adminClient
+        .from('project_staff')
+        .select(`
+          id,
+          project_id,
+          staff_id,
+          role,
+          assigned_at,
+          staff:staff_id (
             id,
             full_name,
             email,
-            phone,
-            whatsapp,
-            institution,
-            degree_level,
-            programme
-          `)
-          .eq('id', project.client_id)
-          .maybeSingle(),
+            role
+          )
+        `)
+        .eq('project_id', projectId)
+        .order('assigned_at', { ascending: true }),
 
-        project.support_request_id
-          ? adminClient
-              .from('support_requests')
-              .select(`
-                id,
-                request_reference,
-                working_title,
-                requested_service,
-                current_stage,
-                academic_level,
-                status,
-                created_at
-              `)
-              .eq('id', project.support_request_id)
-              .maybeSingle()
-          : Promise.resolve({ data: null, error: null }),
-
-        adminClient
-          .from('activity_logs')
-          .select(`
-            id,
-            category,
-            action,
-            description,
-            performed_by,
-            created_at
-          `)
-          .eq('project_id', projectId)
-          .order('created_at', { ascending: false }),
-
-        adminClient
-          .from('project_staff')
-          .select(`
-            id,
-            project_id,
-            staff_id,
-            role,
-            assigned_at,
-            staff:staff_id (
-              id,
-              full_name,
-              email,
-              role
-            )
-          `)
-          .eq('project_id', projectId)
-          .order('assigned_at', { ascending: true }),
-      ]);
+      adminClient
+        .from('project_milestones')
+        .select(`
+          id,
+          title,
+          description,
+          due_date,
+          status,
+          completed_date,
+          created_at,
+          updated_at
+        `)
+        .eq('project_id', projectId)
+        .order('due_date', { ascending: true }),
+    ]);
 
     const client =
       clientResult.status === 'fulfilled'
@@ -213,6 +226,11 @@ export async function GET(
     const rawTeam =
       teamResult.status === 'fulfilled'
         ? teamResult.value.data || []
+        : [];
+
+    const milestones =
+      milestoneResult.status === 'fulfilled'
+        ? milestoneResult.value.data || []
         : [];
 
     const performerIds = [
@@ -262,7 +280,7 @@ export async function GET(
         linked_request: linkedRequest,
         activities,
         team,
-        milestones: [],
+        milestones,
         documents: [],
         payments: [],
         qa_review: null,
@@ -303,7 +321,7 @@ export async function PATCH(
     const body = await request.json();
     const { action, data: updateData } = body;
 
-        if (action === 'update_project') {
+    if (action === 'update_project') {
       const allowedStatuses = [
         'Project Activated',
         'Development',
@@ -313,26 +331,14 @@ export async function PATCH(
         'Completed',
       ];
 
-      const status = String(
-        updateData?.status ?? ''
-      ).trim();
-
-      const completionPercentage = Number(
-        updateData?.completionPercentage
-      );
-
-      const expectedDeliveryDate =
-        updateData?.expectedDeliveryDate || null;
-
-      const notes =
-        String(updateData?.notes ?? '').trim() || null;
+      const status = String(updateData?.status ?? '').trim();
+      const completionPercentage = Number(updateData?.completionPercentage);
+      const expectedDeliveryDate = updateData?.expectedDeliveryDate || null;
+      const notes = String(updateData?.notes ?? '').trim() || null;
 
       if (!allowedStatuses.includes(status)) {
         return NextResponse.json(
-          {
-            error:
-              'A valid project status is required',
-          },
+          { error: 'A valid project status is required' },
           { status: 400 }
         );
       }
@@ -343,81 +349,57 @@ export async function PATCH(
         completionPercentage > 100
       ) {
         return NextResponse.json(
-          {
-            error:
-              'Progress must be a whole number from 0 to 100',
-          },
+          { error: 'Progress must be a whole number from 0 to 100' },
           { status: 400 }
         );
       }
 
       if (
         expectedDeliveryDate &&
-        !/^\d{4}-\d{2}-\d{2}$/.test(
-          expectedDeliveryDate
-        )
+        !/^\d{4}-\d{2}-\d{2}$/.test(expectedDeliveryDate)
       ) {
         return NextResponse.json(
-          {
-            error:
-              'A valid target deadline is required',
-          },
+          { error: 'A valid target deadline is required' },
           { status: 400 }
         );
       }
 
       const isCompleting =
-        status === 'Completed' ||
-        completionPercentage === 100;
+        status === 'Completed' || completionPercentage === 100;
 
-      const { data: project, error } =
-        await adminClient
-          .from('projects')
-          .update({
-            status: isCompleting
-              ? 'Completed'
-              : status,
-            completion_percentage: isCompleting
-              ? 100
-              : completionPercentage,
-            expected_delivery_date:
-              expectedDeliveryDate,
-            notes,
-            completed_at: isCompleting
-              ? new Date().toISOString()
-              : null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', projectId)
-          .select('*')
-          .single();
+      const { data: project, error } = await adminClient
+        .from('projects')
+        .update({
+          status: isCompleting ? 'Completed' : status,
+          completion_percentage: isCompleting
+            ? 100
+            : completionPercentage,
+          expected_delivery_date: expectedDeliveryDate,
+          notes,
+          completed_at: isCompleting
+            ? new Date().toISOString()
+            : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', projectId)
+        .select('*')
+        .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      await adminClient
-        .from('activity_logs')
-        .insert({
-          category: 'Project',
-          action: 'project_updated',
-          description: `Project updated: ${
-            isCompleting ? 'Completed' : status
-          }, ${
-            isCompleting
-              ? 100
-              : completionPercentage
-          }% complete`,
-          project_id: projectId,
-          entity_type: 'projects',
-          entity_id: projectId,
-          performed_by: staff.id,
-        });
-
-      return NextResponse.json({
-        success: true,
-        project,
+      await adminClient.from('activity_logs').insert({
+        category: 'Project',
+        action: 'project_updated',
+        description: `Project updated: ${
+          isCompleting ? 'Completed' : status
+        }, ${isCompleting ? 100 : completionPercentage}% complete`,
+        project_id: projectId,
+        entity_type: 'projects',
+        entity_id: projectId,
+        performed_by: staff.id,
       });
+
+      return NextResponse.json({ success: true, project });
     }
 
     if (action === 'complete') {
@@ -433,9 +415,7 @@ export async function PATCH(
         .select('*')
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       await adminClient.from('activity_logs').insert({
         category: 'Project',
@@ -447,10 +427,7 @@ export async function PATCH(
         performed_by: staff.id,
       });
 
-      return NextResponse.json({
-        success: true,
-        project,
-      });
+      return NextResponse.json({ success: true, project });
     }
 
     return NextResponse.json(
