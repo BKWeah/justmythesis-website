@@ -83,6 +83,33 @@ const RECOMMENDATION_STATUS_OPTIONS = [
   { value: "Rejected", label: "Rejected" },
 ];
 
+function calculateProjectDeadline(startDate: string, timeline: string): string {
+  if (!startDate || !timeline) return "";
+
+  const match = timeline
+    .trim()
+    .toLowerCase()
+    .match(/(\d+(?:\.\d+)?)\s*(day|days|week|weeks|month|months)/);
+
+  if (!match) return "";
+
+  const amount = Number.parseFloat(match[1]);
+  const unit = match[2];
+  const date = new Date(`${startDate}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  if (unit.startsWith("day")) {
+    date.setDate(date.getDate() + amount);
+  } else if (unit.startsWith("week")) {
+    date.setDate(date.getDate() + amount * 7);
+  } else if (unit.startsWith("month")) {
+    date.setMonth(date.getMonth() + amount);
+  }
+
+  return date.toISOString().split("T")[0];
+}
+
 function StatusBadge({ status }: { status: string }) {
   const variants: Record<
     string,
@@ -248,8 +275,11 @@ export default function RequestDetailPage({
     setProjectForm((previous) => ({
       ...previous,
       project_title: data.working_title || "",
-      service_package: data.requested_service || "",
-      deadline: data.submission_deadline || "",
+      service_package:
+        data.recommendation?.recommended_service || data.requested_service || "",
+      payment_structure: data.recommendation?.payment_structure || "",
+      estimated_cost: data.recommendation?.recommended_fee?.toString() || "",
+      deadline: "",
     }));
   }, [data]);
 
@@ -288,9 +318,7 @@ export default function RequestDetailPage({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          requestId: id,
-        }),
+        body: JSON.stringify({ requestId: id }),
       });
 
       const result = await response.json();
@@ -467,9 +495,7 @@ export default function RequestDetailPage({
     clearMessages();
 
     if (!data?.recommendation) {
-      setActionError(
-        "Save the recommendation before recording a client decision.",
-      );
+      setActionError("Save the recommendation before recording a client decision.");
       return;
     }
 
@@ -542,13 +568,22 @@ export default function RequestDetailPage({
       return;
     }
 
+    if (!projectForm.start_date) {
+      setActionError("Start date is required.");
+      return;
+    }
+
+    if (!projectForm.deadline) {
+      setActionError("Project deadline is required.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const result = await convertToProject({
         project_title: projectForm.project_title,
-        start_date:
-          projectForm.start_date || new Date().toISOString().split("T")[0],
+        start_date: projectForm.start_date,
         deadline: projectForm.deadline,
         service_package:
           projectForm.service_package || data?.requested_service || "",
@@ -598,41 +633,13 @@ export default function RequestDetailPage({
     label: string;
     icon: React.ReactNode;
   }> = [
-    {
-      id: "overview",
-      label: "Overview",
-      icon: <FileText className="h-4 w-4" />,
-    },
-    {
-      id: "client",
-      label: "Client",
-      icon: <User className="h-4 w-4" />,
-    },
-    {
-      id: "documents",
-      label: "Documents",
-      icon: <FileText className="h-4 w-4" />,
-    },
-    {
-      id: "assessment",
-      label: "Assessment",
-      icon: <CheckCircle className="h-4 w-4" />,
-    },
-    {
-      id: "recommendation",
-      label: "Recommendation",
-      icon: <Send className="h-4 w-4" />,
-    },
-    {
-      id: "notes",
-      label: "Notes",
-      icon: <MessageSquare className="h-4 w-4" />,
-    },
-    {
-      id: "activity",
-      label: "Activity Log",
-      icon: <Activity className="h-4 w-4" />,
-    },
+    { id: "overview", label: "Overview", icon: <FileText className="h-4 w-4" /> },
+    { id: "client", label: "Client", icon: <User className="h-4 w-4" /> },
+    { id: "documents", label: "Documents", icon: <FileText className="h-4 w-4" /> },
+    { id: "assessment", label: "Assessment", icon: <CheckCircle className="h-4 w-4" /> },
+    { id: "recommendation", label: "Recommendation", icon: <Send className="h-4 w-4" /> },
+    { id: "notes", label: "Notes", icon: <MessageSquare className="h-4 w-4" /> },
+    { id: "activity", label: "Activity Log", icon: <Activity className="h-4 w-4" /> },
   ];
 
   return (
@@ -773,24 +780,16 @@ export default function RequestDetailPage({
             </dl>
           </SectionCard>
 
-          <SectionCard
-            title="Operations GPT"
-            icon={<Bot className="h-5 w-5" />}
-          >
+          <SectionCard title="Operations GPT" icon={<Bot className="h-5 w-5" />}>
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <div className="mb-4 rounded-full bg-brand-green/10 p-4">
                 <Bot className="h-8 w-8 text-brand-green" />
               </div>
-
-              <h3 className="mb-2 font-semibold text-gray-900">
-                Analyze Request
-              </h3>
-
+              <h3 className="mb-2 font-semibold text-gray-900">Analyze Request</h3>
               <p className="mb-4 max-w-sm text-sm text-gray-500">
                 Operations GPT will later analyze the request and prepare an
                 assessment draft for staff review.
               </p>
-
               <Button disabled>Coming Soon</Button>
             </div>
           </SectionCard>
@@ -798,55 +797,41 @@ export default function RequestDetailPage({
       ) : null}
 
       {activeTab === "client" ? (
-        <SectionCard
-          title="Client Information"
-          icon={<User className="h-5 w-5" />}
-        >
+        <SectionCard title="Client Information" icon={<User className="h-5 w-5" />}>
           <dl className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <User className="h-4 w-4" />
-                Full Name
+                <User className="h-4 w-4" /> Full Name
               </dt>
               <dd className="font-medium">{data.clients?.full_name || "-"}</dd>
             </div>
-
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <Mail className="h-4 w-4" />
-                Email
+                <Mail className="h-4 w-4" /> Email
               </dt>
               <dd>{data.clients?.email || "-"}</dd>
             </div>
-
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <Phone className="h-4 w-4" />
-                Phone
+                <Phone className="h-4 w-4" /> Phone
               </dt>
               <dd>{data.clients?.phone || "-"}</dd>
             </div>
-
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <Building className="h-4 w-4" />
-                Institution
+                <Building className="h-4 w-4" /> Institution
               </dt>
               <dd>{data.clients?.institution || "-"}</dd>
             </div>
-
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <GraduationCap className="h-4 w-4" />
-                Programme
+                <GraduationCap className="h-4 w-4" /> Programme
               </dt>
               <dd>{data.clients?.programme || "-"}</dd>
             </div>
-
             <div>
               <dt className="mb-1 flex items-center gap-2 text-sm text-gray-500">
-                <GraduationCap className="h-4 w-4" />
-                Degree Level
+                <GraduationCap className="h-4 w-4" /> Degree Level
               </dt>
               <dd>
                 {data.clients?.degree_level ||
@@ -865,9 +850,7 @@ export default function RequestDetailPage({
             <div className="space-y-3">
               {data.documents.map((document) => (
                 <div key={document.id} className="rounded-lg bg-gray-50 p-3">
-                  <p className="font-medium text-gray-900">
-                    {document.file_name}
-                  </p>
+                  <p className="font-medium text-gray-900">{document.file_name}</p>
                   <p className="text-sm text-gray-500">
                     {document.category || "Document"}
                   </p>
@@ -875,9 +858,7 @@ export default function RequestDetailPage({
               ))}
             </div>
           ) : (
-            <p className="py-8 text-center text-gray-500">
-              No documents uploaded
-            </p>
+            <p className="py-8 text-center text-gray-500">No documents uploaded</p>
           )}
         </SectionCard>
       ) : null}
@@ -902,13 +883,7 @@ export default function RequestDetailPage({
             icon={<CheckCircle className="h-5 w-5" />}
             actions={
               data.assessment ? (
-                <Badge
-                  variant={
-                    data.assessment.status === "Completed"
-                      ? "success"
-                      : "warning"
-                  }
-                >
+                <Badge variant={data.assessment.status === "Completed" ? "success" : "warning"}>
                   {data.assessment.status}
                 </Badge>
               ) : null
@@ -1049,7 +1024,6 @@ export default function RequestDetailPage({
                   disabled={isSubmitting || isAnalyzingAssessment}
                 >
                   <Save className="mr-2 h-4 w-4" />
-
                   {isSubmitting
                     ? "Saving..."
                     : assessmentForm.status === "Completed"
@@ -1216,9 +1190,7 @@ export default function RequestDetailPage({
 
                   <Button
                     variant="secondary"
-                    onClick={() =>
-                      handleSaveRecommendation("Approved Internally")
-                    }
+                    onClick={() => handleSaveRecommendation("Approved Internally")}
                     disabled={
                       isSubmitting ||
                       recommendationForm.status === "Sent to Client" ||
@@ -1292,32 +1264,23 @@ export default function RequestDetailPage({
                       {formatDistanceToNow(note.created_at)}
                     </p>
                   </div>
-
-                  <p className="whitespace-pre-wrap text-gray-600">
-                    {note.content}
-                  </p>
+                  <p className="whitespace-pre-wrap text-gray-600">{note.content}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="py-8 text-center text-gray-500">
-              No internal notes yet
-            </p>
+            <p className="py-8 text-center text-gray-500">No internal notes yet</p>
           )}
         </SectionCard>
       ) : null}
 
       {activeTab === "activity" ? (
-        <SectionCard
-          title="Activity Log"
-          icon={<Activity className="h-5 w-5" />}
-        >
+        <SectionCard title="Activity Log" icon={<Activity className="h-5 w-5" />}>
           {data.activities?.length ? (
             <div className="space-y-4">
               {data.activities.map((activity) => (
                 <div key={activity.id} className="flex gap-4">
                   <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-brand-green" />
-
                   <div>
                     <p className="text-gray-900">{activity.description}</p>
                     <p className="mt-1 text-sm text-gray-500">
@@ -1329,9 +1292,7 @@ export default function RequestDetailPage({
               ))}
             </div>
           ) : (
-            <p className="py-8 text-center text-gray-500">
-              No activity recorded
-            </p>
+            <p className="py-8 text-center text-gray-500">No activity recorded</p>
           )}
         </SectionCard>
       ) : null}
@@ -1352,7 +1313,6 @@ export default function RequestDetailPage({
           <Button variant="secondary" onClick={() => setShowStatusModal(false)}>
             Cancel
           </Button>
-
           <Button onClick={handleStatusChange} disabled={isSubmitting}>
             Update Status
           </Button>
@@ -1381,12 +1341,17 @@ export default function RequestDetailPage({
             label="Start Date"
             type="date"
             value={projectForm.start_date}
-            onChange={(event) =>
+            onChange={(event) => {
+              const startDate = event.target.value;
               setProjectForm((previous) => ({
                 ...previous,
-                start_date: event.target.value,
-              }))
-            }
+                start_date: startDate,
+                deadline: calculateProjectDeadline(
+                  startDate,
+                  data.recommendation?.recommended_timeline || "",
+                ),
+              }));
+            }}
           />
 
           <Input
@@ -1437,13 +1402,9 @@ export default function RequestDetailPage({
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button
-            variant="secondary"
-            onClick={() => setShowConvertModal(false)}
-          >
+          <Button variant="secondary" onClick={() => setShowConvertModal(false)}>
             Cancel
           </Button>
-
           <Button onClick={handleConvertToProject} disabled={isSubmitting}>
             Create Project
           </Button>
@@ -1476,7 +1437,6 @@ export default function RequestDetailPage({
           >
             Cancel
           </Button>
-
           <Button
             onClick={() => handleClientDecision("Rejected")}
             disabled={isSubmitting || !clientFeedback.trim()}
@@ -1503,7 +1463,6 @@ export default function RequestDetailPage({
           <Button variant="secondary" onClick={() => setShowNoteModal(false)}>
             Cancel
           </Button>
-
           <Button
             onClick={handleAddNote}
             disabled={isSubmitting || !newNote.trim()}
