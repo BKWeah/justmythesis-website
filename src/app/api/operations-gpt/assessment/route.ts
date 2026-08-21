@@ -124,9 +124,7 @@ function extractResponseText(responseData: any): string {
   throw new Error('Operations GPT returned no assessment content');
 }
 
-function validateGeneratedAssessment(
-  value: any
-): GeneratedAssessment {
+function validateGeneratedAssessment(value: any): GeneratedAssessment {
   const riskLevels = ['Low', 'Medium', 'High'];
 
   if (!value || typeof value !== 'object') {
@@ -145,10 +143,8 @@ function validateGeneratedAssessment(
     risk_level: riskLevels.includes(value.risk_level)
       ? value.risk_level
       : 'Medium',
-    strengths:
-      typeof value.strengths === 'string' ? value.strengths : '',
-    weaknesses:
-      typeof value.weaknesses === 'string' ? value.weaknesses : '',
+    strengths: typeof value.strengths === 'string' ? value.strengths : '',
+    weaknesses: typeof value.weaknesses === 'string' ? value.weaknesses : '',
     missing_requirements:
       typeof value.missing_requirements === 'string'
         ? value.missing_requirements
@@ -200,24 +196,30 @@ export async function POST(request: NextRequest) {
 
     const adminClient = authentication.adminClient;
 
-    const { data: supportRequest, error: requestError } =
-      await adminClient
-        .from('support_requests')
-        .select(`
-          *,
-          clients:client_id (
-            id,
-            full_name,
-            institution,
-            programme,
-            degree_level,
-            academic_level
-          )
-        `)
-        .eq('id', requestId)
-        .single();
+    const { data: supportRequest, error: requestError } = await adminClient
+      .from('support_requests')
+      .select(`
+        *,
+        clients:client_id (
+          id,
+          full_name,
+          institution,
+          programme,
+          degree_level
+        )
+      `)
+      .eq('id', requestId)
+      .maybeSingle();
 
-    if (requestError || !supportRequest) {
+    if (requestError) {
+      console.error('Operations GPT support request lookup error:', requestError);
+      return NextResponse.json(
+        { error: requestError.message || 'Failed to load support request' },
+        { status: 500 }
+      );
+    }
+
+    if (!supportRequest) {
       return NextResponse.json(
         { error: 'Support request not found' },
         { status: 404 }
@@ -242,26 +244,23 @@ export async function POST(request: NextRequest) {
       submitted_documents: documents || [],
     };
 
-    const model =
-      process.env.OPENAI_MODEL || 'gpt-4.1-mini';
+    const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
 
-    const openAiResponse = await fetch(
-      'https://api.openai.com/v1/responses',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${openAiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model,
-          input: [
-            {
-              role: 'system',
-              content: [
-                {
-                  type: 'input_text',
-                  text: `You are Operations GPT for JUSTmyTHESIS, a professional research-support operations platform.
+    const openAiResponse = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${openAiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        input: [
+          {
+            role: 'system',
+            content: [
+              {
+                type: 'input_text',
+                text: `You are Operations GPT for JUSTmyTHESIS, a professional research-support operations platform.
 
 Your task is to prepare an internal draft assessment from the submitted request information.
 
@@ -274,78 +273,60 @@ Rules:
 6. Completion estimate must be realistic but clearly presented as an estimate.
 7. This output is an internal draft for human staff review and must not be treated as final approval.
 8. Return only valid JSON matching the required structure.`,
-                },
-              ],
-            },
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'input_text',
-                  text: JSON.stringify(requestContext, null, 2),
-                },
-              ],
-            },
-          ],
-          text: {
-            format: {
-              type: 'json_schema',
-              name: 'justmythesis_assessment',
-              strict: true,
-              schema: {
-                type: 'object',
-                additionalProperties: false,
-                properties: {
-                  current_project_stage: {
-                    type: 'string',
-                  },
-                  completion_estimate: {
-                    type: 'string',
-                  },
-                  risk_level: {
-                    type: 'string',
-                    enum: ['Low', 'Medium', 'High'],
-                  },
-                  strengths: {
-                    type: 'string',
-                  },
-                  weaknesses: {
-                    type: 'string',
-                  },
-                  missing_requirements: {
-                    type: 'string',
-                  },
-                  compliance_issues: {
-                    type: 'string',
-                  },
-                  assessment_summary: {
-                    type: 'string',
-                  },
-                },
-                required: [
-                  'current_project_stage',
-                  'completion_estimate',
-                  'risk_level',
-                  'strengths',
-                  'weaknesses',
-                  'missing_requirements',
-                  'compliance_issues',
-                  'assessment_summary',
-                ],
               },
+            ],
+          },
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'input_text',
+                text: JSON.stringify(requestContext, null, 2),
+              },
+            ],
+          },
+        ],
+        text: {
+          format: {
+            type: 'json_schema',
+            name: 'justmythesis_assessment',
+            strict: true,
+            schema: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                current_project_stage: { type: 'string' },
+                completion_estimate: { type: 'string' },
+                risk_level: {
+                  type: 'string',
+                  enum: ['Low', 'Medium', 'High'],
+                },
+                strengths: { type: 'string' },
+                weaknesses: { type: 'string' },
+                missing_requirements: { type: 'string' },
+                compliance_issues: { type: 'string' },
+                assessment_summary: { type: 'string' },
+              },
+              required: [
+                'current_project_stage',
+                'completion_estimate',
+                'risk_level',
+                'strengths',
+                'weaknesses',
+                'missing_requirements',
+                'compliance_issues',
+                'assessment_summary',
+              ],
             },
           },
-        }),
-      }
-    );
+        },
+      }),
+    });
 
     const openAiData = await openAiResponse.json();
 
     if (!openAiResponse.ok) {
-      console.error(
-        'Operations GPT assessment error:',
-        openAiData
-      );
+      console.error('Operations GPT assessment error:', openAiData);
 
       return NextResponse.json(
         {
@@ -359,8 +340,7 @@ Rules:
 
     const responseText = extractResponseText(openAiData);
     const parsedAssessment = JSON.parse(responseText);
-    const assessment =
-      validateGeneratedAssessment(parsedAssessment);
+    const assessment = validateGeneratedAssessment(parsedAssessment);
 
     await adminClient.from('activity_logs').insert({
       category: 'Operations GPT',
@@ -379,16 +359,11 @@ Rules:
         'AI-generated draft. Staff review and approval are required before saving.',
     });
   } catch (error: any) {
-    console.error(
-      'Operations GPT assessment API error:',
-      error
-    );
+    console.error('Operations GPT assessment API error:', error);
 
     return NextResponse.json(
       {
-        error:
-          error?.message ||
-          'Failed to generate the assessment draft',
+        error: error?.message || 'Failed to generate the assessment draft',
       },
       { status: 500 }
     );
