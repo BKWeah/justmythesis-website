@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Mail, RefreshCw, Search, ShieldCheck, UserRound, Users } from 'lucide-react';
-import { Badge, Button, Card, Input, LoadingState } from '@/components/ui';
+import { Badge, Button, Card, LoadingState } from '@/components/ui';
 
 type StaffMember = {
   id: string;
@@ -58,15 +58,13 @@ export default function TeamPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green">
-              <Users className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Support Team</h1>
-              <p className="mt-1 text-gray-500">View staff accounts available for project assignment and operational oversight.</p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green">
+            <Users className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Support Team</h1>
+            <p className="mt-1 text-gray-500">View staff accounts available for project assignment and operational oversight.</p>
           </div>
         </div>
         <Button variant="secondary" onClick={() => void loadStaff()} disabled={isLoading}>
@@ -101,12 +99,13 @@ export default function TeamPage() {
             <h2 className="text-lg font-semibold text-gray-900">Staff Directory</h2>
             <p className="mt-1 text-sm text-gray-500">Search by staff name, email address or operational role.</p>
           </div>
-          <div className="w-full sm:max-w-sm">
-            <Input
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search support team..."
-              leftIcon={<Search className="h-4 w-4" />}
+              className="h-10 w-full rounded-lg border border-gray-200 bg-white pl-10 pr-3 text-sm outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
             />
           </div>
         </div>
