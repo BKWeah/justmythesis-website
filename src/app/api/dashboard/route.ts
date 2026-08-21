@@ -1,20 +1,32 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  // Return empty data if Supabase is not configured
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return NextResponse.json({
-      stats: { totalRequests: 0, pendingRequests: 0, activeProjects: 0, completedProjects: 0 },
-      recentRequests: [],
-      attentionProjects: [],
-    }, { status: 200 });
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return NextResponse.json(
+      {
+        stats: {
+          totalRequests: 0,
+          pendingRequests: 0,
+          activeProjects: 0,
+          completedProjects: 0,
+        },
+        recentRequests: [],
+        attentionProjects: [],
+      },
+      { status: 200 }
+    );
   }
 
   try {
-    const supabase = createServerClient(
+    const authClient = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
@@ -22,59 +34,41 @@ export async function GET(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
-            );
-          },
+          setAll() {},
         },
       }
     );
 
-    // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await authClient.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is staff using service role to bypass RLS
-let staffData = null;
-
-if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  const adminClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      cookies: {
-        getAll() {
-          return [];
+    const adminClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
         },
-        setAll() {},
-      },
-    }
-  );
+      }
+    );
 
-  const { data } = await adminClient
-    .from('staff_users')
-    .select('id')
-    .eq('auth_uid', user.id)
-    .single();
+    const { data: staffData, error: staffError } = await adminClient
+      .from('staff_users')
+      .select('id')
+      .eq('auth_uid', user.id)
+      .single();
 
-  staffData = data;
-}
-
-    if (!staffData) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+    if (staffError || !staffData) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    // Fetch dashboard stats
     const [
       totalRequestsResult,
       pendingRequestsResult,
@@ -83,31 +77,26 @@ if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
       recentRequestsResult,
       attentionProjectsResult,
     ] = await Promise.all([
-      // Total requests count
-      supabase
+      adminClient
         .from('support_requests')
         .select('id', { count: 'exact', head: true }),
 
-      // Pending requests count (New Request + Under Review)
-      supabase
+      adminClient
         .from('support_requests')
         .select('id', { count: 'exact', head: true })
         .in('status', ['New Request', 'Under Review']),
 
-      // Active projects count
-      supabase
+      adminClient
         .from('projects')
         .select('id', { count: 'exact', head: true })
         .not('status', 'in', '("Completed","Archived")'),
 
-      // Completed projects count
-      supabase
+      adminClient
         .from('projects')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'Completed'),
 
-      // Recent requests (last 10)
-      supabase
+      adminClient
         .from('support_requests')
         .select(`
           id,
@@ -124,8 +113,7 @@ if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
         .order('created_at', { ascending: false })
         .limit(10),
 
-      // Projects requiring attention (not completed, sorted by deadline)
-      supabase
+      adminClient
         .from('projects')
         .select(`
           id,
@@ -178,11 +166,19 @@ if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
     });
   } catch (error) {
     console.error('Dashboard API error:', error);
-    return NextResponse.json({
-      stats: { totalRequests: 0, pendingRequests: 0, activeProjects: 0, completedProjects: 0 },
-      recentRequests: [],
-      attentionProjects: [],
-      error: 'Failed to fetch dashboard data',
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        stats: {
+          totalRequests: 0,
+          pendingRequests: 0,
+          activeProjects: 0,
+          completedProjects: 0,
+        },
+        recentRequests: [],
+        attentionProjects: [],
+        error: 'Failed to fetch dashboard data',
+      },
+      { status: 200 }
+    );
   }
 }
