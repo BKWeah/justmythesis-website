@@ -2,6 +2,13 @@ import { NextRequest } from 'next/server';
 
 import { getAuthenticatedClient } from '@/lib/services/client-auth';
 
+export interface ClientProjectTimelineEvent {
+  id: string;
+  action: string;
+  description: string;
+  createdAt: string;
+}
+
 export interface ClientProjectDetail {
   id: string;
   projectReference: string;
@@ -14,6 +21,7 @@ export interface ClientProjectDetail {
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  timeline: ClientProjectTimelineEvent[];
 }
 
 interface ProjectRecord {
@@ -30,8 +38,25 @@ interface ProjectRecord {
   updated_at: string;
 }
 
+interface ActivityRecord {
+  id: string;
+  action: string;
+  description: string;
+  created_at: string;
+}
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const CLIENT_SAFE_TIMELINE_ACTIONS = [
+  'project_created',
+  'project_updated',
+  'project_completed',
+  'milestone_added',
+  'milestone_completed',
+  'deliverable_released',
+  'deliverable_confirmed',
+] as const;
 
 function normalizeProgress(value: number | null): number {
   const progress = Number(value ?? 0);
@@ -58,7 +83,10 @@ function formatLabel(value: string | null | undefined): string {
   );
 }
 
-function mapProject(project: ProjectRecord): ClientProjectDetail {
+function mapProject(
+  project: ProjectRecord,
+  timeline: ClientProjectTimelineEvent[]
+): ClientProjectDetail {
   return {
     id: project.id,
     projectReference: project.project_reference || project.id,
@@ -71,6 +99,7 @@ function mapProject(project: ProjectRecord): ClientProjectDetail {
     completedAt: project.completed_at,
     createdAt: project.created_at,
     updatedAt: project.updated_at,
+    timeline,
   };
 }
 
@@ -120,5 +149,27 @@ export async function getClientProjectDetail(
     return null;
   }
 
-  return mapProject(data as ProjectRecord);
+  const project = data as ProjectRecord;
+
+  const { data: activityRows, error: activityError } = await admin
+    .from('activity_logs')
+    .select('id, action, description, created_at')
+    .eq('project_id', project.id)
+    .in('action', [...CLIENT_SAFE_TIMELINE_ACTIONS])
+    .order('created_at', { ascending: false });
+
+  if (activityError) {
+    throw new Error(activityError.message);
+  }
+
+  const timeline = ((activityRows || []) as ActivityRecord[]).map(
+    (activity) => ({
+      id: activity.id,
+      action: activity.action,
+      description: activity.description,
+      createdAt: activity.created_at,
+    })
+  );
+
+  return mapProject(project, timeline);
 }
