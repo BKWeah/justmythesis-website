@@ -220,15 +220,15 @@ export function PaymentsTab({ projectId, isCompleted = false }: PaymentsTabProps
 
       {isLoading ? <div className="py-12 text-center text-gray-500">Loading payments...</div> : payments.length === 0 ?
         <div className="rounded-lg border border-dashed border-gray-300 py-12 text-center"><CreditCard className="mx-auto h-10 w-10 text-gray-300" /><p className="mt-3 font-medium text-gray-700">No payments recorded</p></div> :
-        <div className="overflow-x-auto"><table className="w-full min-w-[980px]"><thead><tr className="border-b">
-          {['Date','Reference','Method','Amount','Status','Proof','Actions'].map((h) => <th key={h} className={`py-3 text-xs font-medium uppercase text-gray-500 ${h === 'Actions' ? 'text-right' : 'text-left'}`}>{h}</th>)}
+        <div className="overflow-x-auto"><table className="w-full min-w-[900px]"><thead><tr className="border-b">
+          {['Date','Reference','Method','Amount','Status','Proof','Actions'].map((h) => <th key={h} className={`py-3 text-xs font-medium uppercase text-gray-500 ${h === 'Actions' ? 'sticky right-0 z-10 min-w-[190px] bg-white pl-4 text-right' : 'text-left'}`}>{h}</th>)}
         </tr></thead><tbody>{payments.map((payment) => <tr key={payment.id} className="border-b last:border-0">
           <td className="py-4 text-gray-700">{formatDate(payment.payment_date)}</td>
           <td className="py-4"><p className="font-mono text-sm font-medium text-brand-green">{payment.reference_number}</p>{payment.transaction_id && <p className="mt-1 text-xs text-gray-500">Transaction: {payment.transaction_id}</p>}</td>
           <td className="py-4 text-gray-700">{payment.payment_method}</td><td className="py-4 font-semibold text-gray-900">{formatMoney(Number(payment.amount), payment.currency)}</td>
           <td className="py-4"><Badge variant={statusVariant(payment.status) as any}>{payment.status}</Badge>{payment.rejection_reason && <p className="mt-1 max-w-[220px] text-xs text-red-600">{payment.rejection_reason}</p>}</td>
           <td className="py-4">{payment.proof_url ? <Button size="sm" variant="ghost" onClick={() => viewProof(payment.id)}><Eye className="mr-1 h-4 w-4" />View Proof</Button> : <span className="text-sm text-gray-400">None</span>}</td>
-          <td className="py-4 text-right"><div className="flex justify-end gap-2">{payment.status === 'Pending' && !isCompleted && <>
+          <td className="sticky right-0 z-10 min-w-[190px] bg-white py-4 pl-4 text-right"><div className="flex flex-wrap justify-end gap-2">{payment.status === 'Pending' && !isCompleted && <>
             <Button size="sm" variant="ghost" onClick={() => openEditPayment(payment)} disabled={isSubmitting}><Pencil className="mr-1 h-4 w-4" />Edit</Button>
             <Button size="sm" variant="secondary" onClick={() => verifyPayment(payment.id)} disabled={isSubmitting}><Check className="mr-1 h-4 w-4" />Verify</Button>
             <Button size="sm" variant="ghost" onClick={() => openRejectPayment(payment)} disabled={isSubmitting}><X className="mr-1 h-4 w-4" />Reject</Button></>}</div></td>
