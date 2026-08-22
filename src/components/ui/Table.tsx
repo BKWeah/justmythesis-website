@@ -6,9 +6,9 @@ export interface TableProps extends HTMLAttributes<HTMLTableElement> {
 }
 
 const Table = ({ className, children, ...props }: TableProps) => (
-  <div className="w-full overflow-x-auto">
+  <div className="w-full overflow-x-auto rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.03)]">
     <table
-      className={cn('w-full caption-bottom text-sm', className)}
+      className={cn('w-full min-w-[640px] caption-bottom text-sm', className)}
       {...props}
     >
       {children}
@@ -21,7 +21,13 @@ export interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement
 }
 
 const TableHeader = ({ className, children, ...props }: TableHeaderProps) => (
-  <thead className={cn('border-b border-gray-200 bg-gray-50/50', className)} {...props}>
+  <thead
+    className={cn(
+      'border-b border-[var(--border-subtle)] bg-[var(--surface-subtle)]',
+      className
+    )}
+    {...props}
+  >
     {children}
   </thead>
 );
@@ -31,7 +37,7 @@ export interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> 
 }
 
 const TableBody = ({ className, children, ...props }: TableBodyProps) => (
-  <tbody className={cn('divide-y divide-gray-100', className)} {...props}>
+  <tbody className={cn('divide-y divide-[var(--border-subtle)] bg-white', className)} {...props}>
     {children}
   </tbody>
 );
@@ -44,8 +50,8 @@ export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
 const TableRow = ({ className, children, hoverable = true, ...props }: TableRowProps) => (
   <tr
     className={cn(
-      'transition-colors',
-      hoverable && 'hover:bg-gray-50',
+      'transition-colors duration-150',
+      hoverable && 'hover:bg-[#FAFBFA]',
       className
     )}
     {...props}
@@ -61,7 +67,7 @@ export interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
 const TableHead = ({ className, children, ...props }: TableHeadProps) => (
   <th
     className={cn(
-      'px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+      'px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]',
       className
     )}
     {...props}
@@ -76,7 +82,7 @@ export interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
 
 const TableCell = ({ className, children, ...props }: TableCellProps) => (
   <td
-    className={cn('px-4 py-3 text-gray-700 align-middle', className)}
+    className={cn('px-5 py-4 align-middle text-[var(--text-primary)]', className)}
     {...props}
   >
     {children}
@@ -88,7 +94,7 @@ export interface TableCaptionProps extends HTMLAttributes<HTMLTableCaptionElemen
 }
 
 const TableCaption = ({ className, children, ...props }: TableCaptionProps) => (
-  <caption className={cn('mt-4 text-sm text-gray-500', className)} {...props}>
+  <caption className={cn('mt-4 text-sm text-[var(--text-muted)]', className)} {...props}>
     {children}
   </caption>
 );
