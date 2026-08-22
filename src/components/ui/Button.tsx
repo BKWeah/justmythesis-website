@@ -12,11 +12,18 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, disabled, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-green/50 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 rounded-xl';
-    
+    const baseStyles = [
+      'inline-flex items-center justify-center gap-2 whitespace-nowrap',
+      'rounded-[var(--radius-lg)] font-semibold tracking-[-0.01em]',
+      'transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/35 focus-visible:ring-offset-2',
+      'disabled:pointer-events-none disabled:cursor-not-allowed',
+      'active:translate-y-px',
+    ].join(' ');
+
     const sizeStyles = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-sm',
+      sm: 'h-9 px-3.5 text-sm',
+      md: 'h-11 px-4.5 text-sm',
       lg: 'h-12 px-6 text-base',
     };
 
@@ -28,14 +35,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(baseStyles, sizeStyles[size], variantStyles, className)}
         ref={ref}
         disabled={disabled || isLoading}
+        aria-busy={isLoading || undefined}
         {...props}
       >
-        {isLoading && (
+        {isLoading ? (
           <svg
-            className="animate-spin h-4 w-4"
+            className="h-4 w-4 animate-spin"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <circle
               className="opacity-25"
@@ -51,7 +60,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-        )}
+        ) : null}
         {children}
       </button>
     );
