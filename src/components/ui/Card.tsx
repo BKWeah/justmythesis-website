@@ -15,9 +15,12 @@ const Card = ({
   ...props
 }: CardProps) => {
   const variantStyles = {
-    default: 'bg-white rounded-xl border border-gray-100 shadow-sm',
-    elevated: 'bg-white rounded-xl shadow-lg border border-gray-100/50',
-    bordered: 'bg-white rounded-xl border-2 border-gray-200',
+    default:
+      'bg-white rounded-[var(--radius-xl)] border border-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04),0_4px_12px_rgba(16,24,40,0.04)]',
+    elevated:
+      'bg-white rounded-[var(--radius-xl)] border border-gray-200/60 shadow-[0_8px_24px_rgba(16,24,40,0.08)]',
+    bordered:
+      'bg-white rounded-[var(--radius-xl)] border border-gray-200 shadow-none',
   };
 
   const paddingStyles = {
@@ -29,7 +32,12 @@ const Card = ({
 
   return (
     <div
-      className={cn(variantStyles[variant], paddingStyles[padding], className)}
+      className={cn(
+        'transition-[box-shadow,border-color,transform] duration-200 ease-out',
+        variantStyles[variant],
+        paddingStyles[padding],
+        className,
+      )}
       {...props}
     >
       {children}
@@ -71,7 +79,7 @@ export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElemen
 }
 
 const CardDescription = ({ className, children, ...props }: CardDescriptionProps) => (
-  <p className={cn('text-sm text-gray-500 mt-1', className)} {...props}>
+  <p className={cn('mt-1 text-sm text-gray-500', className)} {...props}>
     {children}
   </p>
 );
@@ -91,7 +99,7 @@ export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CardFooter = ({ className, children, ...props }: CardFooterProps) => (
-  <div className={cn('mt-4 pt-4 border-t border-gray-100', className)} {...props}>
+  <div className={cn('mt-4 border-t border-gray-100 pt-4', className)} {...props}>
     {children}
   </div>
 );
