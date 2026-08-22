@@ -1,53 +1,42 @@
 // JUSTmyTHESIS Workspace Theme & Design Tokens
-// Based on existing brand colors from the public website
+// Product-neutral UI framework adapted to JUSTmyTHESIS brand identity.
 
 export const theme = {
-  // Brand Colors
   colors: {
     brand: {
       green: '#18452F',
-      'green-light': '#2a5c45',
-      'green-dark': '#0f2d1f',
+      'green-light': '#2A5C45',
+      'green-dark': '#0F2D1F',
+      'green-soft': '#EAF1ED',
+      'green-muted': '#D9E6DE',
     },
     gold: {
       DEFAULT: '#C79A2D',
-      light: '#d9b44a',
-      dark: '#a68425',
+      light: '#D9B44A',
+      dark: '#9B761D',
+      soft: '#FBF6E8',
+      muted: '#F1E4BC',
+    },
+    neutral: {
+      page: '#F7F8F7',
+      subtle: '#F2F4F2',
+      muted: '#E9EDEA',
+      border: '#D6DDD8',
+      text: '#171A18',
+      secondary: '#5D625F',
     },
     cream: '#FAF7F0',
     white: '#FFFFFF',
     dark: '#222222',
   },
 
-  // Status Colors
   status: {
-    success: {
-      bg: 'bg-green-50',
-      text: 'text-green-700',
-      border: 'border-green-200',
-      icon: 'text-green-500',
-    },
-    warning: {
-      bg: 'bg-amber-50',
-      text: 'text-amber-700',
-      border: 'border-amber-200',
-      icon: 'text-amber-500',
-    },
-    error: {
-      bg: 'bg-red-50',
-      text: 'text-red-700',
-      border: 'border-red-200',
-      icon: 'text-red-500',
-    },
-    info: {
-      bg: 'bg-blue-50',
-      text: 'text-blue-700',
-      border: 'border-blue-200',
-      icon: 'text-blue-500',
-    },
+    success: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: 'text-green-500' },
+    warning: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: 'text-amber-500' },
+    error: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: 'text-red-500' },
+    info: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', icon: 'text-blue-500' },
   },
 
-  // Badge Variants
   badge: {
     default: 'bg-gray-100 text-gray-800 border-gray-200',
     primary: 'bg-brand-green/10 text-brand-green border-brand-green/20',
@@ -58,36 +47,36 @@ export const theme = {
     info: 'bg-blue-100 text-blue-800 border-blue-200',
   },
 
-  // Button Variants
+  // Button hierarchy: primary action, secondary action, quiet/tertiary action,
+  // destructive action, and limited-use gold emphasis.
   button: {
     primary: {
-      base: 'bg-brand-green text-white hover:bg-brand-green-light',
-      active: 'active:bg-brand-green-dark',
-      disabled: 'disabled:bg-gray-300 disabled:text-gray-500',
+      base: 'bg-brand-green text-white border border-brand-green shadow-sm hover:bg-brand-green-light hover:border-brand-green-light hover:shadow-md',
+      active: 'active:bg-brand-green-dark active:border-brand-green-dark active:shadow-sm',
+      disabled: 'disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-400 disabled:shadow-none',
     },
     secondary: {
-      base: 'bg-white text-brand-green border-2 border-brand-green hover:bg-brand-green/5',
-      active: '',
-      disabled: 'disabled:border-gray-300 disabled:text-gray-400',
+      base: 'bg-white text-brand-green border border-gray-300 shadow-sm hover:bg-[#F7F9F8] hover:border-brand-green/40',
+      active: 'active:bg-brand-green/5',
+      disabled: 'disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50 disabled:shadow-none',
     },
     ghost: {
-      base: 'bg-transparent text-brand-green hover:bg-brand-green/5',
-      active: '',
-      disabled: 'disabled:text-gray-400',
+      base: 'bg-transparent text-gray-700 border border-transparent hover:bg-gray-100 hover:text-brand-green',
+      active: 'active:bg-gray-200/70',
+      disabled: 'disabled:text-gray-400 disabled:bg-transparent',
     },
     danger: {
-      base: 'bg-red-600 text-white hover:bg-red-700',
-      active: '',
-      disabled: 'disabled:bg-gray-300 disabled:text-gray-500',
+      base: 'bg-red-600 text-white border border-red-600 shadow-sm hover:bg-red-700 hover:border-red-700',
+      active: 'active:bg-red-800',
+      disabled: 'disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-400 disabled:shadow-none',
     },
     gold: {
-      base: 'bg-gold text-white hover:bg-gold-dark',
-      active: '',
-      disabled: 'disabled:bg-gray-300 disabled:text-gray-500',
+      base: 'bg-gold text-[#2B2415] border border-gold shadow-sm hover:bg-gold-light hover:border-gold-light',
+      active: 'active:bg-gold-dark active:text-white',
+      disabled: 'disabled:bg-gray-200 disabled:border-gray-200 disabled:text-gray-400 disabled:shadow-none',
     },
   },
 
-  // Border Radius
   radius: {
     none: 'rounded-none',
     sm: 'rounded-md',
@@ -98,7 +87,6 @@ export const theme = {
     full: 'rounded-full',
   },
 
-  // Shadows
   shadows: {
     sm: 'shadow-sm',
     DEFAULT: 'shadow-md',
@@ -110,19 +98,17 @@ export const theme = {
     none: 'shadow-none',
   },
 
-  // Spacing References (common padding/margin values)
   spacing: {
-    xs: '0.25rem',   // 4px
-    sm: '0.5rem',    // 8px
-    md: '1rem',      // 16px
-    lg: '1.5rem',    // 24px
-    xl: '2rem',      // 32px
-    '2xl': '3rem',   // 48px
-    '3xl': '4rem',   // 64px
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+    '2xl': '3rem',
+    '3xl': '4rem',
   },
 } as const;
 
-// Export individual tokens for easy access
 export const colors = theme.colors;
 export const statusColors = theme.status;
 export const badgeVariants = theme.badge;
@@ -131,21 +117,20 @@ export const borderRadius = theme.radius;
 export const shadows = theme.shadows;
 export const spacing = theme.spacing;
 
-// Typography
 export const typography = {
   fontFamily: {
     sans: ['Inter', 'system-ui', 'sans-serif'],
     serif: ['Georgia', 'serif'],
   },
   fontSize: {
-    xs: '0.75rem',    // 12px
-    sm: '0.875rem',   // 14px
-    base: '1rem',     // 16px
-    lg: '1.125rem',   // 18px
-    xl: '1.25rem',    // 20px
-    '2xl': '1.5rem',  // 24px
-    '3xl': '1.875rem', // 30px
-    '4xl': '2.25rem', // 36px
+    xs: '0.75rem',
+    sm: '0.875rem',
+    base: '1rem',
+    lg: '1.125rem',
+    xl: '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+    '4xl': '2.25rem',
   },
   fontWeight: {
     normal: '400',
@@ -155,7 +140,6 @@ export const typography = {
   },
 };
 
-// Animation durations
 export const animation = {
   fast: '150ms',
   DEFAULT: '200ms',
@@ -163,7 +147,6 @@ export const animation = {
   slower: '500ms',
 };
 
-// Z-index scale
 export const zIndex = {
   dropdown: 'z-10',
   sticky: 'z-20',
