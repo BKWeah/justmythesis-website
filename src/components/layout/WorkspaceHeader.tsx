@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Menu, Bell, LogOut, User, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
 import { SearchInput } from '@/components/ui/SearchInput';
 
 interface WorkspaceHeaderProps {
@@ -27,91 +26,72 @@ const WorkspaceHeader = ({
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
-      <div className="flex items-center justify-between h-16 px-4 md:px-6">
-        {/* Left side */}
-        <div className="flex items-center gap-4">
-          {/* Mobile menu button */}
+    <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+      <div className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 md:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3 md:gap-4">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-gray-500 transition-colors hover:bg-[var(--surface-subtle)] hover:text-gray-800 lg:hidden"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          {/* Page title */}
-          <div>
+          <div className="min-w-0">
             {title && (
-              <h1 className="text-lg md:text-xl font-semibold text-gray-900">
+              <h1 className="truncate text-lg font-semibold tracking-[-0.025em] text-gray-950 md:text-xl">
                 {title}
               </h1>
             )}
             {subtitle && (
-              <p className="text-sm text-gray-500 hidden md:block">
+              <p className="mt-0.5 hidden truncate text-sm text-gray-500 md:block">
                 {subtitle}
               </p>
             )}
           </div>
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-2 md:gap-4">
-          {/* Search (hidden on mobile) */}
-          <div className="hidden md:block w-64 lg:w-80">
-            <SearchInput
-              placeholder="Search..."
-              className="bg-gray-50"
-            />
+        <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
+          <div className="hidden w-56 md:block lg:w-72 xl:w-80">
+            <SearchInput placeholder="Search workspace" className="bg-[var(--surface-subtle)]" />
           </div>
 
-          {/* Notifications */}
           <button
-            className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-gray-500 transition-colors hover:bg-[var(--surface-subtle)] hover:text-gray-800"
             aria-label="Notifications"
           >
             <Bell className="h-5 w-5" />
-            {/* Notification dot */}
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full" />
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500 ring-2 ring-white" />
           </button>
 
-          {/* User menu */}
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+              className="flex min-h-10 items-center gap-2 rounded-[var(--radius-md)] px-1.5 py-1 text-gray-600 transition-colors hover:bg-[var(--surface-subtle)] hover:text-gray-900 md:px-2"
               aria-label="User menu"
             >
-              <div className="hidden md:flex items-center justify-center h-8 w-8 bg-brand-green text-white rounded-full">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-green text-white shadow-sm">
                 <User className="h-4 w-4" />
               </div>
-              <div className="hidden lg:block text-left">
-                <p className="text-sm font-medium text-gray-700">
+              <div className="hidden max-w-36 text-left lg:block">
+                <p className="truncate text-sm font-medium text-gray-800">
                   {user?.name || 'User'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="truncate text-xs text-gray-500">
                   {user?.role || 'Client'}
                 </p>
               </div>
-              <ChevronDown className="h-4 w-4 text-gray-400 hidden lg:block" />
+              <ChevronDown className="hidden h-4 w-4 text-gray-400 lg:block" />
             </button>
 
-            {/* Dropdown menu */}
             {showUserMenu && (
               <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowUserMenu(false)}
-                />
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+                <div className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-white py-1 shadow-[0_16px_40px_rgba(16,24,40,0.14)]">
                   {user?.email && (
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user.name || 'User'}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {user.email}
-                      </p>
+                    <div className="border-b border-[var(--border-subtle)] px-4 py-3">
+                      <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
+                      <p className="mt-0.5 truncate text-xs text-gray-500">{user.email}</p>
                     </div>
                   )}
                   <button
@@ -119,7 +99,7 @@ const WorkspaceHeader = ({
                       setShowUserMenu(false);
                       onLogout?.();
                     }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-[var(--surface-subtle)]"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign out
