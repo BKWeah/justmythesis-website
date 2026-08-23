@@ -50,6 +50,10 @@
   background: linear-gradient(to bottom, rgba(8,24,16,0.08), rgba(8,24,16,0.40));
 }
 
+.hero-bg .heading-xl {
+  color: #ffffff;
+}
+
 .btn,
 .section-nav-btn {
   min-height: 44px;
