@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button, Card } from '@/components/ui';
+import { Badge, Button, Card } from '@/components/ui';
 
 interface ClientProject {
   id: string;
@@ -39,24 +39,14 @@ function clampProgress(value: unknown): number {
         ? Number(value)
         : 0;
 
-  if (!Number.isFinite(parsed)) {
-    return 0;
-  }
-
+  if (!Number.isFinite(parsed)) return 0;
   return Math.min(100, Math.max(0, Math.round(parsed)));
 }
 
 function formatDate(value?: string | null): string {
-  if (!value) {
-    return 'Not available';
-  }
-
+  if (!value) return 'Not available';
   const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
+  if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat('en', {
     day: '2-digit',
     month: 'short',
@@ -77,22 +67,15 @@ function getProjectService(project: ClientProject): string {
 }
 
 function getProjectStage(project: ClientProject): string {
-  return (
-    project.current_stage?.trim() ||
-    project.status?.trim() ||
-    'Project Received'
-  );
+  return project.current_stage?.trim() || project.status?.trim() || 'Project Received';
 }
 
 function getProjectProgress(project: ClientProject): number {
-  return clampProgress(
-    project.progress_percentage ?? project.progress ?? 0
-  );
+  return clampProgress(project.progress_percentage ?? project.progress ?? 0);
 }
 
 export default function ClientProjectsPage() {
   const router = useRouter();
-
   const [projects, setProjects] = useState<ClientProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,36 +84,21 @@ export default function ClientProjectsPage() {
     try {
       setIsLoading(true);
       setError(null);
-
       const response = await fetch('/api/client/projects', {
         method: 'GET',
         credentials: 'include',
         cache: 'no-store',
-        headers: {
-          Accept: 'application/json',
-        },
+        headers: { Accept: 'application/json' },
       });
-
       const data = (await response.json()) as ClientProjectsResponse;
-
       if (response.status === 401) {
         router.replace('/client/login');
         return;
       }
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || 'Unable to retrieve your projects.'
-        );
-      }
-
+      if (!response.ok) throw new Error(data.error || 'Unable to retrieve your projects.');
       setProjects(Array.isArray(data.projects) ? data.projects : []);
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : 'Unable to retrieve your projects.'
-      );
+      setError(requestError instanceof Error ? requestError.message : 'Unable to retrieve your projects.');
     } finally {
       setIsLoading(false);
     }
@@ -141,24 +109,15 @@ export default function ClientProjectsPage() {
   }, [fetchProjects]);
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <main className="min-h-screen bg-[var(--surface-page)]">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              My Projects
-            </h1>
-
-            <p className="mt-2 text-sm text-muted-foreground">
-              View and track all your academic projects.
-            </p>
+            <p className="text-sm font-semibold text-brand-green">Scholar Haven</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-[var(--text-primary)]">My Projects</h1>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">Track project status, progress, and recent updates from one place.</p>
           </div>
-
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => router.push('/client/dashboard')}
-          >
+          <Button type="button" variant="secondary" onClick={() => router.push('/client/dashboard')}>
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back to Scholar Haven
           </Button>
@@ -167,18 +126,9 @@ export default function ClientProjectsPage() {
         {isLoading && (
           <Card variant="bordered" padding="lg" className="bg-white">
             <div className="flex min-h-52 flex-col items-center justify-center text-center">
-              <LoaderCircle
-                className="h-8 w-8 animate-spin text-brand-green"
-                aria-hidden="true"
-              />
-
-              <h2 className="mt-4 text-lg font-semibold text-foreground">
-                Loading your projects
-              </h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                Please wait while we retrieve your academic work.
-              </p>
+              <LoaderCircle className="h-8 w-8 animate-spin text-brand-green" aria-hidden="true" />
+              <h2 className="mt-4 text-lg font-semibold text-[var(--text-primary)]">Loading your projects</h2>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">Please wait while we retrieve your academic work.</p>
             </div>
           </Card>
         )}
@@ -187,25 +137,11 @@ export default function ClientProjectsPage() {
           <Card variant="bordered" padding="lg" className="bg-white">
             <div className="flex min-h-52 flex-col items-center justify-center text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
-                <AlertCircle
-                  className="h-6 w-6 text-red-600"
-                  aria-hidden="true"
-                />
+                <AlertCircle className="h-6 w-6 text-red-600" aria-hidden="true" />
               </div>
-
-              <h2 className="mt-4 text-lg font-semibold text-foreground">
-                We could not load your projects
-              </h2>
-
-              <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
-                {error}
-              </p>
-
-              <Button
-                type="button"
-                className="mt-5"
-                onClick={() => void fetchProjects()}
-              >
+              <h2 className="mt-4 text-lg font-semibold text-[var(--text-primary)]">We could not load your projects</h2>
+              <p className="mt-2 max-w-lg text-sm leading-6 text-[var(--text-secondary)]">{error}</p>
+              <Button type="button" className="mt-5" onClick={() => void fetchProjects()}>
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
                 Try Again
               </Button>
@@ -217,115 +153,60 @@ export default function ClientProjectsPage() {
           <Card variant="bordered" padding="lg" className="bg-white">
             <div className="flex min-h-64 flex-col items-center justify-center text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green/10">
-                <FolderKanban
-                  className="h-7 w-7 text-brand-green"
-                  aria-hidden="true"
-                />
+                <FolderKanban className="h-7 w-7 text-brand-green" aria-hidden="true" />
               </div>
-
-              <h2 className="mt-5 text-xl font-semibold text-foreground">
-                No projects available yet
-              </h2>
-
-              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                Your approved academic projects will appear here once they
-                have been created and assigned to your client account.
-              </p>
-
-              <Button
-                type="button"
-                className="mt-6"
-                onClick={() => router.push('/client/request-support')}
-              >
-                Start a New Request
-              </Button>
+              <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">No projects available yet</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-secondary)]">Your approved academic projects will appear here once they are created and connected to your Scholar Haven account.</p>
+              <Button type="button" className="mt-6" onClick={() => router.push('/client/request-support')}>Start a New Request</Button>
             </div>
           </Card>
         )}
 
         {!isLoading && !error && projects.length > 0 && (
-          <div className="space-y-5">
+          <div className="grid gap-5 xl:grid-cols-2">
             {projects.map((project) => {
               const projectReference = getProjectReference(project);
               const progress = getProjectProgress(project);
-
               return (
                 <Card
                   key={project.id}
                   variant="bordered"
                   padding="lg"
-                  className="bg-white"
+                  className="bg-white transition-[transform,box-shadow,border-color] hover:-translate-y-0.5 hover:border-brand-green/20 hover:shadow-[0_10px_24px_rgba(16,24,40,0.06)]"
                 >
-                  <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-green/10">
-                        <FolderKanban
-                          className="h-6 w-6 text-brand-green"
-                          aria-hidden="true"
-                        />
+                  <div className="flex h-full flex-col">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-green/10">
+                        <FolderKanban className="h-5 w-5 text-brand-green" aria-hidden="true" />
                       </div>
-
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                          {projectReference}
-                        </p>
-
-                        <h2 className="mt-1 text-lg font-semibold text-foreground">
-                          {getProjectTitle(project)}
-                        </h2>
-
-                        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                          <span>{getProjectService(project)}</span>
-                          <span>{getProjectStage(project)}</span>
-                          <span>
-                            Updated{' '}
-                            {formatDate(
-                              project.updated_at ?? project.created_at
-                            )}
-                          </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-mono text-xs font-semibold text-brand-green">{projectReference}</span>
+                          <Badge variant="info">{getProjectStage(project)}</Badge>
                         </div>
+                        <h2 className="mt-2 text-lg font-semibold text-[var(--text-primary)]">{getProjectTitle(project)}</h2>
+                        <p className="mt-2 text-sm text-[var(--text-secondary)]">{getProjectService(project)}</p>
                       </div>
                     </div>
 
-                    <div className="w-full lg:max-w-xs">
-                      <div className="mb-2 flex items-center justify-between">
-                        <span className="text-sm font-medium text-foreground">
-                          Progress
-                        </span>
-
-                        <span className="text-sm font-semibold text-foreground">
-                          {progress}%
-                        </span>
+                    <div className="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] p-4">
+                      <div className="mb-2 flex items-center justify-between gap-4">
+                        <span className="text-sm font-medium text-[var(--text-primary)]">Progress</span>
+                        <span className="text-sm font-semibold text-brand-green">{progress}%</span>
                       </div>
-
-                      <div
-                        className="h-2 overflow-hidden rounded-full bg-gray-100"
-                        role="progressbar"
-                        aria-label={`${getProjectTitle(project)} progress`}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-valuenow={progress}
-                      >
-                        <div
-                          className="h-full rounded-full bg-brand-green"
-                          style={{ width: `${progress}%` }}
-                        />
+                      <div className="h-2 overflow-hidden rounded-full bg-white" role="progressbar" aria-label={`${getProjectTitle(project)} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+                        <div className="h-full rounded-full bg-brand-green" style={{ width: `${progress}%` }} />
                       </div>
-
-                      <Button
-                        type="button"
-                        className="mt-4 w-full"
-                        onClick={() =>
-                          router.push(
-                            `/client/project/${encodeURIComponent(
-                              projectReference
-                            )}`
-                          )
-                        }
-                      >
-                        View Project
-                      </Button>
+                      <p className="mt-3 text-xs text-[var(--text-muted)]">Updated {formatDate(project.updated_at ?? project.created_at)}</p>
                     </div>
+
+                    <Button
+                      type="button"
+                      className="mt-5 w-full"
+                      onClick={() => router.push(`/client/project/${encodeURIComponent(projectReference)}`)}
+                    >
+                      View Project
+                    </Button>
                   </div>
                 </Card>
               );
