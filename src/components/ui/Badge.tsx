@@ -6,6 +6,7 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
   variant?: BadgeVariant;
   size?: 'sm' | 'md';
+  dot?: boolean;
 }
 
 const Badge = ({
@@ -13,29 +14,30 @@ const Badge = ({
   children,
   variant = 'default',
   size = 'md',
+  dot = false,
   ...props
 }: BadgeProps) => {
   const sizeStyles = {
-    sm: 'px-2 py-0.5 text-xs',
+    sm: 'px-2 py-0.5 text-[11px]',
     md: 'px-2.5 py-1 text-xs',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium rounded-full border',
+        'inline-flex items-center gap-1.5 rounded-full border font-semibold leading-none tracking-[-0.01em] whitespace-nowrap',
         badgeVariants[variant],
         sizeStyles[size],
-        className
+        className,
       )}
       {...props}
     >
+      {dot ? <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" aria-hidden="true" /> : null}
       {children}
     </span>
   );
 };
 
-// Convenience components for common status badges
 export interface StatusBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   status: 'pending' | 'in_review' | 'completed' | 'requires_action' | 'active' | 'inactive';
 }
@@ -45,20 +47,19 @@ const statusConfig: Record<StatusBadgeProps['status'], { variant: BadgeVariant; 
   in_review: { variant: 'info', label: 'In Review' },
   completed: { variant: 'success', label: 'Completed' },
   requires_action: { variant: 'error', label: 'Action Required' },
-  active: { variant: 'success', label: 'Active' },
+  active: { variant: 'primary', label: 'Active' },
   inactive: { variant: 'default', label: 'Inactive' },
 };
 
 const StatusBadge = ({ status, className, ...props }: StatusBadgeProps) => {
   const config = statusConfig[status];
   return (
-    <Badge variant={config.variant} className={className} {...props}>
+    <Badge variant={config.variant} dot className={className} {...props}>
       {config.label}
     </Badge>
   );
 };
 
-// Project status badges
 export interface ProjectStatusBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   status: 'inquiry' | 'assessment' | 'active' | 'completed' | 'cancelled';
 }
@@ -74,7 +75,7 @@ const projectStatusConfig: Record<ProjectStatusBadgeProps['status'], { variant: 
 const ProjectStatusBadge = ({ status, className, ...props }: ProjectStatusBadgeProps) => {
   const config = projectStatusConfig[status];
   return (
-    <Badge variant={config.variant} className={className} {...props}>
+    <Badge variant={config.variant} dot className={className} {...props}>
       {config.label}
     </Badge>
   );
