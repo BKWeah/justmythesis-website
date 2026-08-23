@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
-import { GraduationCap } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowLeft, GraduationCap } from 'lucide-react';
+
+import { Button } from '@/components/ui';
 import { RequestSupportForm } from '@/components/request-support';
 
 export const metadata: Metadata = {
@@ -10,50 +13,40 @@ export const metadata: Metadata = {
 
 export default function RequestSupportPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream to-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center gap-2">
-              <GraduationCap className="h-8 w-8 text-brand-green" />
-              <span className="font-semibold text-brand-green text-xl">
+    <div className="min-h-screen bg-[var(--surface-page)]">
+      <header className="border-b border-[var(--border-subtle)] bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-white shadow-sm">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight text-brand-green">
                 JUST<span className="text-gold">my</span>THESIS
-              </span>
-            </a>
+              </p>
+              <p className="text-xs text-[var(--text-muted)]">Academic Support</p>
+            </div>
+          </Link>
 
-            <a
-              href="/"
-              className="text-sm font-medium text-gray-600 hover:text-brand-green transition-colors"
-            >
+          <Link href="/">
+            <Button variant="secondary" size="sm">
+              <ArrowLeft className="h-4 w-4" />
               Back to Home
-            </a>
-          </div>
+            </Button>
+          </Link>
         </div>
       </header>
 
-      {/* Request Support Form */}
-      <main className="py-10">
+      <main className="py-8 sm:py-10">
         <RequestSupportForm />
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>
-              © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
-            </p>
-
-            <div className="flex gap-6">
-              <a href="/terms" className="hover:text-brand-green">
-                Terms
-              </a>
-
-              <a href="/privacy" className="hover:text-brand-green">
-                Privacy
-              </a>
-            </div>
+      <footer className="mt-10 border-t border-[var(--border-subtle)] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-6 text-sm text-[var(--text-muted)] sm:px-6 md:flex-row lg:px-8">
+          <p>© {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="/terms" className="transition-colors hover:text-brand-green">Terms</Link>
+            <Link href="/privacy" className="transition-colors hover:text-brand-green">Privacy</Link>
           </div>
         </div>
       </footer>
