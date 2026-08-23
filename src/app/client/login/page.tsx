@@ -3,16 +3,11 @@
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  AlertCircle,
-  Database,
-  GraduationCap,
-  Lock,
-} from 'lucide-react';
+import { AlertCircle, Database, GraduationCap, Lock, ShieldCheck } from 'lucide-react';
+import { Button, Card, Input } from '@/components/ui';
 
 export default function ClientLoginPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -27,202 +22,137 @@ export default function ClientLoginPage() {
           setIsConfigured(false);
           return;
         }
-
         setIsConfigured(true);
       })
-      .catch(() => {
-        setIsConfigured(true);
-      });
+      .catch(() => setIsConfigured(true));
   }, []);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     setError(null);
     setIsLoading(true);
 
     try {
       const response = await fetch('/api/client/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed.');
-      }
-
+      if (!response.ok) throw new Error(data.error || 'Login failed.');
       router.push('/client/dashboard');
       router.refresh();
     } catch (loginError) {
-      setError(
-        loginError instanceof Error
-          ? loginError.message
-          : 'An unexpected error occurred.'
-      );
+      setError(loginError instanceof Error ? loginError.message : 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: '#FAF7F0' }}
-    >
-      <header className="p-6">
-        <Link href="/" className="flex items-center gap-2 w-fit">
-          <GraduationCap className="h-8 w-8 text-[#18452F]" />
-
-          <span className="font-semibold text-[#18452F] text-xl">
-            JUST<span className="text-[#C79A2D]">my</span>THESIS
-          </span>
-        </Link>
-      </header>
-
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div
-            className="rounded-2xl shadow-xl border border-gray-200 p-8"
-            style={{ backgroundColor: '#FFFFFF' }}
-          >
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#18452F]/10 mb-4">
-                <Lock className="h-8 w-8 text-[#18452F]" />
-              </div>
-
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Client Portal Login
-              </h1>
-
-              <p className="text-gray-600">
-                Sign in to access your project, payments, and deliverables
+    <main className="min-h-screen bg-[var(--surface-page)]">
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-5 py-5 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-5">
+          <Link href="/" className="flex items-center gap-3 rounded-xl focus-visible:outline-none">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-white shadow-sm">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight text-brand-green">
+                JUST<span className="text-gold">my</span>THESIS
               </p>
+              <p className="text-xs text-[var(--text-muted)]">Scholar Haven</p>
+            </div>
+          </Link>
+
+          <Link href="/" className="text-sm font-semibold text-brand-green transition hover:text-brand-green-light">
+            Back to website
+          </Link>
+        </header>
+
+        <section className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-green/15 bg-brand-green/5 px-3 py-1.5 text-sm font-semibold text-brand-green">
+              <ShieldCheck className="h-4 w-4" />
+              Secure client workspace
+            </div>
+            <h1 className="mt-5 text-4xl font-bold tracking-tight text-[var(--text-primary)] sm:text-5xl">
+              Sign in to your Scholar Haven.
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-7 text-[var(--text-secondary)] sm:text-lg">
+              Access your academic projects, messages, updates and released deliverables from one private workspace.
+            </p>
+          </div>
+
+          <Card variant="bordered" padding="lg" className="w-full max-w-lg justify-self-end border-[var(--border-subtle)] bg-white shadow-sm">
+            <div className="mb-7 flex items-start gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-green/10">
+                <Lock className="h-5 w-5 text-brand-green" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">Client sign in</h2>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">Use the credentials provided for your Scholar Haven account.</p>
+              </div>
             </div>
 
             {isConfigured === false && (
-              <div className="mb-6 p-4 bg-amber-100 border border-amber-300 rounded-lg flex items-start gap-3">
-                <Database className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-
+              <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
+                <Database className="mt-0.5 h-5 w-5 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-amber-800">
-                    Database Not Configured
-                  </p>
-
-                  <p className="text-xs text-amber-700 mt-1">
-                    The database is not properly configured. Please contact
-                    JUSTmyTHESIS support.
-                  </p>
+                  <p className="font-semibold">Database not configured</p>
+                  <p className="mt-1 text-sm">Please contact JUSTmyTHESIS support.</p>
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-
-                <p className="text-sm font-medium text-red-800">
-                  {error}
-                </p>
+              <div role="alert" className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                <p className="text-sm">{error}</p>
               </div>
             )}
 
             <form onSubmit={handleLogin} className="space-y-5">
-              <div className="w-full">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-800 mb-1.5"
-                >
-                  Email Address
-                </label>
-
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                  disabled={isLoading || isConfigured === false}
-                  className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#18452F]/50 focus:border-[#18452F] disabled:opacity-60"
-                />
-              </div>
-
-              <div className="w-full">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-800 mb-1.5"
-                >
-                  Password
-                </label>
-
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  disabled={isLoading || isConfigured === false}
-                  className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#18452F]/50 focus:border-[#18452F] disabled:opacity-60"
-                />
-              </div>
-
-              <button
-                type="submit"
+              <Input
+                label="Email address"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
                 disabled={isLoading || isConfigured === false}
-                className="inline-flex items-center justify-center gap-2 font-medium rounded-xl h-10 px-4 text-sm w-full bg-[#18452F] text-white hover:bg-[#2a5c45] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              />
+              <Input
+                label="Password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                disabled={isLoading || isConfigured === false}
+              />
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading || isConfigured === false}>
                 {isLoading ? 'Signing in...' : 'Sign In'}
-              </button>
+              </Button>
             </form>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-600">
-                  Registered Clients Only
-                </span>
-              </div>
+            <div className="mt-6 border-t border-[var(--border-subtle)] pt-5 text-center">
+              <p className="text-sm text-[var(--text-secondary)]">
+                Need help accessing your account?{' '}
+                <a href="mailto:support@justmythesis.org" className="font-semibold text-brand-green hover:underline">
+                  Contact support
+                </a>
+              </p>
             </div>
+          </Card>
+        </section>
 
-            <p className="text-center text-sm text-gray-700">
-              Need help accessing your account?{' '}
-              <a
-                href="mailto:support@justmythesis.org"
-                className="text-[#18452F] hover:underline font-medium"
-              >
-                Contact support
-              </a>
-            </p>
-          </div>
-
-          <div className="mt-6 text-center">
-            <Link
-              href="/"
-              className="text-sm text-gray-700 hover:text-[#18452F] transition-colors"
-            >
-              ← Back to website
-            </Link>
-          </div>
-        </div>
-      </main>
-
-      <footer className="p-6 text-center text-sm text-gray-600">
-        © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
-      </footer>
-    </div>
+        <footer className="border-t border-[var(--border-subtle)] pt-5 text-center text-sm text-[var(--text-muted)]">
+          © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
+        </footer>
+      </div>
+    </main>
   );
 }
