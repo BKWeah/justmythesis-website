@@ -26,49 +26,55 @@ export function DashboardStatCard({
   iconBackground = 'bg-brand-green/10',
   onClick,
 }: DashboardStatCardProps) {
+  const isInteractive = Boolean(onClick);
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-brand-green/50 focus:ring-offset-2"
+      disabled={!isInteractive}
+      className="group w-full rounded-[var(--radius-xl)] text-left outline-none disabled:cursor-default focus-visible:ring-2 focus-visible:ring-brand-green/40 focus-visible:ring-offset-2"
     >
       <Card
         variant="bordered"
         padding="md"
-        className="h-full cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-green/40 hover:shadow-md"
+        className={cn(
+          'h-full border-[var(--border-subtle)] bg-white transition-[transform,box-shadow,border-color] duration-200',
+          isInteractive && 'cursor-pointer group-hover:-translate-y-0.5 group-hover:border-brand-green/25 group-hover:shadow-[0_10px_24px_rgba(16,24,40,0.07)]'
+        )}
       >
-        <div className="flex h-full min-h-[220px] flex-col">
-          <div className="flex items-start justify-between gap-4">
+        <div className="flex min-h-[190px] h-full flex-col">
+          <div className="flex items-start justify-between gap-5">
             <div
               className={cn(
-                'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl',
+                'flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-lg)]',
                 iconBackground
               )}
             >
-              <Icon
-                className={cn('h-6 w-6', iconColor)}
-                aria-hidden="true"
-              />
+              <Icon className={cn('h-5 w-5', iconColor)} aria-hidden="true" />
             </div>
 
-            <span className="text-right text-xl font-bold text-foreground">
+            <span className="text-right text-xl font-bold text-[var(--text-primary)]">
               {value}
             </span>
           </div>
 
-          <div className="mt-6">
-            <h3 className="text-base font-semibold text-foreground">
+          <div className="mt-5">
+            <h3 className="text-base font-semibold text-[var(--text-primary)]">
               {title}
             </h3>
 
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
               {description}
             </p>
           </div>
 
-          <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-semibold text-brand-green">
+          <div className="mt-auto flex items-center gap-2 pt-5 text-sm font-semibold text-brand-green">
             <span>{actionLabel}</span>
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowRight
+              className={cn('h-4 w-4 transition-transform', isInteractive && 'group-hover:translate-x-0.5')}
+              aria-hidden="true"
+            />
           </div>
         </div>
       </Card>
