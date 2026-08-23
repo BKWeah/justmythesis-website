@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './modern-polish.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://justmythesis-website.vercel.app'),
