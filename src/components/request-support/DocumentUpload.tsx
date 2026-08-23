@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useForm, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
-import { Upload, X, File, AlertCircle } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { AlertCircle, File, Upload, X } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
-import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { DOCUMENT_CATEGORIES } from '@/lib/supabase/types';
+import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
 interface FileWithPreview {
   file: File;
@@ -31,55 +30,70 @@ const categoryOptions = DOCUMENT_CATEGORIES.map((cat) => ({
   label: cat.label,
 }));
 
-export function DocumentUpload({ clientId, onUploadComplete }: DocumentUploadProps) {
+export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileSelect = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFiles = Array.from(event.target.files || []);
-      addFiles(selectedFiles);
+  const notifyChange = useCallback(
+    (nextFiles: FileWithPreview[]) => {
+      setFiles(nextFiles);
+      onUploadComplete?.(nextFiles);
     },
-    []
+    [onUploadComplete],
   );
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
+  const addFiles = useCallback(
+    (newFiles: File[]) => {
+      const filesWithPreview: FileWithPreview[] = newFiles.map((file) => ({
+        file,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+        category: 'Other',
+        description: '',
+      }));
+
+      setFiles((current) => {
+        const next = [...current, ...filesWithPreview];
+        onUploadComplete?.(next);
+        return next;
+      });
+    },
+    [onUploadComplete],
+  );
+
+  const handleFileSelect = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      addFiles(Array.from(event.target.files || []));
+      event.target.value = '';
+    },
+    [addFiles],
+  );
+
+  const handleDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
+  const handleDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
     setIsDragging(false);
   }, []);
 
   const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
+    (event: React.DragEvent) => {
+      event.preventDefault();
       setIsDragging(false);
-      const droppedFiles = Array.from(e.dataTransfer.files);
-      addFiles(droppedFiles);
+      addFiles(Array.from(event.dataTransfer.files));
     },
-    []
+    [addFiles],
   );
 
-  const addFiles = (newFiles: File[]) => {
-    const filesWithPreview: FileWithPreview[] = newFiles.map((file) => ({
-      file,
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      category: 'Other',
-      description: '',
-    }));
-    setFiles((prev) => [...prev, ...filesWithPreview]);
-  };
-
   const removeFile = (id: string) => {
-    setFiles((prev) => prev.filter((f) => f.id !== id));
+    notifyChange(files.filter((file) => file.id !== id));
   };
 
   const updateFileCategory = (id: string, category: string) => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, category } : f))
+    notifyChange(
+      files.map((file) => (file.id === id ? { ...file, category } : file)),
     );
   };
 
@@ -90,99 +104,111 @@ export function DocumentUpload({ clientId, onUploadComplete }: DocumentUploadPro
   };
 
   return (
-    <div className="space-y-4">
-      {/* Drop Zone */}
+    <div className="space-y-5">
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          'border-2 border-dashed rounded-xl p-8 text-center transition-colors',
+          'rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-200 sm:p-10',
           isDragging
-            ? 'border-brand-green bg-brand-green/5'
-            : 'border-gray-200 hover:border-gray-300'
+            ? 'border-brand-green bg-brand-green/5 shadow-sm'
+            : 'border-[var(--border-default)] bg-[var(--surface-subtle)] hover:border-brand-green/50 hover:bg-brand-green/[0.025]',
         )}
       >
         <input
           type="file"
           multiple
           onChange={handleFileSelect}
-          className="hidden"
+          className="sr-only"
           id="file-upload"
           accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
         />
+
         <label
           htmlFor="file-upload"
-          className="cursor-pointer flex flex-col items-center gap-3"
+          className="flex cursor-pointer flex-col items-center gap-4"
         >
-          <div className="p-4 rounded-full bg-brand-green/10">
-            <Upload className="h-8 w-8 text-brand-green" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-[var(--border-subtle)]">
+            <Upload className="h-6 w-6 text-brand-green" aria-hidden="true" />
           </div>
+
           <div>
-            <p className="text-gray-700 font-medium">
-              Drop files here or click to upload
+            <p className="font-semibold text-[var(--text-primary)]">
+              Drop files here or choose from your device
             </p>
-            <p className="text-sm text-gray-500 mt-1">
-              PDF, Word, Excel, or images up to 50MB
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              PDF, Word, Excel, JPG or PNG, up to 50 MB per file.
             </p>
           </div>
+
+          <span className="inline-flex min-h-10 items-center justify-center rounded-xl border border-brand-green/20 bg-white px-4 py-2 text-sm font-semibold text-brand-green shadow-sm">
+            Choose files
+          </span>
         </label>
       </div>
 
-      {/* File List */}
       {files.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-700">
-            Uploaded Documents ({files.length})
-          </h4>
+          <div className="flex items-center justify-between gap-4">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)]">
+              Selected documents
+            </h4>
+            <span className="rounded-full bg-brand-green/10 px-2.5 py-1 text-xs font-semibold text-brand-green">
+              {files.length} {files.length === 1 ? 'file' : 'files'}
+            </span>
+          </div>
+
           {files.map((fileData) => (
             <div
               key={fileData.id}
-              className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
+              className="flex flex-col gap-4 rounded-2xl border border-[var(--border-subtle)] bg-white p-4 shadow-sm sm:flex-row sm:items-start"
             >
-              <div className="flex-shrink-0 mt-1">
-                <File className="h-5 w-5 text-gray-400" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-subtle)]">
+                <File className="h-5 w-5 text-brand-green" aria-hidden="true" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
                   {fileData.file.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
                   {formatFileSize(fileData.file.size)}
                 </p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
+
+                <div className="mt-3 max-w-sm">
                   <Select
+                    label="Document category"
                     options={categoryOptions}
                     value={fileData.category}
-                    onChange={(e) => updateFileCategory(fileData.id, e.target.value)}
+                    onChange={(event) =>
+                      updateFileCategory(fileData.id, event.target.value)
+                    }
                     placeholder="Select category"
                   />
                 </div>
               </div>
+
               <button
                 type="button"
                 onClick={() => removeFile(fileData.id)}
-                className="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition-colors"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center self-end rounded-xl text-[var(--text-muted)] transition hover:bg-red-50 hover:text-red-600 sm:self-start"
+                aria-label={`Remove ${fileData.file.name}`}
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Info Box */}
-      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-        <div className="flex gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-700">
-            <p className="font-medium">Documents are optional but recommended</p>
-            <p className="mt-1 text-blue-600">
-              You can submit your request without documents. If you have a thesis
-              guide, proposal draft, or supervisor comments, uploading them will help
-              us better understand your project.
-            </p>
-          </div>
+      <div className="flex gap-3 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 text-blue-800">
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+        <div className="text-sm leading-6">
+          <p className="font-semibold">Documents are optional</p>
+          <p className="mt-1 text-blue-700">
+            A thesis guide, proposal draft, supervisor comments or related files can help the team assess your request more accurately.
+          </p>
         </div>
       </div>
     </div>
