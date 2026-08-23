@@ -2,14 +2,33 @@ import Link from 'next/link';
 import { ArrowLeft, FileCheck2 } from 'lucide-react';
 
 const sections = [
-  ['1. Acceptance of Terms', <p>By accessing and using the JUSTmyTHESIS™ website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>],
-  ['2. Nature of Services', <><p>JUSTmyTHESIS™ provides academic support services including proposal development, thesis development, formatting, and research coaching. Our services are designed to support and guide students through their academic research and writing process.</p><p><strong>Important:</strong> JUSTmyTHESIS™ does not fabricate, create, or generate research data, survey responses, interview results, citations, references, or any academic data on behalf of clients.</p></>],
-  ['3. Client Responsibilities', <><p>Clients remain responsible for:</p><ul className="list-disc space-y-2 pl-6"><li>Conducting their own surveys and interviews</li><li>Data collection activities</li><li>Research activities</li><li>Academic approvals and compliance</li><li>Thesis defense preparation and attendance</li><li>Final submission activities</li></ul></>],
-  ['4. Confidentiality', <p>JUSTmyTHESIS™ handles all client projects with strict confidentiality. Client information, project details, and submitted documents are kept private and are not shared with third parties.</p>],
-  ['5. Intellectual Property', <p>The structure, formatting guidance, and support methodologies provided by JUSTmyTHESIS™ are for the client&apos;s use in developing their own academic work. Final academic work produced using our services remains the intellectual property of the client.</p>],
-  ['6. Service Fees', <p>Service fees are structured based on the scope and complexity of support required. Specific pricing is provided during the package recommendation phase. Reasonable payment arrangements may be discussed where necessary.</p>],
-  ['7. Limitation of Liability', <p>JUSTmyTHESIS™ provides guidance and support services. We are not responsible for academic outcomes, supervisor decisions, or institutional requirements beyond our direct service deliverables.</p>],
-  ['8. Contact', <p>For questions regarding these terms, contact us at <a href="mailto:team@justmythesis.org" className="font-semibold text-brand-green hover:underline">team@justmythesis.org</a> or Phone/WhatsApp: +231776732989.</p>],
+  ['1. Acceptance of Terms', <p key="terms-acceptance">By accessing and using the JUSTmyTHESIS™ website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>],
+  [
+    '2. Nature of Services',
+    <div key="terms-nature-of-services">
+      <p>JUSTmyTHESIS™ provides academic support services including proposal development, thesis development, formatting, and research coaching. Our services are designed to support and guide students through their academic research and writing process.</p>
+      <p><strong>Important:</strong> JUSTmyTHESIS™ does not fabricate, create, or generate research data, survey responses, interview results, citations, references, or any academic data on behalf of clients.</p>
+    </div>,
+  ],
+  [
+    '3. Client Responsibilities',
+    <div key="terms-client-responsibilities">
+      <p>Clients remain responsible for:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li>Conducting their own surveys and interviews</li>
+        <li>Data collection activities</li>
+        <li>Research activities</li>
+        <li>Academic approvals and compliance</li>
+        <li>Thesis defense preparation and attendance</li>
+        <li>Final submission activities</li>
+      </ul>
+    </div>,
+  ],
+  ['4. Confidentiality', <p key="terms-confidentiality">JUSTmyTHESIS™ handles all client projects with strict confidentiality. Client information, project details, and submitted documents are kept private and are not shared with third parties.</p>],
+  ['5. Intellectual Property', <p key="terms-intellectual-property">The structure, formatting guidance, and support methodologies provided by JUSTmyTHESIS™ are for the client&apos;s use in developing their own academic work. Final academic work produced using our services remains the intellectual property of the client.</p>],
+  ['6. Service Fees', <p key="terms-service-fees">Service fees are structured based on the scope and complexity of support required. Specific pricing is provided during the package recommendation phase. Reasonable payment arrangements may be discussed where necessary.</p>],
+  ['7. Limitation of Liability', <p key="terms-liability">JUSTmyTHESIS™ provides guidance and support services. We are not responsible for academic outcomes, supervisor decisions, or institutional requirements beyond our direct service deliverables.</p>],
+  ['8. Contact', <p key="terms-contact">For questions regarding these terms, contact us at <a href="mailto:team@justmythesis.org" className="font-semibold text-brand-green hover:underline">team@justmythesis.org</a> or Phone/WhatsApp: +231776732989.</p>],
 ] as const;
 
 export default function TermsPage() {
