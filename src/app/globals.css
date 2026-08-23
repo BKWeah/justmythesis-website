@@ -15,7 +15,7 @@
   --dark: #222222;
   --text-primary: #171a18;
   --text-secondary: #5d625f;
-  --text-muted: #7b817d;
+  --text-muted: #6f7671;
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --surface-page: #f7f8f7;
@@ -82,13 +82,30 @@ p { color: inherit; }
 small { font-size: 0.875rem; line-height: 1.5; }
 button,input,textarea,select { font: inherit; }
 button,a { letter-spacing: -0.01em; }
+a, button, input, textarea, select, summary { -webkit-tap-highlight-color: transparent; }
+button, [role='button'], a { touch-action: manipulation; }
 
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: rgba(24,69,47,0.05); }
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#C79A2D,#a68425); border-radius: var(--radius-sm); }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg,#d9b44a,#C79A2D); }
-::selection { background-color: rgba(199,154,45,0.3); color: var(--brand-green); }
-*:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+::selection { background-color: rgba(199,154,45,0.3); color: var(--brand-green-dark); }
+*:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  border-radius: var(--radius-md);
+  background: var(--brand-green);
+  color: white;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(15,45,31,0.18);
+}
+.skip-link:focus { transform: translateY(0); }
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -178,12 +195,30 @@ button,a { letter-spacing: -0.01em; }
 }
 
 @media (max-width: 767px) {
-  body { font-size: 15px; }
+  body { font-size: 15px; overflow-x: hidden; }
   .section { padding-top: clamp(3rem, 10vw, 4rem); padding-bottom: clamp(3rem, 10vw, 4rem); }
-  .btn, button, [role='button'] { min-height: 40px; }
+  .btn, button, [role='button'], input, select { min-height: 44px; }
   .section-nav-btn { width: 100%; justify-content: center; }
+  table { font-size: 0.875rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --text-secondary: #454a47;
+    --text-muted: #555c57;
+    --border-subtle: #cbd3cd;
+    --border-default: #b8c3bb;
+  }
+  *:focus-visible { outline-width: 4px; }
 }
