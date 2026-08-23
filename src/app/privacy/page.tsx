@@ -2,15 +2,68 @@ import Link from 'next/link';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const sections = [
-  ['1. Information We Collect', <><p>We may collect the following types of information:</p><ul className="list-disc space-y-2 pl-6"><li><strong>Contact Information:</strong> Name, email address, phone number, and WhatsApp number when you reach out to us for services.</li><li><strong>Project Information:</strong> Academic documents, research materials, and project details you voluntarily share during consultations.</li><li><strong>Usage Data:</strong> Information about how you interact with our website, including pages visited and time spent.</li></ul></>],
-  ['2. How We Use Your Information', <><p>We use collected information to:</p><ul className="list-disc space-y-2 pl-6"><li>Provide academic support and consultation services</li><li>Communicate with you about your project</li><li>Process service requests and deliver packages</li><li>Improve our website and services</li><li>Respond to inquiries and support requests</li></ul></>],
-  ['3. Confidentiality', <><p><strong>Your privacy is paramount.</strong> All project information, documents, and communications are treated with strict confidentiality. We do not:</p><ul className="list-disc space-y-2 pl-6"><li>Share client information with third parties</li><li>Disclose project details to anyone outside our team</li><li>Use client documents for any purpose other than providing requested services</li></ul></>],
-  ['4. Data Protection', <><p>We implement appropriate security measures to protect your personal information and project documents. Your data is:</p><ul className="list-disc space-y-2 pl-6"><li>Stored securely and accessible only to authorized team members</li><li>Not shared with any third parties</li><li>Handled in accordance with professional confidentiality standards</li></ul></>],
-  ['5. Cookies and Tracking', <p>Our website may use cookies and similar tracking technologies to enhance your browsing experience. You can control cookie preferences through your browser settings.</p>],
-  ['6. Third-Party Services', <p>We may use third-party services for communication, such as WhatsApp, and website analytics. These services have their own privacy policies governing their use of your information.</p>],
-  ['7. Your Rights', <><p>You have the right to:</p><ul className="list-disc space-y-2 pl-6"><li>Request access to your personal information</li><li>Request correction of inaccurate information</li><li>Request deletion of your information</li><li>Opt out of communications at any time</li></ul></>],
-  ['8. Contact Us', <p>If you have any questions about this Privacy Policy, contact us at <a href="mailto:team@justmythesis.org" className="font-semibold text-brand-green hover:underline">team@justmythesis.org</a> or Phone/WhatsApp: +231776732989.</p>],
-  ['9. Changes to This Policy', <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date.</p>],
+  [
+    '1. Information We Collect',
+    <div key="privacy-information-we-collect">
+      <p>We may collect the following types of information:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li><strong>Contact Information:</strong> Name, email address, phone number, and WhatsApp number when you reach out to us for services.</li>
+        <li><strong>Project Information:</strong> Academic documents, research materials, and project details you voluntarily share during consultations.</li>
+        <li><strong>Usage Data:</strong> Information about how you interact with our website, including pages visited and time spent.</li>
+      </ul>
+    </div>,
+  ],
+  [
+    '2. How We Use Your Information',
+    <div key="privacy-how-we-use-information">
+      <p>We use collected information to:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li>Provide academic support and consultation services</li>
+        <li>Communicate with you about your project</li>
+        <li>Process service requests and deliver packages</li>
+        <li>Improve our website and services</li>
+        <li>Respond to inquiries and support requests</li>
+      </ul>
+    </div>,
+  ],
+  [
+    '3. Confidentiality',
+    <div key="privacy-confidentiality">
+      <p><strong>Your privacy is paramount.</strong> All project information, documents, and communications are treated with strict confidentiality. We do not:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li>Share client information with third parties</li>
+        <li>Disclose project details to anyone outside our team</li>
+        <li>Use client documents for any purpose other than providing requested services</li>
+      </ul>
+    </div>,
+  ],
+  [
+    '4. Data Protection',
+    <div key="privacy-data-protection">
+      <p>We implement appropriate security measures to protect your personal information and project documents. Your data is:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li>Stored securely and accessible only to authorized team members</li>
+        <li>Not shared with any third parties</li>
+        <li>Handled in accordance with professional confidentiality standards</li>
+      </ul>
+    </div>,
+  ],
+  ['5. Cookies and Tracking', <p key="privacy-cookies">Our website may use cookies and similar tracking technologies to enhance your browsing experience. You can control cookie preferences through your browser settings.</p>],
+  ['6. Third-Party Services', <p key="privacy-third-party">We may use third-party services for communication, such as WhatsApp, and website analytics. These services have their own privacy policies governing their use of your information.</p>],
+  [
+    '7. Your Rights',
+    <div key="privacy-rights">
+      <p>You have the right to:</p>
+      <ul className="list-disc space-y-2 pl-6">
+        <li>Request access to your personal information</li>
+        <li>Request correction of inaccurate information</li>
+        <li>Request deletion of your information</li>
+        <li>Opt out of communications at any time</li>
+      </ul>
+    </div>,
+  ],
+  ['8. Contact Us', <p key="privacy-contact">If you have any questions about this Privacy Policy, contact us at <a href="mailto:team@justmythesis.org" className="font-semibold text-brand-green hover:underline">team@justmythesis.org</a> or Phone/WhatsApp: +231776732989.</p>],
+  ['9. Changes to This Policy', <p key="privacy-changes">We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date.</p>],
 ] as const;
 
 export default function PrivacyPage() {
