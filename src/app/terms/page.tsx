@@ -1,107 +1,58 @@
 import Link from 'next/link';
+import { ArrowLeft, FileCheck2 } from 'lucide-react';
+
+const sections = [
+  ['1. Acceptance of Terms', <p>By accessing and using the JUSTmyTHESIS™ website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>],
+  ['2. Nature of Services', <><p>JUSTmyTHESIS™ provides academic support services including proposal development, thesis development, formatting, and research coaching. Our services are designed to support and guide students through their academic research and writing process.</p><p><strong>Important:</strong> JUSTmyTHESIS™ does not fabricate, create, or generate research data, survey responses, interview results, citations, references, or any academic data on behalf of clients.</p></>],
+  ['3. Client Responsibilities', <><p>Clients remain responsible for:</p><ul className="list-disc space-y-2 pl-6"><li>Conducting their own surveys and interviews</li><li>Data collection activities</li><li>Research activities</li><li>Academic approvals and compliance</li><li>Thesis defense preparation and attendance</li><li>Final submission activities</li></ul></>],
+  ['4. Confidentiality', <p>JUSTmyTHESIS™ handles all client projects with strict confidentiality. Client information, project details, and submitted documents are kept private and are not shared with third parties.</p>],
+  ['5. Intellectual Property', <p>The structure, formatting guidance, and support methodologies provided by JUSTmyTHESIS™ are for the client&apos;s use in developing their own academic work. Final academic work produced using our services remains the intellectual property of the client.</p>],
+  ['6. Service Fees', <p>Service fees are structured based on the scope and complexity of support required. Specific pricing is provided during the package recommendation phase. Reasonable payment arrangements may be discussed where necessary.</p>],
+  ['7. Limitation of Liability', <p>JUSTmyTHESIS™ provides guidance and support services. We are not responsible for academic outcomes, supervisor decisions, or institutional requirements beyond our direct service deliverables.</p>],
+  ['8. Contact', <p>For questions regarding these terms, contact us at <a href="mailto:team@justmythesis.org" className="font-semibold text-brand-green hover:underline">team@justmythesis.org</a> or Phone/WhatsApp: +231776732989.</p>],
+] as const;
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gold/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/" className="flex items-center gap-3">
-              <img 
-                src="/images/logo/justmythesis-logo.png" 
-                alt="JUSTmyTHESIS™ Logo"
-                className="h-10 md:h-12 w-auto"
-              />
-              <div className="hidden">
-                <h1 className="text-brand-green font-bold text-lg leading-tight">JUSTmyTHESIS™</h1>
-                <p className="text-dark/50 text-xs">Academic Research & Thesis Support</p>
-              </div>
-            </Link>
-          </div>
+    <main className="min-h-screen bg-[var(--surface-page)]">
+      <header className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3 font-semibold text-brand-green">
+            <img src="/images/logo/justmythesis-logo.png" alt="JUSTmyTHESIS™" className="h-10 w-auto" />
+          </Link>
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-green hover:underline">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to Home
+          </Link>
         </div>
       </header>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <h1 className="text-3xl md:text-4xl font-bold text-brand-green mb-8">Terms of Service</h1>
-        
-        <div className="prose prose-lg max-w-none text-dark/80 space-y-6">
-          <p className="text-sm text-dark/50">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-          
-          <h2 className="text-2xl font-bold text-brand-green mt-8 mb-4">1. Acceptance of Terms</h2>
-          <p>
-            By accessing and using the JUSTmyTHESIS™ website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">2. Nature of Services</h2>
-          <p>
-            JUSTmyTHESIS™ provides academic support services including proposal development, thesis development, formatting, and research coaching. Our services are designed to support and guide students through their academic research and writing process.
-          </p>
-          <p>
-            <strong>Important:</strong> JUSTmyTHESIS™ does not fabricate, create, or generate research data, survey responses, interview results, citations, references, or any academic data on behalf of clients.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">3. Client Responsibilities</h2>
-          <p>Clients remain responsible for:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            <li>Conducting their own surveys and interviews</li>
-            <li>Data collection activities</li>
-            <li>Research activities</li>
-            <li>Academic approvals and compliance</li>
-            <li>Thesis defense preparation and attendance</li>
-            <li>Final submission activities</li>
-          </ul>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">4. Confidentiality</h2>
-          <p>
-            JUSTmyTHESIS™ handles all client projects with strict confidentiality. Client information, project details, and submitted documents are kept private and are not shared with third parties.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">5. Intellectual Property</h2>
-          <p>
-            The structure, formatting guidance, and support methodologies provided by JUSTmyTHESIS™ are for the client's use in developing their own academic work. Final academic work produced using our services remains the intellectual property of the client.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">6. Service Fees</h2>
-          <p>
-            Service fees are structured based on the scope and complexity of support required. Specific pricing is provided during the package recommendation phase. Reasonable payment arrangements may be discussed where necessary.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">7. Limitation of Liability</h2>
-          <p>
-            JUSTmyTHESIS™ provides guidance and support services. We are not responsible for academic outcomes, supervisor decisions, or institutional requirements beyond our direct service deliverables.
-          </p>
-          
-          <h2 className="text-2xl font-bold text-navy mt-8 mb-4">8. Contact</h2>
-          <p>
-            For questions regarding these terms, please contact us at:<br />
-            Email: <a href="mailto:team@justmythesis.org" className="text-gold hover:text-gold-dark">team@justmythesis.org</a><br />
-            Phone/WhatsApp: +231776732989
-          </p>
+      <section className="border-b border-[var(--border-subtle)] bg-white">
+        <div className="mx-auto max-w-4xl px-5 py-12 sm:px-6 md:py-16">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green">
+            <FileCheck2 className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <p className="eyebrow-label">Legal</p>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Terms of Service</h1>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">The terms governing access to and use of JUSTmyTHESIS™ academic support services.</p>
+          <p className="mt-5 text-sm text-[var(--text-muted)]">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
         </div>
+      </section>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <Link href="/" className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors font-medium">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Home
-          </Link>
+      <div className="mx-auto max-w-4xl px-5 py-10 sm:px-6 md:py-14">
+        <div className="space-y-5">
+          {sections.map(([title, content]) => (
+            <section key={title} className="rounded-2xl border border-[var(--border-subtle)] bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{title}</h2>
+              <div className="mt-4 space-y-4 text-base leading-7 text-[var(--text-secondary)]">{content}</div>
+            </section>
+          ))}
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-cream text-dark py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-dark/60">
-            <Link href="/terms" className="hover:text-gold transition-colors">Terms of Service</Link>
-            <span className="hidden sm:block text-gold">•</span>
-            <Link href="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link>
-          </div>
-          <div className="mt-4 text-center text-dark/40 text-sm">
-            © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
-          </div>
+      <footer className="border-t border-[var(--border-subtle)] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-6 text-sm text-[var(--text-muted)] sm:px-6 md:flex-row lg:px-8">
+          <p>© {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.</p>
+          <div className="flex gap-6"><Link href="/terms" className="font-semibold text-brand-green">Terms of Service</Link><Link href="/privacy" className="hover:text-brand-green">Privacy Policy</Link></div>
         </div>
       </footer>
     </main>
