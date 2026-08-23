@@ -56,16 +56,12 @@ export default function TeamPage() {
   }, [search, staff]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green">
-            <Users className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Support Team</h1>
-            <p className="mt-1 text-gray-500">View staff accounts available for project assignment and operational oversight.</p>
-          </div>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-gold-dark">Operations Workspace</p>
+          <h1 className="mt-2 text-3xl font-bold text-gray-950">Support Team</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">Staff accounts available for project assignment, specialist support and operational oversight.</p>
         </div>
         <Button variant="secondary" onClick={() => void loadStaff()} disabled={isLoading}>
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -74,75 +70,77 @@ export default function TeamPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card className="p-5">
           <p className="text-sm font-medium text-gray-500">Total Staff</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{staff.length}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-950">{staff.length}</p>
         </Card>
-        <Card>
+        <Card className="p-5">
           <p className="text-sm font-medium text-gray-500">Roles Represented</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{new Set(staff.map((member) => member.role)).size}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-950">{new Set(staff.map((member) => member.role)).size}</p>
         </Card>
-        <Card>
+        <Card className="p-5">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-1 h-5 w-5 text-brand-green" />
+            <div className="rounded-xl bg-brand-green/10 p-2.5 text-brand-green"><ShieldCheck className="h-5 w-5" /></div>
             <div>
-              <p className="font-semibold text-gray-900">Assignment Ready</p>
-              <p className="mt-1 text-sm text-gray-500">These staff accounts are available to project-level team assignment.</p>
+              <p className="font-semibold text-gray-950">Assignment Ready</p>
+              <p className="mt-1 text-sm leading-6 text-gray-500">Available for project-level team assignment.</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <Card>
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <Card className="p-0 overflow-hidden">
+        <div className="flex flex-col gap-4 border-b border-gray-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between md:px-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Staff Directory</h2>
-            <p className="mt-1 text-sm text-gray-500">Search by staff name, email address or operational role.</p>
+            <h2 className="text-lg font-semibold text-gray-950">Staff Directory</h2>
+            <p className="mt-1 text-sm text-gray-500">Search by name, email or operational role.</p>
           </div>
           <div className="relative w-full sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search support team..."
-              className="h-10 w-full rounded-lg border border-gray-200 bg-white pl-10 pr-3 text-sm outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+              className="h-11 w-full rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-white pl-10 pr-3 text-sm outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/15"
             />
           </div>
         </div>
 
-        {error && (
-          <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-        )}
+        <div className="p-5 md:p-6">
+          {error && (
+            <div className="mb-5 rounded-[var(--radius-lg)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+          )}
 
-        {isLoading ? (
-          <LoadingState />
-        ) : filteredStaff.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 px-6 py-12 text-center">
-            <Users className="mx-auto h-8 w-8 text-gray-400" />
-            <h3 className="mt-3 font-semibold text-gray-900">No staff found</h3>
-            <p className="mt-1 text-sm text-gray-500">No staff accounts match the current search.</p>
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filteredStaff.map((member) => (
-              <div key={member.id} className="rounded-xl border border-gray-200 bg-white p-5">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-green/10 text-brand-green">
-                    <UserRound className="h-5 w-5" />
+          {isLoading ? (
+            <LoadingState />
+          ) : filteredStaff.length === 0 ? (
+            <div className="rounded-[var(--radius-xl)] border border-dashed border-gray-300 bg-[var(--surface-subtle)] px-6 py-12 text-center">
+              <Users className="mx-auto h-8 w-8 text-gray-400" />
+              <h3 className="mt-3 font-semibold text-gray-950">No staff found</h3>
+              <p className="mt-1 text-sm text-gray-500">No staff accounts match the current search.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {filteredStaff.map((member) => (
+                <div key={member.id} className="rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.03)]">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-green/10 text-brand-green">
+                      <UserRound className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-gray-950">{member.full_name || 'Unnamed Staff Member'}</p>
+                      <div className="mt-2"><Badge variant="info">{member.role || 'Staff'}</Badge></div>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-gray-900">{member.full_name || 'Unnamed Staff Member'}</p>
-                    <div className="mt-2"><Badge variant="info">{member.role || 'Staff'}</Badge></div>
+                  <div className="mt-5 flex items-center gap-2 border-t border-gray-100 pt-4 text-sm text-gray-600">
+                    <Mail className="h-4 w-4 shrink-0 text-gray-400" />
+                    <span className="truncate">{member.email}</span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-                  <Mail className="h-4 w-4 shrink-0" />
-                  <span className="truncate">{member.email}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </Card>
     </div>
   );
