@@ -72,75 +72,93 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F0]">
-      <header className="p-6">
-        <Link href="/" className="flex w-fit items-center gap-2">
-          <GraduationCap className="h-8 w-8 text-[#18452F]" />
-          <span className="text-xl font-semibold text-[#18452F]">JUST<span className="text-[#C79A2D]">my</span>THESIS</span>
+    <div className="flex min-h-screen flex-col bg-[var(--surface-page)]">
+      <header className="border-b border-[var(--border-subtle)] bg-white/95 px-5 py-4 backdrop-blur sm:px-6 lg:px-8">
+        <Link href="/" className="flex w-fit items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-white shadow-sm">
+            <GraduationCap className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-lg font-semibold tracking-tight text-brand-green">
+              JUST<span className="text-gold">my</span>THESIS
+            </p>
+            <p className="text-xs text-[var(--text-muted)]">Operations Workspace</p>
+          </div>
         </Link>
       </header>
 
-      <main className="flex min-h-[calc(100vh-96px)] items-center justify-center p-6">
-        <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
-          <div className="text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#18452F]/10">
-              <LockKeyhole className="h-8 w-8 text-[#18452F]" />
-            </div>
-            <h1 className="mt-4 text-2xl font-bold text-gray-900">Create New Password</h1>
-            <p className="mt-2 text-sm text-gray-600">Set a new password for your JUSTmyTHESIS Operations account.</p>
-          </div>
-
-          {success ? (
-            <div className="mt-6">
-              <div className="flex gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                <CheckCircle2 className="h-5 w-5 shrink-0" />
-                <p>Your password has been updated successfully.</p>
+      <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--border-subtle)] bg-white p-6 shadow-lg sm:p-8">
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
+                <LockKeyhole className="h-7 w-7" />
               </div>
-              <Link href="/workspace/login" className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-xl bg-[#18452F] px-4 text-sm font-medium text-white hover:bg-[#2a5c45]">
-                Return to Operations Login
-              </Link>
+              <p className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-brand-green">Secure Password Update</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground">Create New Password</h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">Set a new password for your JUSTmyTHESIS Operations account.</p>
             </div>
-          ) : (
-            <>
-              {error && <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
-              <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-                <div>
-                  <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-gray-800">New Password</label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    minLength={8}
-                    required
-                    disabled={!isReady || isSubmitting}
-                    className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-[#18452F] focus:ring-2 focus:ring-[#18452F]/20 disabled:bg-gray-50"
-                  />
+            {success ? (
+              <div className="mt-6">
+                <div className="flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+                  <p>Your password has been updated successfully.</p>
                 </div>
-                <div>
-                  <label htmlFor="confirm-password" className="mb-1.5 block text-sm font-medium text-gray-800">Confirm New Password</label>
-                  <input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                    minLength={8}
-                    required
-                    disabled={!isReady || isSubmitting}
-                    className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-[#18452F] focus:ring-2 focus:ring-[#18452F]/20 disabled:bg-gray-50"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={!isReady || isSubmitting || !password || !confirmPassword}
-                  className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-[#18452F] px-4 text-sm font-medium text-white hover:bg-[#2a5c45] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Updating password...' : 'Update Password'}
-                </button>
-              </form>
-            </>
-          )}
+                <Link href="/workspace/login" className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand-green px-4 text-sm font-semibold text-white transition hover:bg-brand-green-light">
+                  Return to Operations Login
+                </Link>
+              </div>
+            ) : (
+              <>
+                {error && (
+                  <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                  <div>
+                    <label htmlFor="password" className="mb-2 block text-sm font-semibold text-foreground">New Password</label>
+                    <input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      minLength={8}
+                      required
+                      disabled={!isReady || isSubmitting}
+                      placeholder="At least 8 characters"
+                      className="h-11 w-full rounded-xl border border-[var(--border-default)] bg-white px-4 text-sm text-foreground outline-none transition placeholder:text-[var(--text-muted)] focus:border-brand-green focus:ring-2 focus:ring-brand-green/15 disabled:bg-[var(--surface-subtle)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="confirm-password" className="mb-2 block text-sm font-semibold text-foreground">Confirm New Password</label>
+                    <input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(event) => setConfirmPassword(event.target.value)}
+                      minLength={8}
+                      required
+                      disabled={!isReady || isSubmitting}
+                      placeholder="Re-enter your new password"
+                      className="h-11 w-full rounded-xl border border-[var(--border-default)] bg-white px-4 text-sm text-foreground outline-none transition placeholder:text-[var(--text-muted)] focus:border-brand-green focus:ring-2 focus:ring-brand-green/15 disabled:bg-[var(--surface-subtle)]"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={!isReady || isSubmitting || !password || !confirmPassword}
+                    className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand-green px-4 text-sm font-semibold text-white transition hover:bg-brand-green-light disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Updating password...' : 'Update Password'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
         </div>
       </main>
     </div>
