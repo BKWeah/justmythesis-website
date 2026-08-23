@@ -31,60 +31,75 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F0]">
-      <header className="p-6">
-        <Link href="/" className="flex w-fit items-center gap-2">
-          <GraduationCap className="h-8 w-8 text-[#18452F]" />
-          <span className="text-xl font-semibold text-[#18452F]">JUST<span className="text-[#C79A2D]">my</span>THESIS</span>
+    <div className="flex min-h-screen flex-col bg-[var(--surface-page)]">
+      <header className="border-b border-[var(--border-subtle)] bg-white/95 px-5 py-4 backdrop-blur sm:px-6 lg:px-8">
+        <Link href="/" className="flex w-fit items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-white shadow-sm">
+            <GraduationCap className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-lg font-semibold tracking-tight text-brand-green">
+              JUST<span className="text-gold">my</span>THESIS
+            </p>
+            <p className="text-xs text-[var(--text-muted)]">Operations Workspace</p>
+          </div>
         </Link>
       </header>
 
-      <main className="flex min-h-[calc(100vh-96px)] items-center justify-center p-6">
-        <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
-          <div className="text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#18452F]/10">
-              <KeyRound className="h-8 w-8 text-[#18452F]" />
+      <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          <div className="rounded-[var(--radius-2xl)] border border-[var(--border-subtle)] bg-white p-6 shadow-lg sm:p-8">
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
+                <KeyRound className="h-7 w-7" />
+              </div>
+              <p className="mt-5 text-sm font-semibold uppercase tracking-[0.16em] text-brand-green">Account Recovery</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground">Reset Operations Password</h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">Enter your staff email address and we will send a secure recovery link.</p>
             </div>
-            <h1 className="mt-4 text-2xl font-bold text-gray-900">Reset Operations Password</h1>
-            <p className="mt-2 text-sm text-gray-600">Enter your staff email address to receive a secure recovery link.</p>
+
+            {message && (
+              <div className="mt-6 flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+                <p>{message}</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+              <div>
+                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-foreground">Email Address</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  placeholder="you@justmythesis.org"
+                  className="h-11 w-full rounded-xl border border-[var(--border-default)] bg-white px-4 text-sm text-foreground outline-none transition placeholder:text-[var(--text-muted)] focus:border-brand-green focus:ring-2 focus:ring-brand-green/15 disabled:bg-[var(--surface-subtle)]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting || !email.trim()}
+                className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand-green px-4 text-sm font-semibold text-white transition hover:bg-brand-green-light disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isSubmitting ? 'Sending recovery link...' : 'Send Recovery Link'}
+              </button>
+            </form>
+
+            <Link href="/workspace/login" className="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-brand-green transition hover:text-brand-green-light">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Operations Login
+            </Link>
           </div>
-
-          {message && (
-            <div className="mt-6 flex gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-              <CheckCircle2 className="h-5 w-5 shrink-0" />
-              <p>{message}</p>
-            </div>
-          )}
-
-          {error && <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
-
-          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-800">Email Address</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                disabled={isSubmitting}
-                placeholder="you@justmythesis.org"
-                className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-[#18452F] focus:ring-2 focus:ring-[#18452F]/20"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isSubmitting || !email.trim()}
-              className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-[#18452F] px-4 text-sm font-medium text-white hover:bg-[#2a5c45] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isSubmitting ? 'Sending recovery link...' : 'Send Recovery Link'}
-            </button>
-          </form>
-
-          <Link href="/workspace/login" className="mt-6 flex items-center justify-center gap-2 text-sm font-medium text-[#18452F] hover:underline">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Operations Login
-          </Link>
         </div>
       </main>
     </div>
