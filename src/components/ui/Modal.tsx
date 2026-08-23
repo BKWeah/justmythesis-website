@@ -27,23 +27,18 @@ const Modal = ({
   showCloseButton = true,
 }: ModalProps) => {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
     };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-    }
+
+    if (isOpen) document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
@@ -57,47 +52,45 @@ const Modal = ({
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-[#17211b]/45 backdrop-blur-[2px] transition-opacity duration-200"
         onClick={closeOnOverlayClick ? onClose : undefined}
         aria-hidden="true"
       />
-      
-      {/* Modal */}
+
       <div
         className={cn(
-          'relative w-full bg-white rounded-xl shadow-xl',
-          'transform transition-all',
+          'relative w-full overflow-hidden border border-gray-200/80 bg-white shadow-[0_24px_80px_rgba(16,24,40,0.18)]',
+          'rounded-t-[var(--radius-2xl)] sm:rounded-[var(--radius-2xl)]',
+          'max-h-[92vh] sm:max-h-[88vh]',
           sizeStyles[size],
-          'max-h-[90vh] overflow-y-auto'
         )}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         aria-describedby={description ? 'modal-description' : undefined}
       >
-        {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-start justify-between p-6 pb-0">
-            <div>
+          <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-5 py-4 sm:px-6 sm:py-5">
+            <div className="min-w-0">
               {title && (
-                <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
+                <h2 id="modal-title" className="text-xl font-semibold tracking-[-0.025em] text-gray-950">
                   {title}
                 </h2>
               )}
               {description && (
-                <p id="modal-description" className="mt-1 text-sm text-gray-500">
+                <p id="modal-description" className="mt-1.5 text-sm leading-6 text-gray-500">
                   {description}
                 </p>
               )}
             </div>
+
             {showCloseButton && (
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+                className="-mr-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/30"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />
@@ -105,20 +98,17 @@ const Modal = ({
             )}
           </div>
         )}
-        
-        {/* Content */}
-        <div className="p-6">
+
+        <div className="overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">
           {children}
         </div>
       </div>
     </div>
   );
 
-  if (typeof document !== 'undefined') {
-    return createPortal(modalContent, document.body);
-  }
-
-  return null;
+  return typeof document !== 'undefined'
+    ? createPortal(modalContent, document.body)
+    : null;
 };
 
 export { Modal };
