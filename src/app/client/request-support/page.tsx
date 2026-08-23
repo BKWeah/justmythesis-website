@@ -13,16 +13,20 @@ export const metadata: Metadata = {
 
 export default function ClientRequestSupportPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream to-white">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <GraduationCap className="h-8 w-8 text-brand-green" />
-
-            <span className="text-xl font-semibold text-brand-green">
-              JUST<span className="text-gold">my</span>THESIS
-            </span>
-          </div>
+    <div className="min-h-screen bg-[var(--surface-page)]">
+      <header className="border-b border-[var(--border-subtle)] bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
+          <Link href="/client/dashboard" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-white shadow-sm">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight text-brand-green">
+                JUST<span className="text-gold">my</span>THESIS
+              </p>
+              <p className="text-xs text-[var(--text-muted)]">Scholar Haven</p>
+            </div>
+          </Link>
 
           <Link href="/client/dashboard">
             <Button variant="secondary" size="sm">
@@ -33,30 +37,16 @@ export default function ClientRequestSupportPage() {
         </div>
       </header>
 
-      <main className="py-10">
+      <main className="py-8 sm:py-10">
         <RequestSupportForm />
       </main>
 
-      <footer className="mt-12 border-t border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-sm text-gray-500 md:flex-row">
-          <p>
-            © {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.
-          </p>
-
+      <footer className="mt-10 border-t border-[var(--border-subtle)] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-6 text-sm text-[var(--text-muted)] sm:px-6 md:flex-row lg:px-8">
+          <p>© {new Date().getFullYear()} JUSTmyTHESIS™. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link
-              href="/terms"
-              className="transition-colors hover:text-brand-green"
-            >
-              Terms
-            </Link>
-
-            <Link
-              href="/privacy"
-              className="transition-colors hover:text-brand-green"
-            >
-              Privacy
-            </Link>
+            <Link href="/terms" className="transition-colors hover:text-brand-green">Terms</Link>
+            <Link href="/privacy" className="transition-colors hover:text-brand-green">Privacy</Link>
           </div>
         </div>
       </footer>
