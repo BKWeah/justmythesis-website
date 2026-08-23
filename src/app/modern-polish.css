@@ -1,0 +1,154 @@
+/* Tasks 50–52: Final JUSTmyTHESIS UI/UX modernization polish */
+
+/* Task 50: Public website surface and section refinement */
+.section-alt {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.9), rgba(247,248,247,0.96)),
+    var(--surface-subtle);
+}
+
+.service-card,
+.pricing-card,
+.card,
+.card-elevated {
+  box-shadow: 0 10px 30px rgba(15,45,31,0.06);
+}
+
+.service-card:hover,
+.pricing-card:hover,
+.card:hover,
+.card-elevated:hover {
+  box-shadow: 0 18px 42px rgba(15,45,31,0.10);
+  transform: translateY(-2px);
+}
+
+.service-card-header {
+  background: linear-gradient(135deg, var(--brand-green-dark), var(--brand-green));
+}
+
+.pricing-card.featured {
+  box-shadow: 0 18px 44px rgba(199,154,45,0.14);
+}
+
+.site-footer {
+  background: linear-gradient(180deg, #fbfaf6 0%, var(--cream) 100%);
+}
+
+/* Task 51: Hero and conversion-action refinement */
+.hero-bg {
+  isolation: isolate;
+  background-position: center 35%;
+}
+
+.hero-bg::before {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,0.08), transparent 42%),
+    linear-gradient(135deg, rgba(15,45,31,0.93) 0%, rgba(24,69,47,0.86) 55%, rgba(15,45,31,0.90) 100%);
+}
+
+.hero-bg::after {
+  background: linear-gradient(to bottom, rgba(8,24,16,0.08), rgba(8,24,16,0.40));
+}
+
+.btn,
+.section-nav-btn {
+  min-height: 44px;
+  box-shadow: 0 6px 18px rgba(15,45,31,0.08);
+}
+
+.btn-primary,
+.btn-whatsapp {
+  box-shadow: 0 10px 24px rgba(15,45,31,0.20);
+}
+
+.btn-primary:hover,
+.btn-whatsapp:hover {
+  box-shadow: 0 14px 30px rgba(15,45,31,0.24);
+  transform: translateY(-1px);
+}
+
+.btn-outline:hover,
+.section-nav-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Task 52: Final cross-platform visual and responsive consistency */
+main {
+  overflow: clip;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+input,
+textarea,
+select {
+  accent-color: var(--brand-green);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8a918c;
+  opacity: 1;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a,
+  button,
+  .card,
+  .card-elevated,
+  .service-card,
+  .pricing-card {
+    transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: ease-out;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-bg {
+    min-height: auto !important;
+    background-position: center;
+  }
+
+  .hero-bg .heading-xl {
+    font-size: clamp(2.25rem, 11vw, 3.4rem);
+    line-height: 1.02;
+  }
+
+  .service-card,
+  .pricing-card,
+  .card,
+  .card-elevated {
+    transform: none !important;
+  }
+
+  .responsive-actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-custom {
+    max-width: 82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card:hover,
+  .pricing-card:hover,
+  .card:hover,
+  .card-elevated:hover,
+  .btn-primary:hover,
+  .btn-whatsapp:hover,
+  .btn-outline:hover,
+  .section-nav-btn:hover {
+    transform: none;
+  }
+}
